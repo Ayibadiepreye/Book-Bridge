@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BookOpen, Heart, Check, MessageCircle } from 'lucide-react';
 import { db, generateTrackingId } from '../lib/firebase';
@@ -13,7 +13,7 @@ const inputStyle: React.CSSProperties = {
   width: '100%', padding: '11px 14px', borderRadius: 10,
   border: '1.5px solid #e8edf8', fontSize: '.88rem', outline: 'none',
   boxSizing: 'border-box', fontFamily: 'inherit', color: '#1a2744',
-  transition: 'border-color .2s, box-shadow .2s',
+  transition: 'border-color .2s, box-shadow .2s', background: '#fff',
 };
 
 const labelStyle: React.CSSProperties = {
@@ -32,6 +32,17 @@ export default function ContactSection() {
   const [reqError, setReqError] = useState('');
   const [donError, setDonError] = useState('');
 
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const ce = e as CustomEvent<Tab>;
+      setTab(ce.detail);
+      setReqSuccess(null);
+      setDonSuccess(null);
+    };
+    window.addEventListener('bb:setTab', handler);
+    return () => window.removeEventListener('bb:setTab', handler);
+  }, []);
+
   function focus(e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
     e.currentTarget.style.borderColor = '#0EA5E9';
     e.currentTarget.style.boxShadow = '0 0 0 3px rgba(14,165,233,.12)';
@@ -43,7 +54,7 @@ export default function ContactSection() {
 
   async function submitRequest(e: React.FormEvent) {
     e.preventDefault();
-    if (!reqForm.studentName || !reqForm.school || !reqForm.phone) { setReqError('Please fill in all required fields.'); return; }
+    if (!reqForm.studentName || !reqForm.phone) { setReqError('Please fill in all required fields.'); return; }
     setReqLoading(true); setReqError('');
     const trackingId = generateTrackingId('REQ');
     const date = new Date().toLocaleDateString('en-NG', { year: 'numeric', month: 'long', day: 'numeric' });
@@ -74,12 +85,16 @@ export default function ContactSection() {
   }
 
   return (
-    <section id="contact" style={{ background: 'linear-gradient(160deg, #f8fafc 0%, #EFF6FF 50%, #f8fafc 100%)', padding: '96px 24px' }}>
+    <section id="contact" style={{
+      background: 'linear-gradient(160deg, #f8fafc 0%, #EFF6FF 50%, #f8fafc 100%)',
+      padding: '96px 24px',
+    }}>
       <div style={{ maxWidth: 1200, margin: '0 auto' }}>
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: .6 }}
           style={{ textAlign: 'center', marginBottom: 48 }}>
           <span style={{
-            display: 'inline-block', background: 'linear-gradient(135deg,rgba(0,71,171,.1),rgba(255,0,144,.1))',
+            display: 'inline-block',
+            background: 'linear-gradient(135deg, rgba(255,0,144,.12), rgba(0,71,171,.12))',
             color: '#0047AB', fontWeight: 700, fontSize: '.78rem', letterSpacing: 1.5,
             textTransform: 'uppercase', padding: '5px 14px', borderRadius: 50, marginBottom: 16,
             border: '1px solid rgba(0,71,171,.2)',
@@ -94,13 +109,17 @@ export default function ContactSection() {
 
         {/* Tab switcher */}
         <div style={{ display: 'flex', background: '#e8edf8', borderRadius: 50, padding: 4, maxWidth: 380, margin: '0 auto 40px', gap: 4 }}>
-          {([['request', '📚 Request a Book', BookOpen], ['donate', '❤️ Donate Books', Heart]] as const).map(([key, label]) => (
-            <button key={key} onClick={() => { setTab(key as Tab); setReqSuccess(null); setDonSuccess(null); }} style={{
+          {([['request', '📚 Request a Book'], ['donate', '❤️ Donate Books']] as const).map(([key, label]) => (
+            <button key={key} onClick={() => { setTab(key); setReqSuccess(null); setDonSuccess(null); }} style={{
               flex: 1, padding: '10px 0', borderRadius: 50, border: 'none', cursor: 'pointer',
               fontWeight: 700, fontSize: '.85rem', transition: 'all .25s',
-              background: tab === key ? 'linear-gradient(135deg,#0047AB,#0EA5E9)' : 'transparent',
+              background: tab === key
+                ? key === 'request'
+                  ? 'linear-gradient(135deg,#0047AB,#0EA5E9)'
+                  : 'linear-gradient(135deg,#FF0090,#7C3AED)'
+                : 'transparent',
               color: tab === key ? '#fff' : '#6b7a99',
-              boxShadow: tab === key ? '0 4px 12px rgba(0,71,171,.3)' : 'none',
+              boxShadow: tab === key ? (key === 'request' ? '0 4px 12px rgba(0,71,171,.3)' : '0 4px 12px rgba(255,0,144,.3)') : 'none',
             }}>{label}</button>
           ))}
         </div>
@@ -127,15 +146,20 @@ export default function ContactSection() {
                       </div>
                     ) : (
                       <form onSubmit={submitRequest}>
-                        <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.5rem', fontWeight: 700, color: '#0A1628', margin: '0 0 24px' }}>📚 Request a Book</h3>
+                        <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.5rem', fontWeight: 700, color: '#0A1628', margin: '0 0 24px', display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <span style={{ display: 'inline-flex', width: 32, height: 32, borderRadius: 8, background: 'linear-gradient(135deg,#0047AB,#0EA5E9)', alignItems: 'center', justifyContent: 'center' }}>
+                            <BookOpen size={16} color="#fff" />
+                          </span>
+                          Request a Book
+                        </h3>
                         <div style={{ display: 'grid', gap: 16 }}>
-                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }} className="form-2col">
                             <div>
                               <label style={labelStyle}>Student Name *</label>
                               <input value={reqForm.studentName} onChange={e => setReqForm(f => ({ ...f, studentName: e.target.value }))} placeholder="Full name" style={inputStyle} onFocus={focus} onBlur={blur} />
                             </div>
                             <div>
-                              <label style={labelStyle}>School *</label>
+                              <label style={labelStyle}>School</label>
                               <input value={reqForm.school} onChange={e => setReqForm(f => ({ ...f, school: e.target.value }))} placeholder="School name" style={inputStyle} onFocus={focus} onBlur={blur} />
                             </div>
                           </div>
@@ -143,23 +167,23 @@ export default function ContactSection() {
                             <label style={labelStyle}>Book Title / Subject Matter</label>
                             <input value={reqForm.bookTitle} onChange={e => setReqForm(f => ({ ...f, bookTitle: e.target.value }))} placeholder="e.g. New General Mathematics JSS 2" style={inputStyle} onFocus={focus} onBlur={blur} />
                           </div>
-                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }} className="form-2col">
                             <div>
                               <label style={labelStyle}>Subject</label>
-                              <select value={reqForm.subject} onChange={e => setReqForm(f => ({ ...f, subject: e.target.value }))} style={{ ...inputStyle, background: '#fff' }} onFocus={focus} onBlur={blur}>
+                              <select value={reqForm.subject} onChange={e => setReqForm(f => ({ ...f, subject: e.target.value }))} style={{ ...inputStyle }} onFocus={focus} onBlur={blur}>
                                 <option value="">Select…</option>
                                 {SUBJECTS.map(s => <option key={s} value={s}>{s}</option>)}
                               </select>
                             </div>
                             <div>
                               <label style={labelStyle}>Class</label>
-                              <select value={reqForm.class} onChange={e => setReqForm(f => ({ ...f, class: e.target.value }))} style={{ ...inputStyle, background: '#fff' }} onFocus={focus} onBlur={blur}>
+                              <select value={reqForm.class} onChange={e => setReqForm(f => ({ ...f, class: e.target.value }))} style={{ ...inputStyle }} onFocus={focus} onBlur={blur}>
                                 <option value="">Select…</option>
                                 {CLASSES.map(c => <option key={c} value={c}>{c}</option>)}
                               </select>
                             </div>
                           </div>
-                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }} className="form-2col">
                             <div>
                               <label style={labelStyle}>WhatsApp / Phone *</label>
                               <input value={reqForm.phone} onChange={e => setReqForm(f => ({ ...f, phone: e.target.value }))} placeholder="+234..." style={inputStyle} onFocus={focus} onBlur={blur} />
@@ -202,9 +226,14 @@ export default function ContactSection() {
                       </div>
                     ) : (
                       <form onSubmit={submitDonation}>
-                        <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.5rem', fontWeight: 700, color: '#0A1628', margin: '0 0 24px' }}>❤️ Donate Books</h3>
+                        <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.5rem', fontWeight: 700, color: '#0A1628', margin: '0 0 24px', display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <span style={{ display: 'inline-flex', width: 32, height: 32, borderRadius: 8, background: 'linear-gradient(135deg,#FF0090,#7C3AED)', alignItems: 'center', justifyContent: 'center' }}>
+                            <Heart size={16} color="#fff" />
+                          </span>
+                          Donate Books
+                        </h3>
                         <div style={{ display: 'grid', gap: 16 }}>
-                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }} className="form-2col">
                             <div>
                               <label style={labelStyle}>Your Name *</label>
                               <input value={donForm.donorName} onChange={e => setDonForm(f => ({ ...f, donorName: e.target.value }))} placeholder="Full name" style={inputStyle} onFocus={focus} onBlur={blur} />
@@ -218,10 +247,10 @@ export default function ContactSection() {
                             <label style={labelStyle}>Book Title / Description *</label>
                             <input value={donForm.bookTitle} onChange={e => setDonForm(f => ({ ...f, bookTitle: e.target.value }))} placeholder="e.g. JSS English Textbooks (set of 5)" style={inputStyle} onFocus={focus} onBlur={blur} />
                           </div>
-                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
+                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }} className="form-3col">
                             <div>
                               <label style={labelStyle}>Subject</label>
-                              <select value={donForm.subject} onChange={e => setDonForm(f => ({ ...f, subject: e.target.value }))} style={{ ...inputStyle, background: '#fff' }} onFocus={focus} onBlur={blur}>
+                              <select value={donForm.subject} onChange={e => setDonForm(f => ({ ...f, subject: e.target.value }))} style={{ ...inputStyle }} onFocus={focus} onBlur={blur}>
                                 <option value="">Select…</option>
                                 {SUBJECTS.map(s => <option key={s} value={s}>{s}</option>)}
                               </select>
@@ -232,14 +261,14 @@ export default function ContactSection() {
                             </div>
                             <div>
                               <label style={labelStyle}>Condition</label>
-                              <select value={donForm.condition} onChange={e => setDonForm(f => ({ ...f, condition: e.target.value }))} style={{ ...inputStyle, background: '#fff' }} onFocus={focus} onBlur={blur}>
+                              <select value={donForm.condition} onChange={e => setDonForm(f => ({ ...f, condition: e.target.value }))} style={{ ...inputStyle }} onFocus={focus} onBlur={blur}>
                                 {CONDITIONS.map(c => <option key={c} value={c}>{c}</option>)}
                               </select>
                             </div>
                           </div>
-                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }} className="form-2col">
                             <div>
-                              <label style={labelStyle}>Your Location *</label>
+                              <label style={labelStyle}>Your Location</label>
                               <input value={donForm.location} onChange={e => setDonForm(f => ({ ...f, location: e.target.value }))} placeholder="City, State" style={inputStyle} onFocus={focus} onBlur={blur} />
                             </div>
                             <div>
@@ -303,16 +332,25 @@ export default function ContactSection() {
               ))}
             </div>
 
-            <div style={{ background: 'linear-gradient(135deg,#fff0f7,#fce7f3)', border: '1px solid #fecdd3', borderRadius: 20, padding: '22px', textAlign: 'center' }}>
+            <div style={{ background: 'linear-gradient(135deg,#fff0f7,#fce7f3)', border: '1px solid rgba(255,0,144,.15)', borderRadius: 20, padding: '22px', textAlign: 'center' }}>
               <div style={{ fontSize: '1.5rem', marginBottom: 8 }}>📧</div>
               <div style={{ fontWeight: 700, color: '#0A1628', marginBottom: 4, fontSize: '.9rem' }}>Email Us Directly</div>
-              <a href="mailto:bookbridge26@gmail.com" style={{ color: '#0047AB', fontSize: '.85rem', textDecoration: 'none', fontWeight: 600 }}>bookbridge26@gmail.com</a>
+              <a href="mailto:bookbridge21@gmail.com" style={{ color: '#FF0090', fontSize: '.85rem', textDecoration: 'none', fontWeight: 600 }}>bookbridge21@gmail.com</a>
             </div>
           </motion.div>
         </div>
       </div>
 
-      <style>{`@media(max-width:768px){ .contact-grid{ grid-template-columns:1fr !important; } }`}</style>
+      <style>{`
+        @media(max-width:768px){
+          .contact-grid{ grid-template-columns:1fr !important; }
+          .form-2col{ grid-template-columns:1fr !important; }
+          .form-3col{ grid-template-columns:1fr 1fr !important; }
+        }
+        @media(max-width:480px){
+          .form-3col{ grid-template-columns:1fr !important; }
+        }
+      `}</style>
     </section>
   );
 }

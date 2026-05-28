@@ -24,6 +24,15 @@ export default function Nav() {
     return () => window.removeEventListener('scroll', fn);
   }, []);
 
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [menuOpen]);
+
   async function handleTrack() {
     const id = trackId.trim();
     if (!id) return;
@@ -72,7 +81,8 @@ export default function Nav() {
             <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.35rem', fontWeight: 700, color: logoColor, transition: 'color .3s' }}>Project BookBridge</span>
           </a>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }} className="hidden md:flex">
+          {/* Desktop nav */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }} className="nav-desktop">
             {NAV_LINKS.map(l => (
               <a key={l.href} href={l.href} style={{
                 padding: '7px 14px', borderRadius: 8, textDecoration: 'none',
@@ -93,7 +103,7 @@ export default function Nav() {
             ><Search size={14} /> Track</button>
             <a href="#contact" style={{
               marginLeft: 6, padding: '9px 22px', borderRadius: 50, textDecoration: 'none',
-              background: 'linear-gradient(135deg, #0047AB 0%, #0EA5E9 100%)',
+              background: 'linear-gradient(135deg, #FF0090 0%, #0047AB 50%, #0EA5E9 100%)',
               color: '#fff', fontWeight: 700, fontSize: '.88rem',
               boxShadow: '0 4px 14px rgba(0,71,171,.45)', transition: 'all .25s',
             }}
@@ -102,45 +112,56 @@ export default function Nav() {
             >Donate Now</a>
           </div>
 
-          <button className="md:hidden" onClick={() => setMenuOpen(o => !o)}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', color: textColor, padding: 4 }}>
-            {menuOpen ? <X size={22} /> : <Menu size={22} />}
+          {/* Hamburger */}
+          <button
+            className="nav-hamburger"
+            onClick={() => setMenuOpen(o => !o)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: textColor, padding: 6, borderRadius: 8, display: 'none', alignItems: 'center', justifyContent: 'center', transition: 'background .2s' }}
+          >
+            {menuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
       </nav>
 
-      {menuOpen && (
-        <div className="md:hidden" style={{
-          position: 'fixed', top: 68, left: 0, right: 0, zIndex: 999,
-          background: '#ffffff', borderBottom: '1px solid #e8edf8',
-          boxShadow: '0 12px 40px rgba(0,71,171,.12)', padding: '12px 20px 20px',
-        }}>
-          {NAV_LINKS.map(l => (
-            <a key={l.href} href={l.href} onClick={() => setMenuOpen(false)} style={{
-              display: 'block', padding: '11px 4px', color: '#0A1628', textDecoration: 'none',
-              fontWeight: 500, borderBottom: '1px solid #f0f4ff', fontSize: '.95rem',
-            }}>{l.label}</a>
-          ))}
-          <button onClick={() => { setMenuOpen(false); setTrackOpen(true); }} style={{
-            display: 'flex', alignItems: 'center', gap: 6, width: '100%', textAlign: 'left',
-            padding: '11px 4px', background: 'none', border: 'none', borderBottom: '1px solid #f0f4ff',
-            color: '#0A1628', fontWeight: 500, fontSize: '.95rem', cursor: 'pointer',
-          }}><Search size={14} /> Track Request</button>
-          <a href="#contact" onClick={() => setMenuOpen(false)} style={{
-            display: 'block', marginTop: 14, padding: '12px 0', textAlign: 'center',
-            background: 'linear-gradient(135deg, #0047AB, #0EA5E9)', color: '#fff',
-            borderRadius: 50, textDecoration: 'none', fontWeight: 700,
-          }}>Donate Now</a>
-        </div>
-      )}
+      {/* Mobile menu overlay */}
+      <div className="nav-mobile-menu" style={{
+        position: 'fixed', top: 68, left: 0, right: 0, bottom: menuOpen ? 0 : undefined,
+        zIndex: 999,
+        background: '#ffffff',
+        borderBottom: '1px solid #e8edf8',
+        boxShadow: menuOpen ? '0 12px 40px rgba(0,71,171,.12)' : 'none',
+        padding: menuOpen ? '16px 20px 24px' : '0 20px',
+        transform: menuOpen ? 'translateY(0)' : 'translateY(-110%)',
+        transition: 'transform .3s cubic-bezier(.4,0,.2,1)',
+        pointerEvents: menuOpen ? 'all' : 'none',
+        display: 'none',
+      }}>
+        {NAV_LINKS.map(l => (
+          <a key={l.href} href={l.href} onClick={() => setMenuOpen(false)} style={{
+            display: 'block', padding: '14px 4px', color: '#0A1628', textDecoration: 'none',
+            fontWeight: 600, borderBottom: '1px solid #f0f4ff', fontSize: '1rem',
+          }}>{l.label}</a>
+        ))}
+        <button onClick={() => { setMenuOpen(false); setTrackOpen(true); }} style={{
+          display: 'flex', alignItems: 'center', gap: 8, width: '100%', textAlign: 'left',
+          padding: '14px 4px', background: 'none', border: 'none', borderBottom: '1px solid #f0f4ff',
+          color: '#0A1628', fontWeight: 600, fontSize: '1rem', cursor: 'pointer',
+        }}><Search size={16} /> Track Request</button>
+        <a href="#contact" onClick={() => setMenuOpen(false)} style={{
+          display: 'block', marginTop: 16, padding: '14px 0', textAlign: 'center',
+          background: 'linear-gradient(135deg, #FF0090 0%, #0047AB 50%, #0EA5E9 100%)',
+          color: '#fff', borderRadius: 50, textDecoration: 'none', fontWeight: 700, fontSize: '1rem',
+        }}>Donate Now</a>
+      </div>
 
+      {/* Track modal */}
       {trackOpen && (
         <div onClick={e => { if (e.target === e.currentTarget) { setTrackOpen(false); setTrackResult(null); setTrackId(''); } }} style={{
           position: 'fixed', inset: 0, zIndex: 2000,
           background: 'rgba(10,22,40,.75)', backdropFilter: 'blur(8px)',
           display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20,
         }}>
-          <div style={{ background: '#fff', borderRadius: 20, padding: 36, width: '100%', maxWidth: 460, boxShadow: '0 40px 80px rgba(0,71,171,.2)' }}>
+          <div style={{ background: '#fff', borderRadius: 20, padding: '32px 28px', width: '100%', maxWidth: 460, boxShadow: '0 40px 80px rgba(0,71,171,.2)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
               <div style={{ width: 40, height: 40, borderRadius: 10, background: 'linear-gradient(135deg,#0047AB,#0EA5E9)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Search size={18} color="#fff" />
@@ -174,7 +195,7 @@ export default function Nav() {
                     </span>
                   </div>
                   {trackResult.bookTitle && <div><strong>Book:</strong> {trackResult.bookTitle}</div>}
-                  {trackResult.studentName && <div><strong>Student:</strong> {trackResult.studentName}</div>}
+                  {trackResult.studentName && <div><strong>Name:</strong> {trackResult.studentName}</div>}
                   {trackResult.donorName && <div><strong>Donor:</strong> {trackResult.donorName}</div>}
                   <div><strong>Date:</strong> {trackResult.date}</div>
                 </div>
@@ -197,6 +218,14 @@ export default function Nav() {
           </div>
         </div>
       )}
+
+      <style>{`
+        @media (max-width: 768px) {
+          .nav-desktop { display: none !important; }
+          .nav-hamburger { display: flex !important; }
+          .nav-mobile-menu { display: block !important; }
+        }
+      `}</style>
     </>
   );
 }

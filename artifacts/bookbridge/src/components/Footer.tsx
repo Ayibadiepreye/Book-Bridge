@@ -3,7 +3,7 @@ import { LOGO } from '../lib/images';
 export default function Footer() {
   const year = new Date().getFullYear();
   return (
-    <footer style={{ background: '#0A1628', color: '#fff', padding: '72px 24px 32px' }}>
+    <footer style={{ background: 'linear-gradient(160deg, #060E1E 0%, #0A1628 50%, #060E1E 100%)', color: '#fff', padding: '72px 24px 32px' }}>
       <div style={{ maxWidth: 1200, margin: '0 auto' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: 48, marginBottom: 60 }} className="footer-grid">
           {/* Brand */}
@@ -13,7 +13,7 @@ export default function Footer() {
               <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.5rem', fontWeight: 700, color: '#fff' }}>Project BookBridge</span>
             </div>
             <p style={{ color: 'rgba(255,255,255,.5)', lineHeight: 1.8, fontSize: '.875rem', maxWidth: 340, marginBottom: 24 }}>
-              Empowering underserved Nigerian junior secondary students through donated books and learning materials. Supporting SDG 4 — Quality Education.
+              Empowering underserved junior secondary students across Rivers State through donated books and learning materials. Supporting SDG 4 — Quality Education.
             </p>
             <div style={{ display: 'flex', gap: 10 }}>
               <a href="https://wa.me/2348128384816" target="_blank" rel="noreferrer" style={{
@@ -24,12 +24,12 @@ export default function Footer() {
               onMouseEnter={e => (e.currentTarget.style.transform = 'translateY(-2px)')}
               onMouseLeave={e => (e.currentTarget.style.transform = 'translateY(0)')}
               title="WhatsApp">💬</a>
-              <a href="mailto:bookbridge26@gmail.com" style={{
+              <a href="mailto:bookbridge21@gmail.com" style={{
                 width: 40, height: 40, borderRadius: 10, background: 'rgba(255,255,255,.1)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 textDecoration: 'none', fontSize: '1rem', transition: 'all .2s', color: '#fff',
               }}
-              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.background = 'rgba(255,255,255,.2)'; }}
+              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.background = 'rgba(255,0,144,.3)'; }}
               onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.background = 'rgba(255,255,255,.1)'; }}
               title="Email">✉️</a>
             </div>
@@ -46,11 +46,11 @@ export default function Footer() {
               ['#contact', 'Donate Books'],
             ].map(([href, label]) => (
               <a key={label} href={href} style={{
-                display: 'block', color: 'rgba(255,255,255,.55)', textDecoration: 'none',
+                display: 'block', color: 'rgba(255,255,255,.5)', textDecoration: 'none',
                 fontSize: '.875rem', marginBottom: 10, transition: 'color .2s',
               }}
-              onMouseEnter={e => (e.currentTarget.style.color = '#7DD3FC')}
-              onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,.55)')}
+              onMouseEnter={e => (e.currentTarget.style.color = '#FFB3DC')}
+              onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,.5)')}
               >{label}</a>
             ))}
           </div>
@@ -61,37 +61,38 @@ export default function Footer() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
                 <span style={{ fontSize: '1rem' }}>📍</span>
-                <span style={{ color: 'rgba(255,255,255,.55)', fontSize: '.875rem', lineHeight: 1.5 }}>Rivers State, Nigeria</span>
+                <span style={{ color: 'rgba(255,255,255,.5)', fontSize: '.875rem', lineHeight: 1.5 }}>Rivers State, Nigeria</span>
               </div>
               <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
                 <span style={{ fontSize: '1rem' }}>📱</span>
-                <a href="https://wa.me/2348128384816" style={{ color: 'rgba(255,255,255,.55)', textDecoration: 'none', fontSize: '.875rem', transition: 'color .2s' }}
+                <a href="https://wa.me/2348128384816" style={{ color: 'rgba(255,255,255,.5)', textDecoration: 'none', fontSize: '.875rem', transition: 'color .2s' }}
                   onMouseEnter={e => (e.currentTarget.style.color = '#25D366')}
-                  onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,.55)')}
+                  onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,.5)')}
                 >+234 812 838 4816</a>
               </div>
               <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
                 <span style={{ fontSize: '1rem' }}>✉️</span>
-                <a href="mailto:bookbridge26@gmail.com" style={{ color: 'rgba(255,255,255,.55)', textDecoration: 'none', fontSize: '.875rem', transition: 'color .2s' }}
-                  onMouseEnter={e => (e.currentTarget.style.color = '#7DD3FC')}
-                  onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,.55)')}
-                >bookbridge26@gmail.com</a>
+                <a href="mailto:bookbridge21@gmail.com" style={{ color: 'rgba(255,255,255,.5)', textDecoration: 'none', fontSize: '.875rem', transition: 'color .2s' }}
+                  onMouseEnter={e => (e.currentTarget.style.color = '#FFB3DC')}
+                  onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,.5)')}
+                >bookbridge21@gmail.com</a>
               </div>
             </div>
           </div>
         </div>
 
-        <div style={{ borderTop: '1px solid rgba(255,255,255,.08)', paddingTop: 28, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
-          <p style={{ color: 'rgba(255,255,255,.3)', fontSize: '.8rem', margin: 0 }}>
-            © {year} Project BookBridge. All rights reserved. Registered Nigerian Nonprofit.
+        {/* Bottom bar */}
+        <div style={{ borderTop: '1px solid rgba(255,255,255,.06)', paddingTop: 28, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+          <p style={{ color: 'rgba(255,255,255,.25)', fontSize: '.8rem', margin: 0 }}>
+            © {year} Project BookBridge · Rivers State, Nigeria · All rights reserved.
           </p>
-          <p style={{ color: 'rgba(255,255,255,.3)', fontSize: '.8rem', margin: 0 }}>
+          <p style={{ color: 'rgba(255,255,255,.25)', fontSize: '.8rem', margin: 0 }}>
             Made with ❤️ for Nigeria's future leaders
           </p>
         </div>
       </div>
 
-      <style>{`@media(max-width:768px){ .footer-grid{ grid-template-columns:1fr !important; } }`}</style>
+      <style>{`@media(max-width:768px){ .footer-grid{ grid-template-columns:1fr !important; gap:32px !important; } }`}</style>
     </footer>
   );
 }
