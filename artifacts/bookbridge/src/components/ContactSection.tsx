@@ -8,6 +8,7 @@ type Tab = 'request' | 'donate';
 const SUBJECTS = ['English Language', 'Mathematics', 'Integrated Science', 'Social Studies', 'Business Studies', 'Agricultural Science', 'Other'];
 const CLASSES = ['JSS 1', 'JSS 2', 'JSS 3'];
 const CONDITIONS = ['New', 'Good', 'Fair'];
+const WA = '2348128384816';
 
 const inputStyle: React.CSSProperties = {
   width: '100%', padding: '11px 14px', borderRadius: 10,
@@ -15,7 +16,6 @@ const inputStyle: React.CSSProperties = {
   boxSizing: 'border-box', fontFamily: 'inherit', color: '#1a2744',
   transition: 'border-color .2s, box-shadow .2s', background: '#fff',
 };
-
 const labelStyle: React.CSSProperties = {
   display: 'block', fontSize: '.75rem', fontWeight: 700, letterSpacing: .5,
   textTransform: 'uppercase', color: '#6b7a99', marginBottom: 6,
@@ -84,17 +84,30 @@ export default function ContactSection() {
     setDonLoading(false);
   }
 
+  function reqWaLink(trackingId: string) {
+    const msg = encodeURIComponent(`Hello BookBridge! I just submitted a book request.\nTracking ID: ${trackingId}\nName: ${reqForm.studentName || 'submitted'}\nPlease confirm receipt. Thank you!`);
+    return `https://wa.me/${WA}?text=${msg}`;
+  }
+  function donWaLink(trackingId: string) {
+    const msg = encodeURIComponent(`Hello BookBridge! I just submitted a book donation offer.\nTracking ID: ${trackingId}\nBooks: ${donForm.bookTitle || 'submitted'}\nPlease confirm receipt. Thank you!`);
+    return `https://wa.me/${WA}?text=${msg}`;
+  }
+
   return (
     <section id="contact" style={{
-      background: 'linear-gradient(160deg, #f8fafc 0%, #EFF6FF 50%, #f8fafc 100%)',
-      padding: '96px 24px',
+      background: 'linear-gradient(160deg,#f0f7ff 0%,#fdf4ff 50%,#f0fff8 100%)',
+      padding: '96px 24px', position: 'relative', overflow: 'hidden',
     }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+      {/* Decorative blobs */}
+      <div style={{ position: 'absolute', top: '5%', right: '3%', width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle,rgba(255,0,144,.06) 0%,transparent 70%)', pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', bottom: '5%', left: '2%', width: 250, height: 250, borderRadius: '50%', background: 'radial-gradient(circle,rgba(0,71,171,.06) 0%,transparent 70%)', pointerEvents: 'none' }} />
+
+      <div style={{ maxWidth: 1200, margin: '0 auto', position: 'relative', zIndex: 1 }}>
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: .6 }}
           style={{ textAlign: 'center', marginBottom: 48 }}>
           <span style={{
             display: 'inline-block',
-            background: 'linear-gradient(135deg, rgba(255,0,144,.12), rgba(0,71,171,.12))',
+            background: 'linear-gradient(135deg,rgba(255,0,144,.12),rgba(0,71,171,.12))',
             color: '#0047AB', fontWeight: 700, fontSize: '.78rem', letterSpacing: 1.5,
             textTransform: 'uppercase', padding: '5px 14px', borderRadius: 50, marginBottom: 16,
             border: '1px solid rgba(0,71,171,.2)',
@@ -113,11 +126,7 @@ export default function ContactSection() {
             <button key={key} onClick={() => { setTab(key); setReqSuccess(null); setDonSuccess(null); }} style={{
               flex: 1, padding: '10px 0', borderRadius: 50, border: 'none', cursor: 'pointer',
               fontWeight: 700, fontSize: '.85rem', transition: 'all .25s',
-              background: tab === key
-                ? key === 'request'
-                  ? 'linear-gradient(135deg,#0047AB,#0EA5E9)'
-                  : 'linear-gradient(135deg,#FF0090,#7C3AED)'
-                : 'transparent',
+              background: tab === key ? (key === 'request' ? 'linear-gradient(135deg,#0047AB,#0EA5E9)' : 'linear-gradient(135deg,#FF0090,#7C3AED)') : 'transparent',
               color: tab === key ? '#fff' : '#6b7a99',
               boxShadow: tab === key ? (key === 'request' ? '0 4px 12px rgba(0,71,171,.3)' : '0 4px 12px rgba(255,0,144,.3)') : 'none',
             }}>{label}</button>
@@ -128,83 +137,60 @@ export default function ContactSection() {
           {/* Form */}
           <AnimatePresence mode="wait">
             <motion.div key={tab} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} transition={{ duration: .3 }}>
-              <div style={{ background: '#fff', borderRadius: 24, padding: '36px 32px', boxShadow: '0 8px 40px rgba(0,71,171,.09)', border: '1px solid rgba(0,71,171,.07)' }}>
+              <div style={{ background: 'rgba(255,255,255,.95)', borderRadius: 24, padding: '36px 32px', boxShadow: '0 8px 40px rgba(0,71,171,.09)', border: '1px solid rgba(255,255,255,.9)', backdropFilter: 'blur(12px)' }}>
                 {tab === 'request' ? (
                   <>
                     {reqSuccess ? (
-                      <div style={{ textAlign: 'center', padding: '20px 0' }}>
-                        <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'linear-gradient(135deg,#10b981,#059669)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                      <div style={{ textAlign: 'center', padding: '12px 0' }}>
+                        <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'linear-gradient(135deg,#10b981,#059669)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', boxShadow: '0 8px 24px rgba(16,185,129,.3)' }}>
                           <Check size={28} color="#fff" />
                         </div>
                         <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.7rem', fontWeight: 700, color: '#0A1628', margin: '0 0 8px' }}>Request Submitted!</h3>
-                        <p style={{ color: '#6b7a99', marginBottom: 20, lineHeight: 1.6 }}>Your book request has been received. We'll be in touch as soon as possible.</p>
+                        <p style={{ color: '#6b7a99', marginBottom: 20, lineHeight: 1.6, fontSize: '.9rem' }}>Your book request has been received. We'll be in touch as soon as possible.</p>
                         <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 12, padding: '12px 16px', marginBottom: 20 }}>
                           <div style={{ fontSize: '.78rem', color: '#059669', fontWeight: 700, marginBottom: 4 }}>YOUR TRACKING ID</div>
                           <code style={{ fontSize: '1rem', fontWeight: 700, color: '#0A1628', letterSpacing: 1 }}>{reqSuccess}</code>
                         </div>
-                        <button onClick={() => setReqSuccess(null)} style={{ padding: '10px 24px', borderRadius: 50, border: 'none', cursor: 'pointer', background: 'linear-gradient(135deg,#0047AB,#0EA5E9)', color: '#fff', fontWeight: 700 }}>Submit Another</button>
+                        <p style={{ color: '#6b7a99', fontSize: '.82rem', marginBottom: 16 }}>
+                          Send us a quick WhatsApp message to speed up processing:
+                        </p>
+                        <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
+                          <a href={reqWaLink(reqSuccess)} target="_blank" rel="noreferrer" style={{
+                            display: 'inline-flex', alignItems: 'center', gap: 7,
+                            padding: '11px 20px', borderRadius: 50, textDecoration: 'none',
+                            background: '#25D366', color: '#fff', fontWeight: 700, fontSize: '.88rem',
+                            boxShadow: '0 6px 16px rgba(37,211,102,.4)',
+                          }}>
+                            <MessageCircle size={16} /> WhatsApp Us
+                          </a>
+                          <button onClick={() => setReqSuccess(null)} style={{ padding: '11px 20px', borderRadius: 50, border: '2px solid #e8edf8', cursor: 'pointer', background: '#fff', color: '#6b7a99', fontWeight: 600, fontSize: '.88rem' }}>
+                            New Request
+                          </button>
+                        </div>
                       </div>
                     ) : (
                       <form onSubmit={submitRequest}>
                         <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.5rem', fontWeight: 700, color: '#0A1628', margin: '0 0 24px', display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <span style={{ display: 'inline-flex', width: 32, height: 32, borderRadius: 8, background: 'linear-gradient(135deg,#0047AB,#0EA5E9)', alignItems: 'center', justifyContent: 'center' }}>
-                            <BookOpen size={16} color="#fff" />
-                          </span>
+                          <span style={{ display: 'inline-flex', width: 32, height: 32, borderRadius: 8, background: 'linear-gradient(135deg,#0047AB,#0EA5E9)', alignItems: 'center', justifyContent: 'center' }}><BookOpen size={16} color="#fff" /></span>
                           Request a Book
                         </h3>
                         <div style={{ display: 'grid', gap: 16 }}>
                           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }} className="form-2col">
-                            <div>
-                              <label style={labelStyle}>Student Name *</label>
-                              <input value={reqForm.studentName} onChange={e => setReqForm(f => ({ ...f, studentName: e.target.value }))} placeholder="Full name" style={inputStyle} onFocus={focus} onBlur={blur} />
-                            </div>
-                            <div>
-                              <label style={labelStyle}>School</label>
-                              <input value={reqForm.school} onChange={e => setReqForm(f => ({ ...f, school: e.target.value }))} placeholder="School name" style={inputStyle} onFocus={focus} onBlur={blur} />
-                            </div>
+                            <div><label style={labelStyle}>Student Name *</label><input value={reqForm.studentName} onChange={e => setReqForm(f => ({ ...f, studentName: e.target.value }))} placeholder="Full name" style={inputStyle} onFocus={focus} onBlur={blur} /></div>
+                            <div><label style={labelStyle}>School</label><input value={reqForm.school} onChange={e => setReqForm(f => ({ ...f, school: e.target.value }))} placeholder="School name" style={inputStyle} onFocus={focus} onBlur={blur} /></div>
                           </div>
-                          <div>
-                            <label style={labelStyle}>Book Title / Subject Matter</label>
-                            <input value={reqForm.bookTitle} onChange={e => setReqForm(f => ({ ...f, bookTitle: e.target.value }))} placeholder="e.g. New General Mathematics JSS 2" style={inputStyle} onFocus={focus} onBlur={blur} />
+                          <div><label style={labelStyle}>Book Title / Subject Matter</label><input value={reqForm.bookTitle} onChange={e => setReqForm(f => ({ ...f, bookTitle: e.target.value }))} placeholder="e.g. New General Mathematics JSS 2" style={inputStyle} onFocus={focus} onBlur={blur} /></div>
+                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }} className="form-2col">
+                            <div><label style={labelStyle}>Subject</label><select value={reqForm.subject} onChange={e => setReqForm(f => ({ ...f, subject: e.target.value }))} style={inputStyle} onFocus={focus} onBlur={blur}><option value="">Select…</option>{SUBJECTS.map(s => <option key={s} value={s}>{s}</option>)}</select></div>
+                            <div><label style={labelStyle}>Class</label><select value={reqForm.class} onChange={e => setReqForm(f => ({ ...f, class: e.target.value }))} style={inputStyle} onFocus={focus} onBlur={blur}><option value="">Select…</option>{CLASSES.map(c => <option key={c} value={c}>{c}</option>)}</select></div>
                           </div>
                           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }} className="form-2col">
-                            <div>
-                              <label style={labelStyle}>Subject</label>
-                              <select value={reqForm.subject} onChange={e => setReqForm(f => ({ ...f, subject: e.target.value }))} style={{ ...inputStyle }} onFocus={focus} onBlur={blur}>
-                                <option value="">Select…</option>
-                                {SUBJECTS.map(s => <option key={s} value={s}>{s}</option>)}
-                              </select>
-                            </div>
-                            <div>
-                              <label style={labelStyle}>Class</label>
-                              <select value={reqForm.class} onChange={e => setReqForm(f => ({ ...f, class: e.target.value }))} style={{ ...inputStyle }} onFocus={focus} onBlur={blur}>
-                                <option value="">Select…</option>
-                                {CLASSES.map(c => <option key={c} value={c}>{c}</option>)}
-                              </select>
-                            </div>
+                            <div><label style={labelStyle}>WhatsApp / Phone *</label><input value={reqForm.phone} onChange={e => setReqForm(f => ({ ...f, phone: e.target.value }))} placeholder="+234..." style={inputStyle} onFocus={focus} onBlur={blur} /></div>
+                            <div><label style={labelStyle}>Email</label><input value={reqForm.email} onChange={e => setReqForm(f => ({ ...f, email: e.target.value }))} placeholder="Optional" style={inputStyle} onFocus={focus} onBlur={blur} /></div>
                           </div>
-                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }} className="form-2col">
-                            <div>
-                              <label style={labelStyle}>WhatsApp / Phone *</label>
-                              <input value={reqForm.phone} onChange={e => setReqForm(f => ({ ...f, phone: e.target.value }))} placeholder="+234..." style={inputStyle} onFocus={focus} onBlur={blur} />
-                            </div>
-                            <div>
-                              <label style={labelStyle}>Email</label>
-                              <input value={reqForm.email} onChange={e => setReqForm(f => ({ ...f, email: e.target.value }))} placeholder="Optional" style={inputStyle} onFocus={focus} onBlur={blur} />
-                            </div>
-                          </div>
-                          <div>
-                            <label style={labelStyle}>Why do you need this book?</label>
-                            <textarea value={reqForm.reason} onChange={e => setReqForm(f => ({ ...f, reason: e.target.value }))} placeholder="Brief explanation…" rows={3} style={{ ...inputStyle, resize: 'vertical' }} onFocus={focus as any} onBlur={blur as any} />
-                          </div>
+                          <div><label style={labelStyle}>Why do you need this book?</label><textarea value={reqForm.reason} onChange={e => setReqForm(f => ({ ...f, reason: e.target.value }))} placeholder="Brief explanation…" rows={3} style={{ ...inputStyle, resize: 'vertical' }} onFocus={focus as any} onBlur={blur as any} /></div>
                           {reqError && <p style={{ color: '#ef4444', fontSize: '.83rem', margin: 0 }}>{reqError}</p>}
-                          <button type="submit" disabled={reqLoading} style={{
-                            width: '100%', padding: '13px 0', borderRadius: 50, border: 'none', cursor: 'pointer',
-                            background: 'linear-gradient(135deg,#0047AB,#0EA5E9)',
-                            color: '#fff', fontWeight: 700, fontSize: '.95rem',
-                            boxShadow: '0 6px 20px rgba(0,71,171,.35)', transition: 'opacity .2s',
-                            opacity: reqLoading ? .6 : 1,
-                          }}>{reqLoading ? 'Submitting…' : 'Submit Request'}</button>
+                          <button type="submit" disabled={reqLoading} style={{ width: '100%', padding: '13px 0', borderRadius: 50, border: 'none', cursor: 'pointer', background: 'linear-gradient(135deg,#0047AB,#0EA5E9)', color: '#fff', fontWeight: 700, fontSize: '.95rem', boxShadow: '0 6px 20px rgba(0,71,171,.35)', opacity: reqLoading ? .6 : 1 }}>{reqLoading ? 'Submitting…' : 'Submit Request'}</button>
                         </div>
                       </form>
                     )}
@@ -212,82 +198,57 @@ export default function ContactSection() {
                 ) : (
                   <>
                     {donSuccess ? (
-                      <div style={{ textAlign: 'center', padding: '20px 0' }}>
-                        <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'linear-gradient(135deg,#FF0090,#7C3AED)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                      <div style={{ textAlign: 'center', padding: '12px 0' }}>
+                        <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'linear-gradient(135deg,#FF0090,#7C3AED)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', boxShadow: '0 8px 24px rgba(255,0,144,.3)' }}>
                           <Heart size={28} color="#fff" />
                         </div>
                         <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.7rem', fontWeight: 700, color: '#0A1628', margin: '0 0 8px' }}>Thank You!</h3>
-                        <p style={{ color: '#6b7a99', marginBottom: 20, lineHeight: 1.6 }}>Your donation offer has been received. We'll contact you shortly to arrange collection or drop-off.</p>
-                        <div style={{ background: '#fff0f7', border: '1px solid #fecdd3', borderRadius: 12, padding: '12px 16px', marginBottom: 20 }}>
+                        <p style={{ color: '#6b7a99', marginBottom: 20, lineHeight: 1.6, fontSize: '.9rem' }}>Your donation offer has been received. We'll contact you shortly to arrange collection or drop-off.</p>
+                        <div style={{ background: '#fff0f7', border: '1px solid rgba(255,0,144,.2)', borderRadius: 12, padding: '12px 16px', marginBottom: 20 }}>
                           <div style={{ fontSize: '.78rem', color: '#FF0090', fontWeight: 700, marginBottom: 4 }}>YOUR TRACKING ID</div>
                           <code style={{ fontSize: '1rem', fontWeight: 700, color: '#0A1628', letterSpacing: 1 }}>{donSuccess}</code>
                         </div>
-                        <button onClick={() => setDonSuccess(null)} style={{ padding: '10px 24px', borderRadius: 50, border: 'none', cursor: 'pointer', background: 'linear-gradient(135deg,#FF0090,#7C3AED)', color: '#fff', fontWeight: 700 }}>Submit Another</button>
+                        <p style={{ color: '#6b7a99', fontSize: '.82rem', marginBottom: 16 }}>
+                          Send us a WhatsApp message to confirm your donation:
+                        </p>
+                        <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
+                          <a href={donWaLink(donSuccess)} target="_blank" rel="noreferrer" style={{
+                            display: 'inline-flex', alignItems: 'center', gap: 7,
+                            padding: '11px 20px', borderRadius: 50, textDecoration: 'none',
+                            background: '#25D366', color: '#fff', fontWeight: 700, fontSize: '.88rem',
+                            boxShadow: '0 6px 16px rgba(37,211,102,.4)',
+                          }}>
+                            <MessageCircle size={16} /> WhatsApp Us
+                          </a>
+                          <button onClick={() => setDonSuccess(null)} style={{ padding: '11px 20px', borderRadius: 50, border: '2px solid #e8edf8', cursor: 'pointer', background: '#fff', color: '#6b7a99', fontWeight: 600, fontSize: '.88rem' }}>
+                            New Donation
+                          </button>
+                        </div>
                       </div>
                     ) : (
                       <form onSubmit={submitDonation}>
                         <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.5rem', fontWeight: 700, color: '#0A1628', margin: '0 0 24px', display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <span style={{ display: 'inline-flex', width: 32, height: 32, borderRadius: 8, background: 'linear-gradient(135deg,#FF0090,#7C3AED)', alignItems: 'center', justifyContent: 'center' }}>
-                            <Heart size={16} color="#fff" />
-                          </span>
+                          <span style={{ display: 'inline-flex', width: 32, height: 32, borderRadius: 8, background: 'linear-gradient(135deg,#FF0090,#7C3AED)', alignItems: 'center', justifyContent: 'center' }}><Heart size={16} color="#fff" /></span>
                           Donate Books
                         </h3>
                         <div style={{ display: 'grid', gap: 16 }}>
                           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }} className="form-2col">
-                            <div>
-                              <label style={labelStyle}>Your Name *</label>
-                              <input value={donForm.donorName} onChange={e => setDonForm(f => ({ ...f, donorName: e.target.value }))} placeholder="Full name" style={inputStyle} onFocus={focus} onBlur={blur} />
-                            </div>
-                            <div>
-                              <label style={labelStyle}>WhatsApp / Phone *</label>
-                              <input value={donForm.phone} onChange={e => setDonForm(f => ({ ...f, phone: e.target.value }))} placeholder="+234..." style={inputStyle} onFocus={focus} onBlur={blur} />
-                            </div>
+                            <div><label style={labelStyle}>Your Name *</label><input value={donForm.donorName} onChange={e => setDonForm(f => ({ ...f, donorName: e.target.value }))} placeholder="Full name" style={inputStyle} onFocus={focus} onBlur={blur} /></div>
+                            <div><label style={labelStyle}>WhatsApp / Phone *</label><input value={donForm.phone} onChange={e => setDonForm(f => ({ ...f, phone: e.target.value }))} placeholder="+234..." style={inputStyle} onFocus={focus} onBlur={blur} /></div>
                           </div>
-                          <div>
-                            <label style={labelStyle}>Book Title / Description *</label>
-                            <input value={donForm.bookTitle} onChange={e => setDonForm(f => ({ ...f, bookTitle: e.target.value }))} placeholder="e.g. JSS English Textbooks (set of 5)" style={inputStyle} onFocus={focus} onBlur={blur} />
-                          </div>
+                          <div><label style={labelStyle}>Book Title / Description *</label><input value={donForm.bookTitle} onChange={e => setDonForm(f => ({ ...f, bookTitle: e.target.value }))} placeholder="e.g. JSS English Textbooks (set of 5)" style={inputStyle} onFocus={focus} onBlur={blur} /></div>
                           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }} className="form-3col">
-                            <div>
-                              <label style={labelStyle}>Subject</label>
-                              <select value={donForm.subject} onChange={e => setDonForm(f => ({ ...f, subject: e.target.value }))} style={{ ...inputStyle }} onFocus={focus} onBlur={blur}>
-                                <option value="">Select…</option>
-                                {SUBJECTS.map(s => <option key={s} value={s}>{s}</option>)}
-                              </select>
-                            </div>
-                            <div>
-                              <label style={labelStyle}>Quantity</label>
-                              <input type="number" min="1" value={donForm.quantity} onChange={e => setDonForm(f => ({ ...f, quantity: e.target.value }))} placeholder="Qty" style={inputStyle} onFocus={focus} onBlur={blur} />
-                            </div>
-                            <div>
-                              <label style={labelStyle}>Condition</label>
-                              <select value={donForm.condition} onChange={e => setDonForm(f => ({ ...f, condition: e.target.value }))} style={{ ...inputStyle }} onFocus={focus} onBlur={blur}>
-                                {CONDITIONS.map(c => <option key={c} value={c}>{c}</option>)}
-                              </select>
-                            </div>
+                            <div><label style={labelStyle}>Subject</label><select value={donForm.subject} onChange={e => setDonForm(f => ({ ...f, subject: e.target.value }))} style={inputStyle} onFocus={focus} onBlur={blur}><option value="">Select…</option>{SUBJECTS.map(s => <option key={s} value={s}>{s}</option>)}</select></div>
+                            <div><label style={labelStyle}>Quantity</label><input type="number" min="1" value={donForm.quantity} onChange={e => setDonForm(f => ({ ...f, quantity: e.target.value }))} placeholder="Qty" style={inputStyle} onFocus={focus} onBlur={blur} /></div>
+                            <div><label style={labelStyle}>Condition</label><select value={donForm.condition} onChange={e => setDonForm(f => ({ ...f, condition: e.target.value }))} style={inputStyle} onFocus={focus} onBlur={blur}>{CONDITIONS.map(c => <option key={c} value={c}>{c}</option>)}</select></div>
                           </div>
                           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }} className="form-2col">
-                            <div>
-                              <label style={labelStyle}>Your Location</label>
-                              <input value={donForm.location} onChange={e => setDonForm(f => ({ ...f, location: e.target.value }))} placeholder="City, State" style={inputStyle} onFocus={focus} onBlur={blur} />
-                            </div>
-                            <div>
-                              <label style={labelStyle}>Email</label>
-                              <input value={donForm.email} onChange={e => setDonForm(f => ({ ...f, email: e.target.value }))} placeholder="Optional" style={inputStyle} onFocus={focus} onBlur={blur} />
-                            </div>
+                            <div><label style={labelStyle}>Your Location</label><input value={donForm.location} onChange={e => setDonForm(f => ({ ...f, location: e.target.value }))} placeholder="City, State" style={inputStyle} onFocus={focus} onBlur={blur} /></div>
+                            <div><label style={labelStyle}>Email</label><input value={donForm.email} onChange={e => setDonForm(f => ({ ...f, email: e.target.value }))} placeholder="Optional" style={inputStyle} onFocus={focus} onBlur={blur} /></div>
                           </div>
-                          <div>
-                            <label style={labelStyle}>Message (optional)</label>
-                            <textarea value={donForm.message} onChange={e => setDonForm(f => ({ ...f, message: e.target.value }))} placeholder="Any additional details…" rows={2} style={{ ...inputStyle, resize: 'vertical' }} onFocus={focus as any} onBlur={blur as any} />
-                          </div>
+                          <div><label style={labelStyle}>Message (optional)</label><textarea value={donForm.message} onChange={e => setDonForm(f => ({ ...f, message: e.target.value }))} placeholder="Any additional details…" rows={2} style={{ ...inputStyle, resize: 'vertical' }} onFocus={focus as any} onBlur={blur as any} /></div>
                           {donError && <p style={{ color: '#ef4444', fontSize: '.83rem', margin: 0 }}>{donError}</p>}
-                          <button type="submit" disabled={donLoading} style={{
-                            width: '100%', padding: '13px 0', borderRadius: 50, border: 'none', cursor: 'pointer',
-                            background: 'linear-gradient(135deg,#FF0090,#7C3AED)',
-                            color: '#fff', fontWeight: 700, fontSize: '.95rem',
-                            boxShadow: '0 6px 20px rgba(255,0,144,.3)', transition: 'opacity .2s',
-                            opacity: donLoading ? .6 : 1,
-                          }}>{donLoading ? 'Submitting…' : 'Offer Donation'}</button>
+                          <button type="submit" disabled={donLoading} style={{ width: '100%', padding: '13px 0', borderRadius: 50, border: 'none', cursor: 'pointer', background: 'linear-gradient(135deg,#FF0090,#7C3AED)', color: '#fff', fontWeight: 700, fontSize: '.95rem', boxShadow: '0 6px 20px rgba(255,0,144,.3)', opacity: donLoading ? .6 : 1 }}>{donLoading ? 'Submitting…' : 'Offer Donation'}</button>
                         </div>
                       </form>
                     )}
@@ -300,11 +261,12 @@ export default function ContactSection() {
           {/* Sidebar */}
           <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: .6 }}
             style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-            <div style={{ background: 'linear-gradient(135deg,#0A1628,#0047AB)', borderRadius: 20, padding: '28px', boxShadow: '0 12px 40px rgba(0,71,171,.3)' }}>
+            <div style={{ background: 'linear-gradient(135deg,#0A1628,#0047AB)', borderRadius: 20, padding: '28px', boxShadow: '0 12px 40px rgba(0,71,171,.3)', position: 'relative', overflow: 'hidden' }}>
+              <div style={{ position: 'absolute', bottom: -20, right: -20, width: 120, height: 120, borderRadius: '50%', background: 'radial-gradient(circle,rgba(14,165,233,.2) 0%,transparent 70%)' }} />
               <div style={{ fontSize: '1.8rem', marginBottom: 12 }}>💬</div>
               <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.4rem', fontWeight: 700, color: '#fff', margin: '0 0 8px' }}>Chat with Us on WhatsApp</h3>
               <p style={{ color: 'rgba(255,255,255,.7)', lineHeight: 1.6, fontSize: '.875rem', marginBottom: 20 }}>Have questions? Our team responds quickly on WhatsApp — reach us directly for faster support.</p>
-              <a href="https://wa.me/2348128384816" target="_blank" rel="noreferrer" style={{
+              <a href={`https://wa.me/${WA}`} target="_blank" rel="noreferrer" style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                 padding: '12px 20px', borderRadius: 50, textDecoration: 'none',
                 background: '#25D366', color: '#fff', fontWeight: 700, fontSize: '.9rem',
@@ -312,12 +274,10 @@ export default function ContactSection() {
               }}
               onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 10px 24px rgba(37,211,102,.5)'; }}
               onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 6px 16px rgba(37,211,102,.4)'; }}
-              >
-                <MessageCircle size={18} /> Open WhatsApp
-              </a>
+              ><MessageCircle size={18} /> Open WhatsApp</a>
             </div>
 
-            <div style={{ background: '#fff', borderRadius: 20, padding: '24px', boxShadow: '0 4px 24px rgba(0,71,171,.07)', border: '1px solid rgba(0,71,171,.07)' }}>
+            <div style={{ background: 'rgba(255,255,255,.9)', borderRadius: 20, padding: '24px', boxShadow: '0 4px 24px rgba(0,71,171,.07)', border: '1px solid rgba(0,71,171,.07)', backdropFilter: 'blur(8px)' }}>
               <h4 style={{ fontWeight: 700, color: '#0A1628', margin: '0 0 16px', fontSize: '.95rem' }}>📍 How It Works</h4>
               {[
                 ['1', 'Submit your request or donation using the form', '#0047AB'],
@@ -347,9 +307,7 @@ export default function ContactSection() {
           .form-2col{ grid-template-columns:1fr !important; }
           .form-3col{ grid-template-columns:1fr 1fr !important; }
         }
-        @media(max-width:480px){
-          .form-3col{ grid-template-columns:1fr !important; }
-        }
+        @media(max-width:480px){ .form-3col{ grid-template-columns:1fr !important; } }
       `}</style>
     </section>
   );

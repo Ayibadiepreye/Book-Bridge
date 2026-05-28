@@ -10,6 +10,16 @@ const NAV_LINKS = [
   { href: '#contact', label: 'Get Involved' },
 ];
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth <= 768);
+  useEffect(() => {
+    const fn = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', fn, { passive: true });
+    return () => window.removeEventListener('resize', fn);
+  }, []);
+  return isMobile;
+}
+
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -17,6 +27,7 @@ export default function Nav() {
   const [trackId, setTrackId] = useState('');
   const [trackResult, setTrackResult] = useState<any>(null);
   const [trackLoading, setTrackLoading] = useState(false);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 40);
@@ -25,11 +36,8 @@ export default function Nav() {
   }, []);
 
   useEffect(() => {
-    if (menuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
+    if (menuOpen) document.body.style.overflow = 'hidden';
+    else document.body.style.overflow = '';
     return () => { document.body.style.overflow = ''; };
   }, [menuOpen]);
 
@@ -44,115 +52,132 @@ export default function Nav() {
       const reqSnap = await database.ref('requests').orderByChild('trackingId').equalTo(id).once('value');
       const reqData = reqSnap.val();
       if (reqData) {
-        const item = Object.values(reqData)[0] as any;
-        setTrackResult({ type: 'request', ...item });
+        setTrackResult({ type: 'request', ...Object.values(reqData)[0] as any });
       } else {
         const donSnap = await database.ref('donations').orderByChild('trackingId').equalTo(id).once('value');
         const donData = donSnap.val();
-        if (donData) {
-          const item = Object.values(donData)[0] as any;
-          setTrackResult({ type: 'donation', ...item });
-        } else {
-          setTrackResult({ notFound: true });
-        }
+        if (donData) setTrackResult({ type: 'donation', ...Object.values(donData)[0] as any });
+        else setTrackResult({ notFound: true });
       }
     } catch { setTrackResult({ error: true }); }
     setTrackLoading(false);
   }
 
-  const navBg = scrolled ? 'rgba(255,255,255,0.97)' : 'transparent';
-  const navShadow = scrolled ? '0 2px 24px rgba(0,71,171,.10)' : 'none';
-  const textColor = scrolled ? '#0A1628' : '#ffffff';
-  const logoColor = scrolled ? '#0047AB' : '#ffffff';
+  const isTransparent = !scrolled && !isMobile;
+  const textColor = isTransparent ? '#ffffff' : '#0A1628';
 
   return (
     <>
       <nav style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000,
-        background: navBg, backdropFilter: scrolled ? 'blur(20px)' : 'none',
-        borderBottom: scrolled ? '1px solid rgba(0,71,171,.08)' : 'none',
-        boxShadow: navShadow, transition: 'all .35s ease',
-        padding: '0 20px', height: 68,
+        background: scrolled || isMobile ? 'rgba(255,255,255,0.97)' : 'transparent',
+        backdropFilter: scrolled || isMobile ? 'blur(20px)' : 'none',
+        borderBottom: scrolled || isMobile ? '1px solid rgba(0,71,171,.08)' : 'none',
+        boxShadow: scrolled || isMobile ? '0 2px 24px rgba(0,71,171,.10)' : 'none',
+        transition: 'all .35s ease',
+        padding: '0 20px', height: 64,
         display: 'flex', alignItems: 'center',
       }}>
         <div style={{ maxWidth: 1200, width: '100%', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          {/* Logo */}
           <a href="#" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
-            <img src={LOGO} alt="BookBridge" style={{ width: 38, height: 38, borderRadius: 9, objectFit: 'cover', border: '2px solid rgba(255,255,255,.3)' }} />
-            <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.35rem', fontWeight: 700, color: logoColor, transition: 'color .3s' }}>Project BookBridge</span>
+            <img src={LOGO} alt="BookBridge" style={{ width: 36, height: 36, borderRadius: 8, objectFit: 'cover', border: '2px solid rgba(0,71,171,.2)' }} />
+            <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: isMobile ? '1.1rem' : '1.35rem', fontWeight: 700, color: isMobile ? '#0A1628' : (isTransparent ? '#fff' : '#0A1628'), transition: 'color .3s' }}>
+              Project BookBridge
+            </span>
           </a>
 
           {/* Desktop nav */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }} className="nav-desktop">
-            {NAV_LINKS.map(l => (
-              <a key={l.href} href={l.href} style={{
-                padding: '7px 14px', borderRadius: 8, textDecoration: 'none',
-                color: textColor, fontWeight: 500, fontSize: '.88rem',
-                transition: 'all .2s', opacity: .85,
+          {!isMobile && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+              {NAV_LINKS.map(l => (
+                <a key={l.href} href={l.href} style={{
+                  padding: '7px 14px', borderRadius: 8, textDecoration: 'none',
+                  color: textColor, fontWeight: 500, fontSize: '.88rem',
+                  transition: 'all .2s', opacity: .85,
+                }}
+                onMouseEnter={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.background = isTransparent ? 'rgba(255,255,255,.15)' : '#f0f4ff'; }}
+                onMouseLeave={e => { e.currentTarget.style.opacity = '.85'; e.currentTarget.style.background = 'transparent'; }}
+                >{l.label}</a>
+              ))}
+              <button onClick={() => setTrackOpen(true)} style={{
+                padding: '7px 14px', borderRadius: 8, border: 'none', cursor: 'pointer',
+                background: 'transparent', color: textColor, fontWeight: 500, fontSize: '.88rem',
+                transition: 'all .2s', opacity: .85, display: 'flex', alignItems: 'center', gap: 5,
               }}
-              onMouseEnter={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.background = scrolled ? '#f0f4ff' : 'rgba(255,255,255,.15)'; }}
+              onMouseEnter={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.background = isTransparent ? 'rgba(255,255,255,.15)' : '#f0f4ff'; }}
               onMouseLeave={e => { e.currentTarget.style.opacity = '.85'; e.currentTarget.style.background = 'transparent'; }}
-              >{l.label}</a>
-            ))}
-            <button onClick={() => setTrackOpen(true)} style={{
-              padding: '7px 14px', borderRadius: 8, border: 'none', cursor: 'pointer',
-              background: 'transparent', color: textColor, fontWeight: 500, fontSize: '.88rem',
-              transition: 'all .2s', opacity: .85, display: 'flex', alignItems: 'center', gap: 5,
-            }}
-            onMouseEnter={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.background = scrolled ? '#f0f4ff' : 'rgba(255,255,255,.15)'; }}
-            onMouseLeave={e => { e.currentTarget.style.opacity = '.85'; e.currentTarget.style.background = 'transparent'; }}
-            ><Search size={14} /> Track</button>
-            <a href="#contact" style={{
-              marginLeft: 6, padding: '9px 22px', borderRadius: 50, textDecoration: 'none',
-              background: 'linear-gradient(135deg, #FF0090 0%, #0047AB 50%, #0EA5E9 100%)',
-              color: '#fff', fontWeight: 700, fontSize: '.88rem',
-              boxShadow: '0 4px 14px rgba(0,71,171,.45)', transition: 'all .25s',
-            }}
-            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 22px rgba(0,71,171,.5)'; }}
-            onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 14px rgba(0,71,171,.45)'; }}
-            >Donate Now</a>
-          </div>
+              ><Search size={14} /> Track</button>
+              <a href="#contact" style={{
+                marginLeft: 6, padding: '9px 22px', borderRadius: 50, textDecoration: 'none',
+                background: 'linear-gradient(135deg, #FF0090 0%, #0047AB 50%, #0EA5E9 100%)',
+                color: '#fff', fontWeight: 700, fontSize: '.88rem',
+                boxShadow: '0 4px 14px rgba(0,71,171,.45)', transition: 'all .25s',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 22px rgba(0,71,171,.5)'; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 14px rgba(0,71,171,.45)'; }}
+              >Donate Now</a>
+            </div>
+          )}
 
-          {/* Hamburger */}
-          <button
-            className="nav-hamburger"
-            onClick={() => setMenuOpen(o => !o)}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', color: textColor, padding: 6, borderRadius: 8, display: 'none', alignItems: 'center', justifyContent: 'center', transition: 'background .2s' }}
-          >
-            {menuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          {/* Hamburger (mobile only) */}
+          {isMobile && (
+            <button
+              onClick={() => setMenuOpen(o => !o)}
+              style={{
+                background: 'none', border: 'none', cursor: 'pointer',
+                color: '#0A1628', padding: 6, borderRadius: 8,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}
+            >
+              {menuOpen ? <X size={26} /> : <Menu size={26} />}
+            </button>
+          )}
         </div>
       </nav>
 
-      {/* Mobile menu overlay */}
-      <div className="nav-mobile-menu" style={{
-        position: 'fixed', top: 68, left: 0, right: 0, bottom: menuOpen ? 0 : undefined,
-        zIndex: 999,
-        background: '#ffffff',
-        borderBottom: '1px solid #e8edf8',
-        boxShadow: menuOpen ? '0 12px 40px rgba(0,71,171,.12)' : 'none',
-        padding: menuOpen ? '16px 20px 24px' : '0 20px',
-        transform: menuOpen ? 'translateY(0)' : 'translateY(-110%)',
-        transition: 'transform .3s cubic-bezier(.4,0,.2,1)',
-        pointerEvents: menuOpen ? 'all' : 'none',
-        display: 'none',
-      }}>
-        {NAV_LINKS.map(l => (
-          <a key={l.href} href={l.href} onClick={() => setMenuOpen(false)} style={{
-            display: 'block', padding: '14px 4px', color: '#0A1628', textDecoration: 'none',
-            fontWeight: 600, borderBottom: '1px solid #f0f4ff', fontSize: '1rem',
-          }}>{l.label}</a>
-        ))}
-        <button onClick={() => { setMenuOpen(false); setTrackOpen(true); }} style={{
-          display: 'flex', alignItems: 'center', gap: 8, width: '100%', textAlign: 'left',
-          padding: '14px 4px', background: 'none', border: 'none', borderBottom: '1px solid #f0f4ff',
-          color: '#0A1628', fontWeight: 600, fontSize: '1rem', cursor: 'pointer',
-        }}><Search size={16} /> Track Request</button>
-        <a href="#contact" onClick={() => setMenuOpen(false)} style={{
-          display: 'block', marginTop: 16, padding: '14px 0', textAlign: 'center',
-          background: 'linear-gradient(135deg, #FF0090 0%, #0047AB 50%, #0EA5E9 100%)',
-          color: '#fff', borderRadius: 50, textDecoration: 'none', fontWeight: 700, fontSize: '1rem',
-        }}>Donate Now</a>
-      </div>
+      {/* Mobile dropdown */}
+      {isMobile && menuOpen && (
+        <>
+          {/* Backdrop */}
+          <div onClick={() => setMenuOpen(false)} style={{
+            position: 'fixed', inset: 0, zIndex: 998,
+            background: 'rgba(10,22,40,.4)', backdropFilter: 'blur(4px)',
+          }} />
+          {/* Menu */}
+          <div style={{
+            position: 'fixed', top: 64, left: 0, right: 0, zIndex: 999,
+            background: '#fff', borderBottom: '1px solid #e8edf8',
+            boxShadow: '0 12px 40px rgba(0,71,171,.12)',
+            padding: '8px 20px 24px',
+          }}>
+            {NAV_LINKS.map(l => (
+              <a key={l.href} href={l.href} onClick={() => setMenuOpen(false)} style={{
+                display: 'flex', alignItems: 'center', padding: '14px 8px',
+                color: '#0A1628', textDecoration: 'none',
+                fontWeight: 600, borderBottom: '1px solid #f0f4ff', fontSize: '.97rem',
+                gap: 10,
+              }}>{l.label}</a>
+            ))}
+            <button onClick={() => { setMenuOpen(false); setTrackOpen(true); }} style={{
+              display: 'flex', alignItems: 'center', gap: 10, width: '100%',
+              padding: '14px 8px', background: 'none', border: 'none', borderBottom: '1px solid #f0f4ff',
+              color: '#0A1628', fontWeight: 600, fontSize: '.97rem', cursor: 'pointer', textAlign: 'left',
+            }}><Search size={16} /> Track My Request</button>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 16 }}>
+              <button onClick={() => { setMenuOpen(false); window.dispatchEvent(new CustomEvent('bb:setTab', { detail: 'request' })); document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' }); }} style={{
+                padding: '12px 0', borderRadius: 50, border: '2px solid #0047AB',
+                background: 'transparent', color: '#0047AB', fontWeight: 700, fontSize: '.88rem', cursor: 'pointer',
+              }}>📚 Request</button>
+              <a href="#contact" onClick={() => { setMenuOpen(false); window.dispatchEvent(new CustomEvent('bb:setTab', { detail: 'donate' })); }} style={{
+                display: 'block', padding: '12px 0', textAlign: 'center',
+                background: 'linear-gradient(135deg, #FF0090, #0047AB)',
+                color: '#fff', borderRadius: 50, textDecoration: 'none', fontWeight: 700, fontSize: '.88rem',
+              }}>❤️ Donate</a>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Track modal */}
       {trackOpen && (
@@ -177,8 +202,7 @@ export default function Nav() {
               style={{
                 width: '100%', padding: '12px 16px', borderRadius: 10,
                 border: '2px solid #e8edf8', fontSize: '.95rem', outline: 'none',
-                boxSizing: 'border-box', marginBottom: 12, transition: 'border .2s',
-                fontFamily: 'inherit',
+                boxSizing: 'border-box', marginBottom: 12, transition: 'border .2s', fontFamily: 'inherit',
               }}
               onFocus={e => (e.currentTarget.style.border = '2px solid #0EA5E9')}
               onBlur={e => (e.currentTarget.style.border = '2px solid #e8edf8')}
@@ -207,7 +231,7 @@ export default function Nav() {
               <button onClick={handleTrack} disabled={trackLoading || !trackId.trim()} style={{
                 flex: 1, padding: '11px 0', borderRadius: 50, border: 'none', cursor: 'pointer',
                 background: 'linear-gradient(135deg,#0047AB,#0EA5E9)',
-                color: '#fff', fontWeight: 700, fontSize: '.9rem', transition: 'opacity .2s',
+                color: '#fff', fontWeight: 700, fontSize: '.9rem',
                 opacity: trackLoading || !trackId.trim() ? .6 : 1,
               }}>{trackLoading ? 'Searching…' : 'Track'}</button>
               <button onClick={() => { setTrackOpen(false); setTrackResult(null); setTrackId(''); }} style={{
@@ -218,14 +242,6 @@ export default function Nav() {
           </div>
         </div>
       )}
-
-      <style>{`
-        @media (max-width: 768px) {
-          .nav-desktop { display: none !important; }
-          .nav-hamburger { display: flex !important; }
-          .nav-mobile-menu { display: block !important; }
-        }
-      `}</style>
     </>
   );
 }

@@ -2,22 +2,30 @@ import { motion } from 'framer-motion';
 import { Clock } from 'lucide-react';
 
 const SUBJECTS = [
-  { emoji: '📖', name: 'English Language', desc: 'Grammar, comprehension, essay writing and oral English preparation for Junior WAEC.' },
-  { emoji: '📐', name: 'Mathematics', desc: 'Algebra, geometry, statistics and number theory aligned with WAEC syllabus.' },
-  { emoji: '🔬', name: 'Integrated Science', desc: 'Biology, chemistry and physics fundamentals for Nigerian JSS students.' },
-  { emoji: '🗺️', name: 'Social Studies', desc: 'Nigerian history, civic education, geography and social science foundations.' },
-  { emoji: '💼', name: 'Business Studies', desc: 'Commerce, economics, typewriting and office practice for JSS level.' },
-  { emoji: '🌾', name: 'Agricultural Science', desc: 'Crop science, animal husbandry, farm management and agro-economics.' },
+  { emoji: '📖', name: 'English Language', desc: 'Grammar, comprehension, essay writing and oral English preparation for Junior WAEC.', color: '#0047AB', grad: 'linear-gradient(135deg,#0047AB,#0EA5E9)' },
+  { emoji: '📐', name: 'Mathematics', desc: 'Algebra, geometry, statistics and number theory aligned with the WAEC syllabus.', color: '#FF0090', grad: 'linear-gradient(135deg,#FF0090,#7C3AED)' },
+  { emoji: '🔬', name: 'Integrated Science', desc: 'Biology, chemistry and physics fundamentals for Nigerian JSS students.', color: '#7C3AED', grad: 'linear-gradient(135deg,#7C3AED,#0EA5E9)' },
+  { emoji: '🗺️', name: 'Social Studies', desc: 'Nigerian history, civic education, geography and social science foundations.', color: '#10B981', grad: 'linear-gradient(135deg,#10B981,#0047AB)' },
+  { emoji: '💼', name: 'Business Studies', desc: 'Commerce, economics, typewriting and office practice for JSS level.', color: '#0EA5E9', grad: 'linear-gradient(135deg,#0EA5E9,#0047AB)' },
+  { emoji: '🌾', name: 'Agricultural Science', desc: 'Crop science, animal husbandry, farm management and agro-economics.', color: '#f59e0b', grad: 'linear-gradient(135deg,#f59e0b,#10B981)' },
 ];
 
 export default function Subjects() {
   return (
-    <section id="subjects" style={{ background: '#f8fafc', padding: '96px 24px' }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+    <section id="subjects" style={{
+      background: 'linear-gradient(160deg,#fdf4ff 0%,#f0f7ff 50%,#f0fff8 100%)',
+      padding: '96px 24px', position: 'relative', overflow: 'hidden',
+    }}>
+      {/* Decorative blobs */}
+      <div style={{ position: 'absolute', top: '5%', left: '3%', width: 250, height: 250, borderRadius: '50%', background: 'radial-gradient(circle,rgba(124,58,237,.07) 0%,transparent 70%)', pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', bottom: '5%', right: '3%', width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle,rgba(0,71,171,.06) 0%,transparent 70%)', pointerEvents: 'none' }} />
+
+      <div style={{ maxWidth: 1200, margin: '0 auto', position: 'relative', zIndex: 1 }}>
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: .6 }}
           style={{ textAlign: 'center', marginBottom: 16 }}>
           <span style={{
-            display: 'inline-block', background: 'linear-gradient(135deg,rgba(124,58,237,.1),rgba(14,165,233,.1))',
+            display: 'inline-block',
+            background: 'linear-gradient(135deg,rgba(124,58,237,.12),rgba(14,165,233,.12))',
             color: '#7C3AED', fontWeight: 700, fontSize: '.78rem', letterSpacing: 1.5,
             textTransform: 'uppercase', padding: '5px 14px', borderRadius: 50, marginBottom: 16,
             border: '1px solid rgba(124,58,237,.2)',
@@ -30,11 +38,10 @@ export default function Subjects() {
           </p>
         </motion.div>
 
-        {/* Coming Soon Banner */}
         <motion.div initial={{ opacity: 0, scale: .96 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: .5, delay: .1 }}
           style={{
             margin: '32px auto 48px', maxWidth: 600,
-            background: 'linear-gradient(135deg, #0A1628, #0047AB)',
+            background: 'linear-gradient(135deg,#0A1628,#0047AB)',
             borderRadius: 16, padding: '18px 28px',
             display: 'flex', alignItems: 'center', gap: 16,
             boxShadow: '0 12px 40px rgba(0,71,171,.25)',
@@ -45,7 +52,7 @@ export default function Subjects() {
           <div>
             <div style={{ color: '#38BDF8', fontWeight: 700, fontSize: '.85rem', marginBottom: 2 }}>📣 Coming Soon</div>
             <div style={{ color: 'rgba(255,255,255,.85)', fontSize: '.88rem', lineHeight: 1.5 }}>
-              Digital learning resources for each subject are under development. We'll notify you when they launch — <strong style={{ color: '#fff' }}>drop your contact below</strong> to be first to know.
+              Digital learning resources for each subject are under development. <strong style={{ color: '#fff' }}>Drop your contact below</strong> to be first to know when they launch.
             </div>
           </div>
         </motion.div>
@@ -55,20 +62,21 @@ export default function Subjects() {
             <motion.div key={s.name}
               initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: .5, delay: i * .07 }}
               style={{
-                background: '#ffffff', borderRadius: 18, padding: '28px 24px',
-                boxShadow: '0 4px 20px rgba(0,71,171,.06)', border: '1px solid rgba(0,71,171,.07)',
+                background: 'rgba(255,255,255,.85)',
+                backdropFilter: 'blur(12px)',
+                borderRadius: 18, padding: '28px 24px',
+                boxShadow: '0 4px 20px rgba(0,71,171,.07)',
+                border: '1px solid rgba(255,255,255,.9)',
                 transition: 'all .3s', position: 'relative', overflow: 'hidden',
               }}
               whileHover={{ y: -5, boxShadow: '0 16px 40px rgba(0,71,171,.13)' }}
             >
-              <div style={{
-                position: 'absolute', top: 0, left: 0, right: 0, height: 3,
-                background: 'linear-gradient(90deg, #0047AB, #0EA5E9)',
-              }} />
+              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: s.grad }} />
+              <div style={{ position: 'absolute', bottom: -12, right: -12, width: 64, height: 64, borderRadius: '50%', background: `radial-gradient(circle,${s.color}12 0%,transparent 70%)` }} />
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
                 <div style={{
                   flexShrink: 0, width: 52, height: 52, borderRadius: 14,
-                  background: 'linear-gradient(135deg, #EFF6FF, #DBEAFE)',
+                  background: s.grad,
                   display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.6rem',
                 }}>{s.emoji}</div>
                 <div>
