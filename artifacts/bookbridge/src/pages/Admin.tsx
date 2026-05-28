@@ -71,12 +71,29 @@ export default function Admin() {
   const [detailItem, setDetailItem] = useState<any>(null);
   const [settingsPass, setSettingsPass] = useState({ current: '', next: '', confirm: '' });
   const [settingsMsg, setSettingsMsg] = useState('');
+  const [settingsMsgType, setSettingsMsgType] = useState<'ok'|'err'>('ok');
+  const [storedPassword, setStoredPassword] = useState('admin123');
+  const [pwLoading, setPwLoading] = useState(false);
   const isMobile = useAdminMobile();
+
+  async function fetchStoredPassword() {
+    try {
+      const database = db();
+      if (!database) return 'admin123';
+      const snap = await database.ref('admin/config/password').once('value');
+      return snap.val() ?? 'admin123';
+    } catch { return 'admin123'; }
+  }
 
   useEffect(() => {
     const stored = sessionStorage.getItem('bb_admin_auth');
     if (stored === '1') {
-      signInAnon().then(() => { setLoggedIn(true); setAuthChecking(false); });
+      signInAnon().then(async () => {
+        const pw = await fetchStoredPassword();
+        setStoredPassword(pw);
+        setLoggedIn(true);
+        setAuthChecking(false);
+      });
     } else {
       setAuthChecking(false);
     }
@@ -90,12 +107,21 @@ export default function Admin() {
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
-    if (username !== 'admin' || password !== 'admin123') {
+    setLoginLoading(true);
+    setLoginError('');
+    if (username !== 'admin') {
       setLoginError('Invalid credentials. Please try again.');
+      setLoginLoading(false);
       return;
     }
-    setLoginLoading(true);
     await signInAnon();
+    const currentPw = await fetchStoredPassword();
+    if (password !== currentPw) {
+      setLoginError('Invalid credentials. Please try again.');
+      setLoginLoading(false);
+      return;
+    }
+    setStoredPassword(currentPw);
     sessionStorage.setItem('bb_admin_auth', '1');
     setLoggedIn(true);
     setLoginLoading(false);
@@ -463,33 +489,106 @@ export default function Admin() {
           {section === 'settings' && (
             <div style={{ maxWidth: 480 }}>
               <div style={{ background: '#fff', borderRadius: 20, padding: '32px 28px', boxShadow: '0 4px 24px rgba(0,71,171,.08)', marginBottom: 20 }}>
-                <h2 style={{ fontWeight: 700, color: '#0A1628', fontSize: '1.1rem', margin: '0 0 16px' }}>⚙️ Account Settings</h2>
-                <div style={{ background: '#f0f9ff', border: '1px solid #bae6fd', borderRadius: 12, padding: '12px 16px', marginBottom: 20, fontSize: '.83rem', color: '#0369a1', lineHeight: 1.6 }}>
-                  <strong>Current login:</strong> username <code>admin</code> / password <code>admin123</code>.<br />
-                  To change credentials permanently, update Admin.tsx line 101 and redeploy.
+                <h2 style={{ fontWeight: 700, color: '#0A1628', fontSize: '1.1rem', margin: '0 0 20px', display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ width: 32, height: 32, borderRadius: 8, background: 'linear-gradient(135deg,#0047AB,#0EA5E9)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem' }}>⚙️</span>
+                  Change Admin Password
+                </h2>
+
+                <div style={{ background: '#f0f9ff', border: '1px solid #bae6fd', borderRadius: 12, padding: '12px 16px', marginBottom: 20, fontSize: '.83rem', color: '#0369a1', lineHeight: 1.7 }}>
+                  Your password is stored securely in Firebase and will persist even after the site is redeployed. Username is always <code style={{ background: '#dbeafe', padding: '1px 5px', borderRadius: 4 }}>admin</code>.
                 </div>
-                {settingsMsg && <div style={{ background: '#dcfce7', border: '1px solid #86efac', borderRadius: 10, padding: '10px 14px', marginBottom: 16, color: '#15803d', fontSize: '.85rem' }}>{settingsMsg}</div>}
+
+                {settingsMsg && (
+                  <div style={{
+                    display: 'flex', gap: 8, alignItems: 'center',
+                    background: settingsMsgType === 'ok' ? '#dcfce7' : '#fee2e2',
+                    border: `1px solid ${settingsMsgType === 'ok' ? '#86efac' : '#fca5a5'}`,
+                    borderRadius: 10, padding: '10px 14px', marginBottom: 16,
+                    color: settingsMsgType === 'ok' ? '#15803d' : '#b91c1c', fontSize: '.85rem',
+                  }}>
+                    {settingsMsgType === 'ok' ? '✅' : '❌'} {settingsMsg}
+                  </div>
+                )}
+
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                   {([['Current Password', 'current'], ['New Password', 'next'], ['Confirm New Password', 'confirm']] as const).map(([label, key]) => (
                     <div key={key}>
                       <label style={{ display: 'block', fontSize: '.73rem', fontWeight: 700, letterSpacing: .5, textTransform: 'uppercase', color: '#6b7a99', marginBottom: 6 }}>{label}</label>
                       <input type="password" value={settingsPass[key]} onChange={e => setSettingsPass(p => ({ ...p, [key]: e.target.value }))}
-                        style={{ width: '100%', padding: '11px 14px', borderRadius: 10, border: '1.5px solid #e8edf8', fontSize: '.9rem', outline: 'none', boxSizing: 'border-box', fontFamily: 'inherit' }}
+                        placeholder={key === 'current' ? 'Enter current password' : key === 'next' ? 'At least 6 characters' : 'Repeat new password'}
+                        style={{ width: '100%', padding: '11px 14px', borderRadius: 10, border: '1.5px solid #e8edf8', fontSize: '.9rem', outline: 'none', boxSizing: 'border-box', fontFamily: 'inherit', transition: 'border .2s' }}
                         onFocus={e => (e.currentTarget.style.border = '1.5px solid #0EA5E9')}
                         onBlur={e => (e.currentTarget.style.border = '1.5px solid #e8edf8')}
                       />
                     </div>
                   ))}
-                  <button onClick={() => {
-                    if (settingsPass.current !== 'admin123') { setSettingsMsg('Current password is incorrect.'); return; }
-                    if (settingsPass.next.length < 6) { setSettingsMsg('New password must be at least 6 characters.'); return; }
-                    if (settingsPass.next !== settingsPass.confirm) { setSettingsMsg('Passwords do not match.'); return; }
-                    setSettingsMsg('Password noted. Update Admin.tsx with the new password and redeploy to make it permanent.');
-                    setSettingsPass({ current: '', next: '', confirm: '' });
-                  }} style={{ padding: '12px 0', borderRadius: 50, border: 'none', cursor: 'pointer', background: 'linear-gradient(135deg,#0047AB,#0EA5E9)', color: '#fff', fontWeight: 700, fontSize: '.9rem' }}>
-                    Update Password
+                  <button
+                    disabled={pwLoading}
+                    onClick={async () => {
+                      setSettingsMsg('');
+                      if (settingsPass.current !== storedPassword) {
+                        setSettingsMsgType('err');
+                        setSettingsMsg('Current password is incorrect.');
+                        return;
+                      }
+                      if (settingsPass.next.length < 6) {
+                        setSettingsMsgType('err');
+                        setSettingsMsg('New password must be at least 6 characters.');
+                        return;
+                      }
+                      if (settingsPass.next !== settingsPass.confirm) {
+                        setSettingsMsgType('err');
+                        setSettingsMsg('Passwords do not match.');
+                        return;
+                      }
+                      setPwLoading(true);
+                      try {
+                        const database = db();
+                        if (database) {
+                          await database.ref('admin/config/password').set(settingsPass.next);
+                          setStoredPassword(settingsPass.next);
+                          setSettingsMsgType('ok');
+                          setSettingsMsg('Password updated successfully! Use your new password next time you log in.');
+                          setSettingsPass({ current: '', next: '', confirm: '' });
+                        } else {
+                          setSettingsMsgType('err');
+                          setSettingsMsg('Database connection failed. Try again.');
+                        }
+                      } catch {
+                        setSettingsMsgType('err');
+                        setSettingsMsg('Failed to save. Please check your connection.');
+                      }
+                      setPwLoading(false);
+                    }}
+                    style={{
+                      padding: '13px 0', borderRadius: 50, border: 'none', cursor: pwLoading ? 'not-allowed' : 'pointer',
+                      background: 'linear-gradient(135deg,#0047AB,#0EA5E9)',
+                      color: '#fff', fontWeight: 700, fontSize: '.9rem',
+                      boxShadow: '0 6px 16px rgba(0,71,171,.3)',
+                      opacity: pwLoading ? .6 : 1, transition: 'opacity .2s',
+                    }}
+                  >
+                    {pwLoading ? 'Saving…' : '🔐 Update Password'}
                   </button>
                 </div>
+              </div>
+
+              {/* Danger zone */}
+              <div style={{ background: '#fff', borderRadius: 20, padding: '24px 28px', boxShadow: '0 4px 24px rgba(0,71,171,.08)', border: '1px solid #fee2e2' }}>
+                <h3 style={{ fontWeight: 700, color: '#b91c1c', fontSize: '.9rem', margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  🔓 Session
+                </h3>
+                <p style={{ color: '#6b7a99', fontSize: '.83rem', lineHeight: 1.6, marginBottom: 16 }}>
+                  You are currently logged in as <strong>admin</strong>. Click below to sign out of this session.
+                </p>
+                <button onClick={logout} style={{
+                  padding: '10px 24px', borderRadius: 50, border: '2px solid #fee2e2', cursor: 'pointer',
+                  background: 'transparent', color: '#b91c1c', fontWeight: 700, fontSize: '.85rem',
+                  transition: 'all .2s',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = '#fee2e2'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+                >Sign Out</button>
               </div>
             </div>
           )}

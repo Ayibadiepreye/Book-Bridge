@@ -8,6 +8,7 @@ import ImpactStories from '../components/ImpactStories';
 import VideoSection from '../components/VideoSection';
 import ContactSection from '../components/ContactSection';
 import Footer from '../components/Footer';
+import SocialBar from '../components/SocialBar';
 
 export default function Home() {
   return (
@@ -22,6 +23,7 @@ export default function Home() {
       <Subjects />
       <ContactSection />
       <Footer />
+      <SocialBar />
     </>
   );
 }

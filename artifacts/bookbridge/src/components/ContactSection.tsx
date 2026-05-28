@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BookOpen, Heart, Check, MessageCircle } from 'lucide-react';
 import { db, generateTrackingId } from '../lib/firebase';
+import { WA_NUMBERS, SOCIALS } from '../lib/social';
 
 type Tab = 'request' | 'donate';
 
 const SUBJECTS = ['English Language', 'Mathematics', 'Integrated Science', 'Social Studies', 'Business Studies', 'Agricultural Science', 'Other'];
 const CLASSES = ['JSS 1', 'JSS 2', 'JSS 3'];
 const CONDITIONS = ['New', 'Good', 'Fair'];
-const WA = '2348128384816';
+const WA = WA_NUMBERS[1].number;
 
 const inputStyle: React.CSSProperties = {
   width: '100%', padding: '11px 14px', borderRadius: 10,
@@ -292,10 +293,26 @@ export default function ContactSection() {
               ))}
             </div>
 
-            <div style={{ background: 'linear-gradient(135deg,#fff0f7,#fce7f3)', border: '1px solid rgba(255,0,144,.15)', borderRadius: 20, padding: '22px', textAlign: 'center' }}>
-              <div style={{ fontSize: '1.5rem', marginBottom: 8 }}>📧</div>
-              <div style={{ fontWeight: 700, color: '#0A1628', marginBottom: 4, fontSize: '.9rem' }}>Email Us Directly</div>
-              <a href="mailto:bookbridge21@gmail.com" style={{ color: '#FF0090', fontSize: '.85rem', textDecoration: 'none', fontWeight: 600 }}>bookbridge21@gmail.com</a>
+            <div style={{ background: 'linear-gradient(135deg,#fff0f7,#fce7f3)', border: '1px solid rgba(255,0,144,.15)', borderRadius: 20, padding: '22px' }}>
+              <div style={{ fontWeight: 700, color: '#0A1628', marginBottom: 12, fontSize: '.9rem' }}>📞 All Contact Numbers</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {WA_NUMBERS.map(({ number, label }) => (
+                  <a key={number} href={`https://wa.me/${number}`} target="_blank" rel="noreferrer"
+                    style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#0A1628', textDecoration: 'none', fontSize: '.85rem', fontWeight: 600, background: 'rgba(255,255,255,.7)', borderRadius: 8, padding: '8px 12px', transition: 'background .2s' }}
+                    onMouseEnter={e => (e.currentTarget.style.background = '#fff')}
+                    onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,.7)')}
+                  >
+                    <span style={{ fontSize: '1rem' }}>💬</span> {label}
+                  </a>
+                ))}
+                <a href={`mailto:${SOCIALS.email}`}
+                  style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#0A1628', textDecoration: 'none', fontSize: '.85rem', fontWeight: 600, background: 'rgba(255,255,255,.7)', borderRadius: 8, padding: '8px 12px', marginTop: 2, transition: 'background .2s' }}
+                  onMouseEnter={e => (e.currentTarget.style.background = '#fff')}
+                  onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,.7)')}
+                >
+                  <span style={{ fontSize: '1rem' }}>✉️</span> {SOCIALS.email}
+                </a>
+              </div>
             </div>
           </motion.div>
         </div>
