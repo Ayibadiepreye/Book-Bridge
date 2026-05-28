@@ -1,0 +1,2759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project BookBridge – Connecting Dreams with Knowledge</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+/* ═══════════════════════════════════════════════
+   PROJECT BOOKBRIDGE — SAPPHIRE EDITION  v2
+   ═══════════════════════════════════════════════ */
+:root{
+  --royal:#0047AB; --royal-deep:#002D72; --azure:#0EA5E9;
+  --sky:#38BDF8; --ice:#E0F2FE; --frost:#F0F9FF; --deep-navy:#030C1A;
+  --neon-pink:#FF0090; --hot-violet:#7C3AED; --electric-cyan:#06B6D4;
+  --golden:#F59E0B; --coral:#F43F5E; --mint:#10B981;
+  --lavender:#A78BFA; --peach:#FB923C;
+  --ink:#040D1F; --muted:#4B6080;
+  --border:rgba(14,165,233,.18);
+  --shadow-blue:rgba(14,165,233,.22);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:#0a1628}
+::-webkit-scrollbar-thumb{background:linear-gradient(var(--azure),var(--neon-pink));border-radius:4px}
+
+body{font-family:'Plus Jakarta Sans',sans-serif;color:var(--ink);overflow-x:hidden;background:#fff}
+
+/* ══ AURORA BACKGROUND ══ */
+#aurora-bg{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 130% 80% at 50% -10%,rgba(14,165,233,.15) 0%,transparent 60%),
+             radial-gradient(ellipse 80% 60% at 0 50%,rgba(124,58,237,.08) 0%,transparent 55%),
+             radial-gradient(ellipse 80% 60% at 100% 50%,rgba(255,0,144,.06) 0%,transparent 55%),
+             #ffffff;
+}
+#aurora-bg::before{
+  content:'';position:absolute;inset:-50%;
+  background:
+    radial-gradient(ellipse 65% 50% at 10% 10%,rgba(56,189,248,.30) 0%,transparent 55%),
+    radial-gradient(ellipse 55% 60% at 88% 12%,rgba(167,139,250,.25) 0%,transparent 55%),
+    radial-gradient(ellipse 60% 55% at 5%  80%,rgba(6,182,212,.25) 0%,transparent 55%),
+    radial-gradient(ellipse 65% 50% at 90% 82%,rgba(245,158,11,.15) 0%,transparent 55%),
+    radial-gradient(ellipse 50% 60% at 50% 92%,rgba(16,185,129,.15) 0%,transparent 52%);
+  animation:auroraA 22s ease-in-out infinite alternate;
+}
+#aurora-bg::after{
+  content:'';position:absolute;inset:-50%;
+  background:
+    radial-gradient(ellipse 60% 50% at 80% 5%,rgba(251,146,60,.20) 0%,transparent 52%),
+    radial-gradient(ellipse 50% 65% at 20% 30%,rgba(14,165,233,.24) 0%,transparent 55%),
+    radial-gradient(ellipse 65% 48% at 65% 72%,rgba(244,63,94,.15) 0%,transparent 52%),
+    radial-gradient(ellipse 55% 55% at 12% 55%,rgba(124,58,237,.18) 0%,transparent 52%),
+    radial-gradient(ellipse 60% 50% at 92% 48%,rgba(56,189,248,.20) 0%,transparent 52%);
+  animation:auroraB 30s ease-in-out infinite alternate-reverse;
+}
+@keyframes auroraA{
+  0%{transform:translate(0,0) rotate(0deg) scale(1)}
+  40%{transform:translate(3%,-4%) rotate(2deg) scale(1.05)}
+  100%{transform:translate(-3%,4%) rotate(-2deg) scale(.97)}
+}
+@keyframes auroraB{
+  0%{transform:translate(0,0) rotate(0deg) scale(1)}
+  50%{transform:translate(-5%,4%) rotate(-3deg) scale(1.07)}
+  100%{transform:translate(5%,-4%) rotate(3deg) scale(.97)}
+}
+#conic-layer{
+  position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.05;
+  background:conic-gradient(from 0deg at 50% 50%,#bae6fd,#c4b5fd,#fda4af,#fed7aa,#a7f3d0,#99f6e4,#bae6fd);
+  animation:conicSpin 80s linear infinite;
+}
+@keyframes conicSpin{to{transform:rotate(360deg)}}
+#prism-stripe{
+  position:fixed;inset:-100%;z-index:0;pointer-events:none;
+  width:300%;height:300%;opacity:.038;
+  background:repeating-linear-gradient(112deg,#38bdf8 0,#818cf8 140px,#f472b6 280px,#fb923c 420px,#34d399 560px,#a78bfa 700px,#38bdf8 840px);
+  animation:prismDrift 40s linear infinite;
+}
+@keyframes prismDrift{0%{transform:translate(0,0)}100%{transform:translate(320px,320px)}}
+
+/* ══ CURSOR ══ */
+#cursor-canvas{position:fixed;inset:0;z-index:9998;pointer-events:none}
+#cursor-glow{
+  position:fixed;width:32px;height:32px;border-radius:50%;
+  pointer-events:none;z-index:9997;transform:translate(-50%,-50%);
+  background:radial-gradient(circle,rgba(56,189,248,.7),transparent 70%);
+  transition:width .3s,height .3s,background .4s;mix-blend-mode:multiply;
+}
+
+/* ══ ORBS ══ */
+.orb{
+  position:fixed;border-radius:50%;pointer-events:none;z-index:0;
+  filter:blur(80px);mix-blend-mode:multiply;
+  animation:orbFloat ease-in-out infinite, orbFadeIn 3s ease forwards;
+  will-change:transform;
+}
+@keyframes orbFloat{
+  0%{transform:translate(0,0) scale(1)}
+  25%{transform:translate(var(--dx1),var(--dy1)) scale(1.1)}
+  50%{transform:translate(var(--dx2),var(--dy2)) scale(.9)}
+  75%{transform:translate(var(--dx3),var(--dy3)) scale(1.05)}
+  100%{transform:translate(0,0) scale(1)}
+}
+@keyframes orbFadeIn{to{opacity:var(--o)}}
+
+/* ══ SECTION GLASS TINTS ══ */
+section{position:relative;z-index:1}
+#about{background:rgba(240,249,255,.60)!important;backdrop-filter:blur(4px)}
+#gallery{background:rgba(255,255,255,.40)!important;backdrop-filter:blur(2px)}
+#request{background:rgba(240,249,255,.65)!important;backdrop-filter:blur(4px)}
+#donate{background:rgba(245,240,255,.52)!important;backdrop-filter:blur(3px)}
+#mentors{background:rgba(240,255,248,.48)!important;backdrop-filter:blur(3px)}
+#stories{background:rgba(255,255,255,.58)!important;backdrop-filter:blur(3px)}
+#contact{background:rgba(248,250,255,.60)!important;backdrop-filter:blur(3px)}
+#social,#documentary,#subjects{background:transparent!important}
+
+/* ══ NAV ══ */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  background:rgba(255,255,255,.80);backdrop-filter:blur(28px) saturate(200%);
+  border-bottom:1px solid rgba(14,165,233,.20);
+  padding:0 clamp(1rem,5vw,4rem);
+  display:flex;align-items:center;justify-content:space-between;
+  height:70px;transition:box-shadow .3s;
+}
+nav.scrolled{box-shadow:0 4px 40px rgba(14,165,233,.14)}
+.nav-brand{display:flex;align-items:center;gap:.8rem;text-decoration:none}
+.logo-icon{
+  width:40px;height:40px;border-radius:12px;
+  background:linear-gradient(135deg,var(--royal),var(--azure));
+  display:flex;align-items:center;justify-content:center;font-size:1.2rem;
+  box-shadow:0 4px 16px rgba(14,165,233,.4);
+}
+.nav-brand span{
+  font-family:'Cormorant Garamond',serif;
+  font-weight:700;font-size:1.55rem;color:var(--royal);letter-spacing:.5px;
+}
+.nav-links{display:flex;align-items:center;gap:2rem}
+.nav-links a{
+  text-decoration:none;color:var(--muted);font-size:.875rem;
+  font-weight:600;transition:color .2s;position:relative;
+}
+.nav-links a::after{
+  content:'';position:absolute;bottom:-4px;left:0;
+  width:0;height:2px;
+  background:linear-gradient(90deg,var(--azure),var(--neon-pink));
+  transition:width .3s;
+}
+.nav-links a:hover::after{width:100%}
+.nav-links a:hover{color:var(--royal)}
+.nav-cta{
+  background:linear-gradient(135deg,var(--royal),var(--azure))!important;
+  color:#fff!important;padding:.5rem 1.4rem;border-radius:50px;
+  font-weight:700!important;box-shadow:0 4px 20px rgba(14,165,233,.35);
+  transition:transform .2s,box-shadow .2s!important;
+}
+.nav-cta:hover{transform:translateY(-2px)!important;box-shadow:0 8px 28px rgba(14,165,233,.5)!important}
+.nav-cta::after{display:none!important}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px}
+.hamburger span{display:block;width:24px;height:2px;background:var(--royal);border-radius:2px;transition:.3s}
+
+/* ══ HERO ══ */
+#hero{
+  min-height:100vh;padding-top:70px;
+  display:grid;grid-template-columns:1fr 1fr;
+  align-items:center;overflow:hidden;position:relative;
+}
+.hero-text-side{
+  padding:clamp(2rem,6vw,6rem) clamp(1.5rem,4vw,5rem) clamp(2rem,6vw,6rem) clamp(2rem,6vw,7rem);
+  position:relative;z-index:2;overflow:hidden;
+}
+/* LOW-OPACITY SLIDESHOW BEHIND HERO TEXT */
+.hero-text-bg{
+  position:absolute;inset:0;z-index:0;pointer-events:none;
+}
+.hero-text-bg-slide{
+  position:absolute;inset:0;opacity:0;
+  background-size:cover;background-position:center;
+  transition:opacity 1.5s ease;
+  filter:saturate(1.2);
+}
+.hero-text-bg-slide.active{opacity:.10;}
+.hero-text-bg::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.82),rgba(240,249,255,.75));
+  z-index:1;
+}
+.hero-text-inner{position:relative;z-index:2}
+.prism-bar{display:flex;height:4px;border-radius:4px;overflow:hidden;margin-bottom:1.6rem;width:72px}
+.prism-bar span{flex:1}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:.5rem;
+  background:linear-gradient(135deg,rgba(14,165,233,.12),rgba(124,58,237,.10));
+  border:1px solid rgba(14,165,233,.28);
+  padding:.45rem 1.1rem;border-radius:50px;
+  font-size:.78rem;font-weight:700;color:var(--royal);
+  letter-spacing:.06em;margin-bottom:1.6rem;backdrop-filter:blur(8px);
+}
+.hero-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(2.8rem,5.5vw,4.8rem);
+  font-weight:700;line-height:1.05;color:var(--ink);margin-bottom:1.3rem;
+}
+.hero-title em{
+  font-style:italic;
+  background:linear-gradient(135deg,var(--royal),var(--azure),var(--neon-pink));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-sub{font-size:1.05rem;color:var(--muted);line-height:1.75;max-width:490px;margin-bottom:2.5rem}
+.hero-actions{display:flex;gap:1rem;flex-wrap:wrap}
+
+/* Shared button */
+.btn-primary{
+  display:inline-flex;align-items:center;gap:.55rem;
+  background:linear-gradient(135deg,var(--royal),var(--azure));
+  color:#fff;padding:.9rem 2.2rem;border-radius:50px;
+  font-size:.98rem;font-weight:700;text-decoration:none;border:none;cursor:pointer;
+  box-shadow:0 6px 24px rgba(14,165,233,.38);
+  transition:transform .2s,box-shadow .25s;position:relative;overflow:hidden;
+  font-family:'Plus Jakarta Sans',sans-serif;
+}
+.btn-primary::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,var(--azure),var(--neon-pink));
+  opacity:0;transition:opacity .35s;
+}
+.btn-primary:hover::before{opacity:1}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(255,0,144,.28)}
+.btn-primary>*{position:relative;z-index:1}
+.btn-secondary{
+  display:inline-flex;align-items:center;gap:.55rem;
+  background:rgba(255,255,255,.75);color:var(--royal);
+  padding:.9rem 2.2rem;border-radius:50px;
+  font-size:.98rem;font-weight:700;text-decoration:none;
+  border:2px solid var(--azure);cursor:pointer;
+  backdrop-filter:blur(8px);transition:transform .2s,background .25s,color .25s;
+  font-family:'Plus Jakarta Sans',sans-serif;
+}
+.btn-secondary:hover{background:var(--royal);color:#fff;transform:translateY(-3px)}
+
+.hero-stats{
+  display:flex;gap:2.5rem;margin-top:2.5rem;
+  padding-top:2rem;border-top:1px solid rgba(14,165,233,.18);
+}
+.stat-item{display:flex;flex-direction:column}
+.stat-num{
+  font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;
+  background:linear-gradient(135deg,var(--royal),var(--azure));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.stat-lbl{font-size:.78rem;color:var(--muted);font-weight:600;letter-spacing:.04em;margin-top:.2rem}
+
+/* Carousel side */
+.hero-carousel-side{position:relative;height:100vh;overflow:hidden;background:var(--royal-deep)}
+.carousel-slide{
+  position:absolute;inset:0;opacity:0;transition:opacity 1.2s ease;
+  background-size:cover;background-position:center;
+}
+.carousel-slide.active{opacity:1}
+.carousel-slide::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(0,39,102,.52),rgba(14,165,233,.12));
+}
+.carousel-overlay{
+  position:absolute;bottom:0;left:0;right:0;z-index:2;padding:2rem;
+  background:linear-gradient(transparent,rgba(0,20,60,.7));color:#fff;
+}
+.carousel-caption{font-size:.92rem;font-weight:500;opacity:.88}
+.carousel-dots{position:absolute;bottom:1.4rem;right:1.6rem;z-index:3;display:flex;gap:.5rem}
+.carousel-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:rgba(255,255,255,.35);cursor:pointer;border:none;
+  transition:background .3s,transform .3s;
+}
+.carousel-dot.active{background:linear-gradient(135deg,var(--sky),var(--neon-pink));transform:scale(1.35)}
+
+/* ══ SECTIONS ══ */
+section{padding:clamp(4rem,8vw,8rem) clamp(1.5rem,5vw,5rem)}
+.section-label{
+  display:inline-block;font-size:.72rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;
+  background:linear-gradient(90deg,var(--azure),var(--neon-pink));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:.8rem;
+}
+.section-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(2.2rem,4.5vw,3.4rem);font-weight:700;color:var(--ink);
+  line-height:1.12;margin-bottom:1rem;
+}
+.section-sub{font-size:1.02rem;color:var(--muted);line-height:1.75;max-width:610px;margin-bottom:3rem}
+
+/* ══ ABOUT ══ */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center}
+.about-image-collage{position:relative;height:520px}
+.collage-img{position:absolute;border-radius:20px;overflow:hidden;box-shadow:0 16px 50px rgba(14,165,233,.18)}
+.collage-img img{width:100%;height:100%;object-fit:cover}
+.collage-img:nth-child(1){width:65%;height:60%;top:0;left:0;z-index:2}
+.collage-img:nth-child(2){width:55%;height:55%;bottom:0;right:0;z-index:2}
+.collage-img:nth-child(3){width:46%;height:40%;top:30%;left:29%;z-index:3;border:4px solid #fff}
+.collage-badge{
+  position:absolute;bottom:9%;left:-1rem;z-index:4;
+  background:linear-gradient(135deg,var(--royal),var(--azure));color:#fff;
+  padding:.85rem 1.3rem;border-radius:14px;
+  box-shadow:0 10px 30px rgba(14,165,233,.4);font-weight:700;font-size:.88rem;white-space:nowrap;
+}
+.about-features{display:flex;flex-direction:column;gap:1.2rem;margin-top:2rem}
+.about-feat{
+  display:flex;gap:1rem;align-items:flex-start;
+  padding:1.1rem;border-radius:14px;transition:background .25s;
+  border:1px solid transparent;
+}
+.about-feat:hover{background:rgba(14,165,233,.07);border-color:rgba(14,165,233,.18)}
+.feat-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.1rem;flex-shrink:0}
+.feat-icon.blue{background:linear-gradient(135deg,var(--royal),var(--azure))}
+.feat-icon.pink{background:linear-gradient(135deg,var(--neon-pink),var(--lavender))}
+.feat-icon.cyan{background:linear-gradient(135deg,var(--electric-cyan),var(--mint))}
+.feat-text h4{font-weight:700;margin-bottom:.25rem}
+.feat-text p{font-size:.9rem;color:var(--muted);line-height:1.55}
+
+/* ══ GALLERY ══ */
+.gallery-intro{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:2rem;flex-wrap:wrap;gap:1rem}
+.gallery-track-wrap{overflow:hidden;border-radius:24px}
+.gallery-track{display:flex;gap:1.5rem;transition:transform .6s cubic-bezier(.25,.46,.45,.94)}
+.gallery-card{
+  flex:0 0 calc(33.333% - 1rem);aspect-ratio:4/3;
+  border-radius:20px;overflow:hidden;position:relative;cursor:pointer;
+  box-shadow:0 6px 28px rgba(14,165,233,.12);
+}
+.gallery-card img{width:100%;height:100%;object-fit:cover;transition:transform .6s}
+.gallery-card:hover img{transform:scale(1.08)}
+.gallery-card-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(transparent 45%,rgba(0,39,102,.88));
+  opacity:0;transition:opacity .4s;
+  display:flex;align-items:flex-end;padding:1.5rem;color:#fff;
+}
+.gallery-card:hover .gallery-card-overlay{opacity:1}
+.gallery-btn{
+  width:46px;height:46px;border-radius:50%;border:2px solid rgba(14,165,233,.28);
+  background:rgba(255,255,255,.85);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--royal);font-size:1rem;backdrop-filter:blur(8px);transition:.25s;
+}
+.gallery-btn:hover{background:var(--royal);color:#fff;border-color:var(--royal)}
+
+/* ══ SUBJECTS ══ */
+#subjects{
+  background:linear-gradient(165deg,var(--royal-deep) 0%,#050F2A 40%,#0A0830 100%);
+  color:#fff;position:relative;overflow:hidden;
+}
+#subjects::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 15% 50%,rgba(14,165,233,.18),transparent 60%),
+    radial-gradient(ellipse 50% 60% at 85% 50%,rgba(124,58,237,.18),transparent 60%);
+}
+#subjects .section-label{-webkit-text-fill-color:unset;color:#fff;background:linear-gradient(135deg,var(--royal),var(--azure));padding:.3rem 1rem;border-radius:50px;font-size:.75rem;display:inline-block;margin-bottom:1rem}
+#subjects .section-title{color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.5)}
+#subjects .section-sub{color:#fff;font-size:1.1rem;font-weight:600;text-shadow:0 2px 8px rgba(0,0,0,.6);max-width:600px;margin:0 auto;line-height:1.7}
+.subjects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.6rem;position:relative;z-index:1}
+.subject-card{
+  background:#fff;border:2px solid var(--azure);
+  border-radius:24px;padding:2.2rem;cursor:pointer;transition:.35s;
+  position:relative;overflow:hidden;
+}
+.subject-card::before{
+  content:'';position:absolute;top:-50%;right:-50%;width:100%;height:100%;
+  background:radial-gradient(circle,rgba(14,165,233,.22),transparent 70%);
+  opacity:0;transition:opacity .4s;
+}
+.subject-card:hover::before{opacity:1}
+.subject-card:hover{transform:translateY(-6px);border-color:var(--royal);box-shadow:0 20px 50px rgba(14,165,233,.35)}
+.subj-icon{font-size:2.6rem;margin-bottom:1rem}
+.subj-name{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:700;margin-bottom:.5rem;color:var(--ink)}
+.subj-desc{font-size:.88rem;color:var(--muted);line-height:1.55;margin-bottom:1.3rem}
+.subj-tag{
+  display:inline-block;padding:.3rem .85rem;
+  background:linear-gradient(135deg,var(--royal),var(--azure));border-radius:50px;
+  font-size:.72rem;font-weight:700;color:#fff;border:none;
+}
+.many-more-card{
+  background:linear-gradient(135deg,var(--royal-deep),var(--royal))!important;
+  border-color:var(--sky)!important;
+}
+.many-more-card .subj-name{color:#fff!important}
+.many-more-card .subj-desc{color:rgba(255,255,255,.8)!important}
+.many-more-card .subj-tag{background:#fff!important;color:var(--royal)!important}
+.more-subject-item:hover{background:var(--royal)!important;border-color:var(--royal)!important;transform:translateY(-2px)}
+.more-subject-item:hover div{color:#fff!important}
+#subject-choice-popup button:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(14,165,233,.2)}
+#subject-choice-popup button:last-child:hover{transform:none;box-shadow:none}
+
+/* ══ AVAILABLE BOOKS LIST ══ */
+.available-books{display:flex;flex-direction:column;gap:.9rem;margin-top:2rem}
+.avail-book{
+  display:flex;align-items:center;gap:1rem;padding:.9rem 1.1rem;
+  background:rgba(255,255,255,.88);border-radius:14px;
+  border:1px solid rgba(14,165,233,.16);backdrop-filter:blur(6px);
+}
+.avail-book-icon{font-size:1.5rem}
+.avail-book-info small{font-size:.72rem;color:var(--muted)}
+.avail-book-info strong{display:block;font-weight:700;font-size:.88rem}
+.avail-badge{margin-left:auto;padding:.3rem .8rem;border-radius:50px;font-size:.7rem;font-weight:800}
+.badge-avail{background:#DBEAFE;color:#1D4ED8}
+.badge-low{background:#FEF3C7;color:#92400E}
+
+/* ══ IMPACT CARDS ══ */
+.impact-cards{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:2.5rem}
+.impact-card{
+  border-radius:18px;padding:1.4rem;text-align:center;
+  border:1px solid rgba(14,165,233,.14);
+  background:rgba(255,255,255,.90);backdrop-filter:blur(8px);
+  box-shadow:0 4px 20px rgba(14,165,233,.08);
+}
+.impact-num{
+  font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:700;
+  background:linear-gradient(135deg,var(--royal),var(--azure));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.impact-lbl{font-size:.78rem;color:var(--muted);font-weight:600;margin-top:.2rem}
+.donate-steps{display:flex;flex-direction:column;gap:1.2rem}
+.donate-step{display:flex;gap:1.2rem;align-items:flex-start}
+.step-num{
+  width:38px;height:38px;border-radius:50%;
+  background:linear-gradient(135deg,var(--royal),var(--azure));
+  color:#fff;display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:.9rem;flex-shrink:0;
+  box-shadow:0 4px 14px rgba(14,165,233,.35);
+}
+.step-text h4{font-weight:700;margin-bottom:.2rem}
+.step-text p{font-size:.9rem;color:var(--muted)}
+
+/* ══ MENTORS ══ */
+.mentors-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2rem}
+.mentor-card{
+  background:rgba(255,255,255,.92);border-radius:24px;overflow:hidden;
+  box-shadow:0 6px 28px rgba(14,165,233,.10);border:1px solid rgba(14,165,233,.14);
+  transition:transform .35s,box-shadow .35s;
+}
+.mentor-card:hover{transform:translateY(-8px);box-shadow:0 20px 50px rgba(14,165,233,.20)}
+.mentor-cover{height:100px;position:relative}
+.mentor-cover-pattern{position:absolute;inset:0;opacity:.15;background-image:radial-gradient(circle,#fff 1px,transparent 1px);background-size:14px 14px}
+.mentor-avatar{
+  width:74px;height:74px;border-radius:50%;
+  border:4px solid #fff;background:var(--ice);
+  display:flex;align-items:center;justify-content:center;font-size:2rem;
+  position:absolute;bottom:-37px;left:1.5rem;
+  box-shadow:0 6px 20px rgba(14,165,233,.20);overflow:hidden;
+}
+.mentor-body{padding:2.8rem 1.6rem 1.8rem}
+.mentor-name{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:700}
+.mentor-subj{
+  font-size:.82rem;font-weight:700;margin-bottom:.85rem;
+  background:linear-gradient(90deg,var(--azure),var(--neon-pink));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.mentor-bio{font-size:.88rem;color:var(--muted);line-height:1.55;margin-bottom:1rem}
+.mentor-meta{display:flex;gap:1rem;font-size:.78rem;color:var(--muted);margin-bottom:1.2rem}
+.mentor-meta span{display:flex;align-items:center;gap:.3rem}
+.mentor-stars{color:var(--golden)}
+.mentor-btn{
+  width:100%;padding:.75rem;border-radius:50px;
+  border:2px solid var(--azure);color:var(--royal);background:transparent;
+  font-weight:700;font-size:.88rem;cursor:pointer;font-family:inherit;
+  transition:.25s;position:relative;overflow:hidden;
+}
+.mentor-btn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,var(--royal),var(--azure));opacity:0;transition:.3s;
+}
+.mentor-btn:hover::before{opacity:1}
+.mentor-btn:hover{color:#fff;border-color:transparent}
+.mentor-btn span{position:relative;z-index:1}
+.become-mentor-wrap{text-align:center;margin-top:3rem}
+
+/* ══ STORIES ══ */
+.stories-slider{position:relative;overflow:hidden}
+.stories-track{display:flex;gap:2rem;transition:transform .6s cubic-bezier(.25,.46,.45,.94)}
+.story-card{
+  flex:0 0 calc(50% - 1rem);background:rgba(255,255,255,.94);
+  border-radius:28px;padding:2.6rem;
+  box-shadow:0 6px 30px rgba(14,165,233,.10);
+  border:1px solid rgba(14,165,233,.14);position:relative;backdrop-filter:blur(8px);
+}
+.story-quote{
+  font-size:4.5rem;line-height:.8;
+  font-family:'Cormorant Garamond',serif;font-weight:700;margin-bottom:.5rem;
+  background:linear-gradient(135deg,var(--azure),var(--neon-pink));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.story-text{font-size:1rem;color:var(--muted);line-height:1.75;margin-bottom:1.6rem;font-style:italic}
+.story-author{display:flex;align-items:center;gap:1rem}
+.story-avatar{
+  width:52px;height:52px;border-radius:50%;
+  background:linear-gradient(135deg,var(--royal),var(--azure));
+  display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:#fff;
+}
+.story-name{font-weight:700;font-size:.95rem}
+.story-loc{font-size:.78rem;color:var(--muted)}
+.story-outcome{
+  position:absolute;top:1.5rem;right:1.5rem;padding:.4rem 1rem;border-radius:50px;
+  font-size:.72rem;font-weight:800;
+  background:linear-gradient(135deg,rgba(14,165,233,.12),rgba(16,185,129,.12));
+  border:1px solid rgba(14,165,233,.25);color:var(--royal);
+}
+.stories-controls{display:flex;gap:1rem;margin-top:2rem;justify-content:center}
+.story-nav-btn{
+  width:50px;height:50px;border-radius:50%;border:2px solid rgba(14,165,233,.25);
+  background:rgba(255,255,255,.85);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--royal);font-size:1rem;transition:.25s;backdrop-filter:blur(8px);
+}
+.story-nav-btn:hover{background:var(--royal);color:#fff;border-color:var(--royal)}
+
+/* ══ DOCUMENTARY ══ */
+#documentary{background:linear-gradient(165deg,#020712,#04122B 50%,#070A20);position:relative;overflow:hidden}
+#documentary::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 55% 50% at 20% 50%,rgba(14,165,233,.14),transparent 60%),
+    radial-gradient(ellipse 45% 55% at 80% 50%,rgba(124,58,237,.12),transparent 60%),
+    radial-gradient(ellipse 40% 40% at 50% 90%,rgba(255,0,144,.10),transparent 55%);
+}
+#documentary .section-label{-webkit-text-fill-color:unset;color:#fff;background:linear-gradient(135deg,var(--neon-pink),var(--hot-violet));padding:.3rem 1rem;border-radius:50px;font-size:.75rem;display:inline-block;margin-bottom:1rem;font-weight:800}
+#documentary .section-title{color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.5)}
+#documentary .section-sub{color:#fff;font-size:1.1rem;font-weight:600;text-shadow:0 2px 8px rgba(0,0,0,.6);max-width:600px;line-height:1.7}
+.video-layout{display:grid;grid-template-columns:1fr;gap:2rem;align-items:start;position:relative;z-index:1;max-width:900px;margin:0 auto;}
+.video-wrapper{
+  border-radius:22px;overflow:hidden;aspect-ratio:16/9;position:relative;background:rgba(0,0,0,.4);
+  box-shadow:0 28px 70px rgba(14,165,233,.28),0 0 0 1px rgba(56,189,248,.15);
+  isolation:isolate;
+}
+.video-wrapper iframe{width:100%;height:100%;border:none}
+.video-playlist{display:flex;flex-direction:column;gap:.9rem}
+.playlist-item{
+  display:flex;gap:1rem;align-items:center;padding:1rem 1.1rem;border-radius:14px;
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);cursor:pointer;transition:.25s;
+}
+.playlist-item:hover,.playlist-item.active{background:var(--royal);border-color:var(--sky);transform:translateX(4px)}
+.playlist-thumb{width:70px;height:50px;border-radius:10px;background:linear-gradient(135deg,var(--royal),var(--azure));display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+.playlist-meta small{font-size:.72rem;color:rgba(255,255,255,.85);font-weight:500}
+.playlist-meta strong{display:block;font-size:.95rem;color:#fff;margin-bottom:.15rem;font-weight:700}
+
+/* ══ SOCIAL ══ */
+#social{padding:4rem clamp(1.5rem,5vw,5rem)}
+.social-banner{
+  position:relative;overflow:hidden;
+  background:linear-gradient(135deg,var(--royal-deep),var(--royal),#0C2B7A);
+  border-radius:32px;padding:4.5rem;text-align:center;color:#fff;
+  box-shadow:0 24px 70px rgba(0,47,114,.35);
+}
+.social-banner::before{
+  content:'';position:absolute;top:-40%;right:-15%;width:500px;height:500px;
+  background:radial-gradient(circle,rgba(14,165,233,.25),transparent 65%);
+}
+.social-banner::after{
+  content:'';position:absolute;bottom:-40%;left:-15%;width:400px;height:400px;
+  background:radial-gradient(circle,rgba(255,0,144,.18),transparent 65%);
+}
+.social-banner h2{font-family:'Cormorant Garamond',serif;font-size:clamp(1.9rem,3.5vw,3rem);font-weight:700;margin-bottom:.8rem;position:relative;z-index:1}
+.social-banner p{opacity:.82;max-width:520px;margin:0 auto 2.5rem;font-size:1.05rem;position:relative;z-index:1}
+.social-links{display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;position:relative;z-index:1}
+.social-link{display:flex;align-items:center;gap:.7rem;padding:.95rem 2.2rem;border-radius:50px;font-weight:700;font-size:.95rem;text-decoration:none;transition:.25s}
+.social-link.yt{background:#FF0000;color:#fff;box-shadow:0 6px 20px rgba(255,0,0,.35)}
+.social-link.ig{background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);color:#fff;box-shadow:0 6px 20px rgba(253,29,29,.30)}
+.social-link:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.30)}
+
+/* ══ CONTACT ══ */
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start}
+.contact-info{display:flex;flex-direction:column;gap:1.5rem}
+.contact-item{display:flex;gap:1rem;align-items:flex-start}
+.contact-icon{
+  width:50px;height:50px;border-radius:14px;
+  background:linear-gradient(135deg,rgba(14,165,233,.12),rgba(124,58,237,.10));
+  display:flex;align-items:center;justify-content:center;
+  color:var(--azure);font-size:1.25rem;flex-shrink:0;
+  border:1px solid rgba(14,165,233,.20);
+}
+.contact-detail h4{font-weight:700;margin-bottom:.2rem}
+.contact-detail p{font-size:.9rem;color:var(--muted)}
+.contact-detail a{color:var(--royal);text-decoration:none;font-weight:600}
+
+/* ══ FORM CARD ══ */
+.form-card{
+  background:rgba(255,255,255,.94);border-radius:28px;padding:2.8rem;
+  box-shadow:0 10px 50px rgba(14,165,233,.14);border:1px solid rgba(14,165,233,.14);
+  backdrop-filter:blur(12px);
+}
+.form-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;color:var(--royal);margin-bottom:.3rem}
+.form-sub{font-size:.88rem;color:var(--muted);margin-bottom:2rem}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.3rem}
+.form-group{display:flex;flex-direction:column;gap:.5rem}
+.form-group.full{grid-column:1/-1}
+.form-group label{font-size:.82rem;font-weight:700;color:var(--ink);letter-spacing:.02em}
+.form-group input,.form-group select,.form-group textarea{
+  padding:.85rem 1.1rem;border:1.5px solid rgba(14,165,233,.22);
+  border-radius:12px;font-size:.95rem;font-family:inherit;
+  background:rgba(240,249,255,.7);color:var(--ink);
+  transition:border-color .25s,box-shadow .25s;outline:none;
+}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{
+  border-color:var(--azure);box-shadow:0 0 0 4px rgba(14,165,233,.12);background:#fff;
+}
+.form-group textarea{min-height:95px;resize:vertical}
+.form-submit{
+  width:100%;margin-top:1.6rem;
+  background:linear-gradient(135deg,var(--royal),var(--azure));
+  color:#fff;padding:1.05rem;border-radius:50px;border:none;
+  font-size:1rem;font-weight:700;cursor:pointer;font-family:inherit;transition:.25s;
+  display:flex;align-items:center;justify-content:center;gap:.6rem;
+  box-shadow:0 6px 24px rgba(14,165,233,.35);position:relative;overflow:hidden;
+}
+.form-submit::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,var(--neon-pink),var(--hot-violet));opacity:0;transition:.35s;
+}
+.form-submit:hover::before{opacity:1}
+.form-submit:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(255,0,144,.28)}
+.form-submit>*{position:relative;z-index:1}
+
+/* ══ COVER GRADIENT VARIANTS ══ */
+.cover-blue{background:linear-gradient(135deg,var(--royal),var(--azure))}
+.cover-pink{background:linear-gradient(135deg,var(--neon-pink),var(--hot-violet))}
+.cover-cyan{background:linear-gradient(135deg,var(--electric-cyan),var(--royal))}
+.cover-gold{background:linear-gradient(135deg,var(--golden),var(--coral))}
+.cover-mint{background:linear-gradient(135deg,var(--mint),var(--electric-cyan))}
+.cover-lav{background:linear-gradient(135deg,var(--hot-violet),var(--lavender))}
+
+/* ══ HOLOGRAPHIC SHIMMER ══ */
+.holo-card{position:relative;overflow:hidden}
+.holo-card::after{
+  content:'';position:absolute;top:-110%;left:-60%;
+  width:30%;height:340%;
+  background:linear-gradient(110deg,transparent 20%,rgba(255,255,255,.65) 45%,rgba(200,230,255,.30) 50%,transparent 75%);
+  animation:holoSweep 6s ease-in-out infinite;pointer-events:none;
+}
+@keyframes holoSweep{
+  0%{transform:translateX(-100%) skewX(-12deg);opacity:0}
+  10%{opacity:1} 90%{opacity:1}
+  100%{transform:translateX(700%) skewX(-12deg);opacity:0}
+}
+
+/* ══════════════════════════
+   POPUP MODALS — fully fixed
+   ══════════════════════════ */
+.popup-overlay{
+  position:fixed;inset:0;z-index:10000;
+  background:rgba(2,10,30,.35);backdrop-filter:blur(4px);
+  display:flex;align-items:center;justify-content:center;
+  padding:1rem;opacity:0;pointer-events:none;
+  transition:opacity .35s ease;
+}
+.popup-overlay.open{opacity:1;pointer-events:all}
+.popup-box{
+  background:#fff;border-radius:28px;
+  padding:2.8rem;max-width:580px;width:100%;
+  transform:scale(.88) translateY(30px);
+  transition:transform .38s cubic-bezier(.34,1.38,.64,1),opacity .35s;
+  position:relative;max-height:92vh;overflow-y:auto;
+  border:2px solid rgba(14,165,233,.4);
+  box-shadow:0 30px 100px rgba(0,0,0,.35),0 0 0 1px rgba(56,189,248,.2);
+  opacity:0;
+}
+.popup-overlay.open .popup-box{transform:scale(1) translateY(0);opacity:1}
+.popup-close{
+  position:absolute;top:1.2rem;right:1.2rem;
+  width:36px;height:36px;border-radius:50%;border:none;
+  background:var(--ice);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;color:var(--muted);transition:.2s;z-index:10;
+}
+.popup-close:hover{background:var(--ice);color:var(--royal);transform:rotate(90deg)}
+.popup-header{text-align:center;margin-bottom:2rem}
+.popup-emoji{font-size:2.8rem;display:block;margin-bottom:.6rem}
+.popup-title{font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:700;color:var(--royal);margin-bottom:.3rem}
+.popup-sub{font-size:.9rem;color:var(--muted)}
+
+/* ══ RICH FOOTER ══ */
+footer{
+  background:var(--deep-navy);color:rgba(255,255,255,.65);
+  padding:0;position:relative;overflow:hidden;
+}
+footer::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 55% 60% at 10% 30%,rgba(14,165,233,.10),transparent 60%),
+    radial-gradient(ellipse 45% 50% at 90% 60%,rgba(124,58,237,.08),transparent 60%);
+  pointer-events:none;
+}
+.footer-top{
+  display:grid;grid-template-columns:2fr 1fr 1fr 1.4fr;gap:3rem;
+  padding:4rem clamp(1.5rem,5vw,5rem) 3rem;
+  border-bottom:1px solid rgba(255,255,255,.08);position:relative;z-index:1;
+}
+.footer-brand-col{}
+.footer-logo-row{display:flex;align-items:center;gap:.85rem;margin-bottom:1.1rem}
+.footer-logo-row span{
+  font-family:'Cormorant Garamond',serif;font-size:1.55rem;font-weight:700;
+  background:linear-gradient(90deg,var(--sky),var(--lavender));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.footer-tagline{font-size:.9rem;color:rgba(255,255,255,.55);line-height:1.65;max-width:260px;margin-bottom:1.5rem}
+.footer-social{display:flex;gap:.8rem}
+.footer-social a{
+  width:38px;height:38px;border-radius:10px;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.10);
+  display:flex;align-items:center;justify-content:center;
+  color:rgba(255,255,255,.6);font-size:1rem;text-decoration:none;
+  transition:.2s;
+}
+.footer-social a:hover{background:linear-gradient(135deg,var(--royal),var(--azure));color:#fff;border-color:transparent}
+.footer-col h5{
+  font-size:.72rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;
+  background:linear-gradient(90deg,var(--azure),var(--neon-pink));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:1.2rem;
+}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:.7rem}
+.footer-col ul li a{color:rgba(255,255,255,.52);text-decoration:none;font-size:.88rem;transition:color .2s}
+.footer-col ul li a:hover{color:var(--sky)}
+.footer-contact-item{display:flex;align-items:flex-start;gap:.7rem;margin-bottom:.9rem}
+.footer-contact-item i{color:var(--azure);font-size:.88rem;margin-top:.2rem;flex-shrink:0}
+.footer-contact-item span{font-size:.85rem;color:rgba(255,255,255,.52);line-height:1.5}
+.footer-contact-item a{color:rgba(255,255,255,.52);text-decoration:none;transition:color .2s;font-size:.85rem}
+.footer-contact-item a:hover{color:var(--sky)}
+.footer-badge{
+  display:inline-flex;align-items:center;gap:.5rem;
+  margin-top:1rem;padding:.5rem 1rem;border-radius:50px;
+  background:rgba(14,165,233,.12);border:1px solid rgba(14,165,233,.22);
+  font-size:.75rem;font-weight:700;color:var(--sky);
+}
+.footer-bottom{
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;
+  padding:1.5rem clamp(1.5rem,5vw,5rem);
+  position:relative;z-index:1;
+}
+.footer-bottom p{font-size:.82rem;color:rgba(255,255,255,.42)}
+.footer-bottom strong{
+  background:linear-gradient(90deg,var(--sky),var(--lavender));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.footer-bottom-links{display:flex;gap:1.5rem}
+.footer-bottom-links a{color:rgba(255,255,255,.38);text-decoration:none;font-size:.8rem;transition:color .2s}
+.footer-bottom-links a:hover{color:var(--sky)}
+
+/* ══ TOAST ══ */
+.toast{
+  position:fixed;bottom:2rem;right:2rem;z-index:20000;
+  background:linear-gradient(135deg,var(--royal),var(--azure));color:#fff;
+  padding:1.1rem 1.6rem;border-radius:16px;
+  box-shadow:0 10px 40px rgba(14,165,233,.35);
+  display:flex;align-items:center;gap:.8rem;
+  transform:translateY(120px);opacity:0;
+  transition:.45s cubic-bezier(.34,1.56,.64,1);max-width:360px;
+}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* ══ BACK TO TOP ══ */
+.back-top{
+  position:fixed;bottom:2rem;left:2rem;z-index:999;
+  width:50px;height:50px;border-radius:50%;
+  background:linear-gradient(135deg,var(--royal),var(--azure));
+  color:#fff;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:1rem;
+  opacity:0;transform:translateY(20px);transition:.3s;
+  box-shadow:0 6px 22px rgba(14,165,233,.40);
+}
+.back-top.show{opacity:1;transform:translateY(0)}
+
+/* ══ FADE UP ══ */
+.fade-up{opacity:0;transform:translateY(32px);transition:.75s cubic-bezier(.25,.46,.45,.94)}
+.fade-up.visible{opacity:1;transform:translateY(0)}
+
+/* ══ MOBILE ══ */
+@media(max-width:900px){
+  #hero{grid-template-columns:1fr}
+  .hero-carousel-side{height:300px;position:relative}
+  .hero-text-side{padding:2rem 1.5rem}
+  .about-grid,.contact-grid{grid-template-columns:1fr;gap:2.5rem}
+  .video-layout{max-width:100%;padding:0 1rem}
+  .form-grid{grid-template-columns:1fr}
+  .story-card{flex:0 0 calc(100% - .5rem)}
+  .gallery-card{flex:0 0 calc(82% - .5rem)}
+  .about-image-collage{height:280px}
+  .nav-links{
+    display:none;position:fixed;top:70px;left:0;right:0;
+    background:rgba(255,255,255,.96);backdrop-filter:blur(24px);
+    border-bottom:1px solid var(--border);padding:1.5rem;
+    flex-direction:column;gap:1rem;z-index:999;
+  }
+  .nav-links.open{display:flex}
+  .hamburger{display:flex}
+  .impact-cards{grid-template-columns:1fr 1fr}
+  .social-banner{padding:2.2rem 1.5rem}
+  .footer-top{grid-template-columns:1fr 1fr;gap:2rem}
+  .footer-brand-col{grid-column:1/-1}
+  .footer-bottom{flex-direction:column;text-align:center}
+}
+@media(max-width:540px){
+  .footer-top{grid-template-columns:1fr}
+  .footer-brand-col{grid-column:auto}
+  .popup-box{padding:1.8rem}
+}
+</style>
+</head>
+<body>
+
+<!-- BG LAYERS -->
+<div id="aurora-bg"></div>
+<div id="conic-layer"></div>
+<div id="prism-stripe"></div>
+<canvas id="cursor-canvas"></canvas>
+<div id="cursor-glow"></div>
+<div id="orb-container"></div>
+
+<!-- ════ NAV ════ -->
+<nav id="main-nav">
+  <a href="#" class="nav-brand">
+    <img src="assets/logo.jpeg" alt="Project BookBridge" style="width:48px;height:48px;border-radius:10px;object-fit:cover;box-shadow:0 4px 15px rgba(0,0,0,.1);">
+    <span>Project BookBridge</span>
+  </a>
+  <div class="nav-links" id="nav-links">
+    <a href="#about">About</a>
+    <a href="#gallery">Gallery</a>
+    <a href="#subjects">Learn</a>
+    <a href="#" onclick="openResourcesCenter();return false"><i class="fas fa-book-open"></i> Resources</a>
+    <a href="#mentors">Mentors</a>
+    <a href="#documentary">Documentary</a>
+    <a href="#" onclick="openTrackLookup();return false"><i class="fas fa-search"></i> Track</a>
+    <a href="#contact">Contact</a>
+    <a href="#" class="nav-cta" onclick="openPopup('donate-popup');return false">Donate Now</a>
+  </div>
+  <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- ════ HERO ════ -->
+<section id="hero">
+  <div class="hero-text-side">
+    <!-- LOW-OPACITY BG SLIDESHOW -->
+    <div class="hero-text-bg" id="hero-text-bg">
+      <div class="hero-text-bg-slide active" style="background-image:url('assets/WhatsApp Image 2026-05-03 at 2.57.29 PM.jpeg')"></div>
+      <div class="hero-text-bg-slide" style="background-image:url('assets/WhatsApp Image 2026-05-03 at 2.57.30 PM (1).jpeg')"></div>
+      <div class="hero-text-bg-slide" style="background-image:url('assets/WhatsApp Image 2026-05-03 at 2.57.30 PM (2).jpeg')"></div>
+      <div class="hero-text-bg-slide" style="background-image:url('assets/WhatsApp Image 2026-05-03 at 2.57.30 PM (3).jpeg')"></div>
+      <div class="hero-text-bg-slide" style="background-image:url('assets/WhatsApp Image 2026-05-03 at 2.57.30 PM (4).jpeg')"></div>
+      <div class="hero-text-bg-slide" style="background-image:url('assets/WhatsApp Image 2026-05-03 at 2.57.30 PM.jpeg')"></div>
+      <div class="hero-text-bg-slide" style="background-image:url('assets/WhatsApp Image 2026-05-03 at 2.57.31 PM (1).jpeg')"></div>
+      <div class="hero-text-bg-slide" style="background-image:url('assets/WhatsApp Image 2026-05-03 at 2.57.31 PM (2).jpeg')"></div>
+    </div>
+    <!-- CONTENT -->
+    <div class="hero-text-inner">
+      <div class="prism-bar">
+        <span style="background:var(--royal)"></span>
+        <span style="background:var(--azure)"></span>
+        <span style="background:var(--electric-cyan)"></span>
+        <span style="background:var(--neon-pink)"></span>
+        <span style="background:var(--hot-violet)"></span>
+        <span style="background:var(--golden)"></span>
+      </div>
+      <div class="hero-badge">
+        <i class="fas fa-star" style="color:var(--golden)"></i>
+        Supporting SDG 4 · Quality Education
+      </div>
+      <h1 class="hero-title">
+        Connecting <em>Dreams</em><br>with Knowledge
+      </h1>
+      <p class="hero-sub">
+        Project BookBridge empowers underserved junior secondary students across Nigeria with donated books, quality learning materials, and experienced mentors — one student at a time.
+      </p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="openPopup('request-popup')">
+          <i class="fas fa-book-open"></i> <span>Request a Book</span>
+        </button>
+        <button class="btn-secondary" onclick="openPopup('donate-popup')">
+          <i class="fas fa-heart"></i> Donate Books
+        </button>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-num" data-target="200">0</span>
+          <span class="stat-lbl">Books Donated</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" data-target="150">0</span>
+          <span class="stat-lbl">Students Helped</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" data-target="25">0</span>
+          <span class="stat-lbl">Active Mentors</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-carousel-side">
+    <div class="carousel-slide active" style="background-image:url('assets/WhatsApp Image 2026-05-03 at 2.57.31 PM (3).jpeg')"></div>
+    <div class="carousel-slide" style="background-image:url('assets/WhatsApp Image 2026-05-03 at 2.57.31 PM (4).jpeg')"></div>
+    <div class="carousel-slide" style="background-image:url('assets/WhatsApp Image 2026-05-03 at 2.57.31 PM.jpeg')"></div>
+    <div class="carousel-slide" style="background-image:url('assets/WhatsApp Image 2026-05-03 at 2.57.32 PM (1).jpeg')"></div>
+    <div class="carousel-slide" style="background-image:url('assets/WhatsApp Image 2026-05-03 at 2.57.32 PM (2).jpeg')"></div>
+    <div class="carousel-slide" style="background-image:url('assets/WhatsApp Image 2026-05-03 at 2.57.32 PM (3).jpeg')"></div>
+    <div class="carousel-slide" style="background-image:url('assets/WhatsApp Image 2026-05-03 at 2.57.32 PM (4).jpeg')"></div>
+    <div class="carousel-slide" style="background-image:url('assets/WhatsApp Image 2026-05-03 at 2.57.32 PM.jpeg')"></div>
+    <div class="carousel-slide" style="background-image:url('assets/WhatsApp Image 2026-05-03 at 2.57.33 PM (1).jpeg')"></div>
+    <div class="carousel-slide" style="background-image:url('assets/WhatsApp Image 2026-05-03 at 2.57.33 PM (2).jpeg')"></div>
+    <div class="carousel-overlay">
+      <p class="carousel-caption" id="carousel-caption">Students at Agboville Community Secondary School, Rivers State</p>
+    </div>
+    <div class="carousel-dots" id="carousel-dots"></div>
+  </div>
+</section>
+
+<!-- ════ ABOUT ════ -->
+<section id="about">
+  <div class="about-grid fade-up">
+    <div class="about-image-collage">
+      <div class="collage-img"><img src="assets/WhatsApp Image 2026-05-03 at 2.57.33 PM (3).jpeg" alt="Students reading"></div>
+      <div class="collage-img"><img src="assets/WhatsApp Image 2026-05-03 at 2.57.33 PM.jpeg" alt="Library books"></div>
+      <div class="collage-img"><img src="assets/WhatsApp Image 2026-05-03 at 2.57.34 PM (1).jpeg" alt="Children learning"></div>
+      <div class="collage-badge">📚 200+ Books Distributed</div>
+    </div>
+    <div>
+      <span class="section-label">Our Mission</span>
+      <h2 class="section-title">Bridging the<br>Educational Gap</h2>
+      <p class="section-sub">We believe every child deserves access to quality education, regardless of their background or economic circumstances. Project BookBridge makes that possible.</p>
+      <div class="about-features">
+        <div class="about-feat">
+          <div class="feat-icon blue"><i class="fas fa-book"></i></div>
+          <div class="feat-text"><h4>Book Request & Donation</h4><p>Students request specific books; donors fulfill requests directly, creating a real impact chain.</p></div>
+        </div>
+        <div class="about-feat">
+          <div class="feat-icon pink"><i class="fas fa-chalkboard-teacher"></i></div>
+          <div class="feat-text"><h4>Mentor Connections</h4><p>Experienced educators offer personalized guidance aligned to Junior WAEC subjects.</p></div>
+        </div>
+        <div class="about-feat">
+          <div class="feat-icon cyan"><i class="fas fa-mobile-alt"></i></div>
+          <div class="feat-text"><h4>Mobile-First Learning</h4><p>Our platform is built for the phones students actually have, working even on limited data.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════ GALLERY ════ -->
+<section id="gallery">
+  <div class="gallery-intro fade-up">
+    <div>
+      <span class="section-label">What We've Done</span>
+      <h2 class="section-title">Stories in Pictures</h2>
+    </div>
+    <div style="display:flex;gap:.8rem">
+      <button class="gallery-btn" onclick="galleryMove(-1)"><i class="fas fa-arrow-left"></i></button>
+      <button class="gallery-btn" onclick="galleryMove(1)"><i class="fas fa-arrow-right"></i></button>
+    </div>
+  </div>
+  <div class="gallery-track-wrap fade-up">
+    <div class="gallery-track" id="gallery-track">
+      <div class="gallery-card holo-card"><img src="assets/WhatsApp Image 2026-05-03 at 2.57.34 PM (2).jpeg" alt=""><div class="gallery-card-overlay"><div><strong>Book Donation Drive</strong><br><small>Rivers State, Jan 2025</small></div></div></div>
+      <div class="gallery-card holo-card"><img src="assets/WhatsApp Image 2026-05-03 at 2.57.34 PM (3).jpeg" alt=""><div class="gallery-card-overlay"><div><strong>Study Sessions</strong><br><small>Rivers State, Feb 2025</small></div></div></div>
+      <div class="gallery-card holo-card"><img src="assets/WhatsApp Image 2026-05-03 at 2.57.34 PM (4).jpeg" alt=""><div class="gallery-card-overlay"><div><strong>Mentor Workshop</strong><br><small>Rivers State, Mar 2025</small></div></div></div>
+      <div class="gallery-card holo-card"><img src="assets/WhatsApp Image 2026-05-03 at 2.57.34 PM (5).jpeg" alt=""><div class="gallery-card-overlay"><div><strong>Library Setup</strong><br><small>Rivers State, Apr 2025</small></div></div></div>
+      <div class="gallery-card holo-card"><img src="assets/WhatsApp Image 2026-05-03 at 2.57.34 PM.jpeg" alt=""><div class="gallery-card-overlay"><div><strong>Community Outreach</strong><br><small>Rivers State, May 2025</small></div></div></div>
+      <div class="gallery-card holo-card"><img src="assets/WhatsApp Image 2026-05-03 at 2.57.35 PM (1).jpeg" alt=""><div class="gallery-card-overlay"><div><strong>Awards Ceremony</strong><br><small>Rivers State, Jun 2025</small></div></div></div>
+      <div class="gallery-card holo-card"><img src="assets/WhatsApp Image 2026-05-03 at 2.57.35 PM (2).jpeg" alt=""><div class="gallery-card-overlay"><div><strong>Student Graduation</strong><br><small>Rivers State, Jul 2025</small></div></div></div>
+      <div class="gallery-card holo-card"><img src="assets/WhatsApp Image 2026-05-03 at 2.57.35 PM (3).jpeg" alt=""><div class="gallery-card-overlay"><div><strong>Reading Club</strong><br><small>Rivers State, Aug 2025</small></div></div></div>
+      <div class="gallery-card holo-card"><img src="assets/WhatsApp Image 2026-05-03 at 2.57.35 PM (4).jpeg" alt=""><div class="gallery-card-overlay"><div><strong>Volunteer Training</strong><br><small>Rivers State, Sep 2025</small></div></div></div>
+      <div class="gallery-card holo-card"><img src="assets/WhatsApp Image 2026-05-03 at 2.57.35 PM.jpeg" alt=""><div class="gallery-card-overlay"><div><strong>School Visit</strong><br><small>Rivers State, Oct 2025</small></div></div></div>
+      <div class="gallery-card holo-card"><img src="assets/WhatsApp Image 2026-05-03 at 2.57.36 PM (1).jpeg" alt=""><div class="gallery-card-overlay"><div><strong>Book Distribution</strong><br><small>Rivers State, Nov 2025</small></div></div></div>
+      <div class="gallery-card holo-card"><img src="assets/WhatsApp Image 2026-05-03 at 2.57.36 PM (2).jpeg" alt=""><div class="gallery-card-overlay"><div><strong>Success Celebration</strong><br><small>Rivers State, Dec 2025</small></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ════ SUBJECTS ════ -->
+<section id="subjects">
+  <div class="section-header fade-up" style="text-align:center">
+    <span class="section-label">Learning Materials</span>
+    <h2 class="section-title" style="color:#fff">Junior WAEC Subject Hub</h2>
+    <p class="section-sub" style="margin:0 auto;color:rgba(255, 255, 255, 0.911)">Access comprehensive study materials, past questions, and guides for all core Junior WAEC subjects.</p>
+    <button onclick="openResourcesCenter()" class="btn-primary" style="margin-top:1.5rem;display:inline-flex;align-items:center;gap:.5rem;padding:1rem 2rem;font-size:1rem;background:linear-gradient(135deg,var(--azure),var(--royal));box-shadow:0 8px 30px rgba(14,165,233,.4);">
+      <i class="fas fa-book-open"></i> <span>Open Learning Resources Center</span>
+    </button>
+  </div>
+  <div class="subjects-grid fade-up" id="subjects-grid">
+    <div class="subject-card" data-subject="English Language" onclick="showSubjectChoice('English Language')"><div class="subj-icon">📝</div><div class="subj-name">English Language</div><div class="subj-desc">Comprehension, essay writing, oral English, and grammar — built for Junior WAEC success.</div><span class="subj-tag"><span class="resource-count">120</span> Resources</span></div>
+    <div class="subject-card" data-subject="Mathematics" onclick="showSubjectChoice('Mathematics')"><div class="subj-icon">🔢</div><div class="subj-name">Mathematics</div><div class="subj-desc">Algebra, geometry, statistics, and numbers — with worked examples that make it click.</div><span class="subj-tag"><span class="resource-count">98</span> Resources</span></div>
+    <div class="subject-card" data-subject="Integrated Science" onclick="showSubjectChoice('Integrated Science')"><div class="subj-icon">🔬</div><div class="subj-name">Integrated Science</div><div class="subj-desc">Biology, chemistry, and physics combined — easy to understand, exam-ready guides.</div><span class="subj-tag"><span class="resource-count">85</span> Resources</span></div>
+    <div class="subject-card" data-subject="Social Studies" onclick="showSubjectChoice('Social Studies')"><div class="subj-icon">🌍</div><div class="subj-name">Social Studies</div><div class="subj-desc">History, civics, economics, and geography for the modern Nigerian student.</div><span class="subj-tag"><span class="resource-count">72</span> Resources</span></div>
+    <div class="subject-card" data-subject="Business Studies" onclick="showSubjectChoice('Business Studies')"><div class="subj-icon">💼</div><div class="subj-name">Business Studies</div><div class="subj-desc">Entrepreneurship, bookkeeping, and commerce fundamentals for young Nigerian achievers.</div><span class="subj-tag"><span class="resource-count">60</span> Resources</span></div>
+    <div class="subject-card" data-subject="Agricultural Science" onclick="showSubjectChoice('Agricultural Science')"><div class="subj-icon">🌱</div><div class="subj-name">Agricultural Science</div><div class="subj-desc">Farming techniques, soil science, and animal husbandry to connect theory with real life.</div><span class="subj-tag"><span class="resource-count">44</span> Resources</span></div>
+    <div class="subject-card many-more-card" onclick="openPopup('many-more-popup')"><div class="subj-icon">📚</div><div class="subj-name">And Many More...</div><div class="subj-desc">Civic Education, CRS, Home Economics, Computer Studies, French, and other Junior WAEC subjects.</div><span class="subj-tag">Explore All</span></div>
+  </div>
+</section>
+
+<!-- ════ MENTORS ════ -->
+<section id="mentors">
+  <div class="section-header fade-up" style="text-align:center">
+    <span class="section-label">Mentor Network</span>
+    <h2 class="section-title">Learn from the Best</h2>
+    <p class="section-sub" style="margin:0 auto">Connect with experienced educators who give their time to help underserved students achieve their full potential.</p>
+  </div>
+  <div class="mentors-grid fade-up" id="mentors-grid"></div>
+  <div class="become-mentor-wrap fade-up">
+    <p style="color:var(--muted);margin-bottom:1.2rem">Are you an experienced educator? Join our growing mentor community.</p>
+    <button class="btn-primary" style="margin:0 auto" onclick="openPopup('mentor-apply-popup')">
+      <i class="fas fa-chalkboard-teacher"></i> <span>Become a Mentor</span>
+    </button>
+  </div>
+</section>
+
+<!-- ════ STORIES ════ -->
+<section id="stories" style="padding-bottom:2rem">
+  <div class="section-header fade-up">
+    <span class="section-label">Success Stories</span>
+    <h2 class="section-title">Lives Transformed</h2>
+    <p class="section-sub">Real students. Real results. These are the voices that fuel our mission.</p>
+  </div>
+  <div class="stories-slider fade-up">
+    <div class="stories-track" id="stories-track">
+      <div class="story-card holo-card">
+        <span class="story-outcome">Passed Junior WAEC ✓</span>
+        <div class="story-quote">"</div>
+        <p class="story-text">I failed my Maths test twice before Project BookBridge connected me with Mr. Abdullahi. Three months later, I scored a B in my Junior WAEC. I can't believe how much I've grown.</p>
+        <div class="story-author"><div class="story-avatar">👩‍🎓</div><div><div class="story-name">Amaka Nwosu</div><div class="story-loc">JSS 3 · Rivers State</div></div></div>
+      </div>
+      <div class="story-card holo-card">
+        <span class="story-outcome">Got Scholarship ✓</span>
+        <div class="story-quote">"</div>
+        <p class="story-text">I didn't have a single textbook when I started JSS 2. Project BookBridge gave me four books, and my teacher said I became the best student in my class. I won a scholarship this year!</p>
+        <div class="story-author"><div class="story-avatar">👦</div><div><div class="story-name">Ibrahim Musa</div><div class="story-loc">JSS 2 → JSS 3 · Rivers State</div></div></div>
+      </div>
+      <div class="story-card holo-card">
+        <span class="story-outcome">Top of Class ✓</span>
+        <div class="story-quote">"</div>
+        <p class="story-text">My mum is a petty trader and couldn't afford my books. My school principal told us about Project BookBridge and within a week, I had everything I needed. I finished top of my class!</p>
+        <div class="story-author"><div class="story-avatar">👧</div><div><div class="story-name">Precious Adeleke</div><div class="story-loc">JSS 1 · Rivers State</div></div></div>
+      </div>
+      <div class="story-card holo-card">
+        <span class="story-outcome">Inspired Others ✓</span>
+        <div class="story-quote">"</div>
+        <p class="story-text">I was ashamed to come to school without books while others had them. Project BookBridge changed that. Now I tell every student in my village about it. We all have books now.</p>
+        <div class="story-author"><div class="story-avatar">👨‍🎓</div><div><div class="story-name">Chukwuemeka Eze</div><div class="story-loc">JSS 3 · Rivers State</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="stories-controls fade-up">
+    <button class="story-nav-btn" onclick="storiesMove(-1)"><i class="fas fa-arrow-left"></i></button>
+    <button class="story-nav-btn" onclick="storiesMove(1)"><i class="fas fa-arrow-right"></i></button>
+  </div>
+</section>
+
+<!-- ════ DOCUMENTARY ════ -->
+<section id="documentary">
+  <div class="video-layout fade-up">
+    <div>
+      <span class="section-label">Video Documentary</span>
+      <h2 class="section-title" style="color:#fff;margin-bottom:.8rem">See Our Work<br>in Action</h2>
+      <p class="section-sub" style="margin-bottom:2rem">Watch our documentary series capturing real moments from book drives, mentoring sessions, and community outreach across Nigeria.</p>
+      <a href="https://youtu.be/laNbHZsr2jw" target="_blank" class="video-wrapper" style="display:block;text-decoration:none;position:relative;overflow:hidden;">
+        <img src="https://img.youtube.com/vi/laNbHZsr2jw/maxresdefault.jpg" alt="Project BookBridge Documentary" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;transition:transform 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.3);transition:background 0.3s;" onmouseover="this.style.background='rgba(0,0,0,.1)'" onmouseout="this.style.background='rgba(0,0,0,.3)'">
+          <div style="text-align:center;color:#fff;">
+            <div style="width:90px;height:60px;background:#FF0000;border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 25px rgba(0,0,0,.4);margin:0 auto 1rem;transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+              <i class="fas fa-play" style="color:#fff;font-size:1.5rem;margin-left:5px;"></i>
+            </div>
+            <div style="font-size:1.1rem;font-weight:600;text-shadow:0 2px 10px rgba(0,0,0,.5);">Click to Watch on YouTube</div>
+          </div>
+        </div>
+      </a>
+      <div style="margin-top:1.2rem;text-align:center">
+        <a href="https://youtube.com/@projectbookbridge" target="_blank" class="btn-primary" style="display:inline-flex">
+          <i class="fab fa-youtube"></i> <span>Watch Full Channel</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════ SOCIAL ════ -->
+<section id="social" style="padding:4rem clamp(1.5rem,5vw,5rem)">
+  <div class="social-banner fade-up">
+    <h2>Follow Our Journey</h2>
+    <p>Stay updated with our latest book drives, student stories, and community impact — on YouTube and Instagram.</p>
+    <div class="social-links">
+      <a href="https://youtube.com/@projectbookbridge" target="_blank" class="social-link yt"><i class="fab fa-youtube"></i> @projectbookbridge</a>
+      <a href="https://www.instagram.com/_bookbridge" target="_blank" class="social-link ig"><i class="fab fa-instagram"></i> @_bookbridge</a>
+    </div>
+  </div>
+</section>
+
+<!-- ════ CONTACT ════ -->
+<section id="contact">
+  <div class="contact-grid">
+    <div class="fade-up">
+      <span class="section-label">Get in Touch</span>
+      <h2 class="section-title">We'd Love<br>to Hear from You</h2>
+      <p class="section-sub">Whether you're a school, NGO, corporate donor, or just want to get involved — reach out!</p>
+      <div class="contact-info">
+        <div class="contact-item"><div class="contact-icon"><i class="fab fa-whatsapp" style="color:#25D366"></i></div><div class="contact-detail"><h4>WhatsApp Us</h4><p><a href="https://wa.me/2348128384816" target="_blank" style="color:#25D366;font-weight:700">+234 812 838 4816</a><br><small style="color:var(--muted)">Primary admin line</small></p></div></div>
+        <div class="contact-item"><div class="contact-icon"><i class="fas fa-envelope"></i></div><div class="contact-detail"><h4>Email Us</h4><p><a href="mailto:bookbridge21@gmail.com">bookbridge21@gmail.com</a></p></div></div>
+        <div class="contact-item"><div class="contact-icon"><i class="fab fa-youtube"></i></div><div class="contact-detail"><h4>YouTube</h4><p><a href="https://youtube.com/@projectbookbridge" target="_blank">@projectbookbridge</a></p></div></div>
+        <div class="contact-item"><div class="contact-icon"><i class="fab fa-instagram"></i></div><div class="contact-detail"><h4>Instagram</h4><p><a href="https://www.instagram.com/_bookbridge" target="_blank">@_bookbridge</a></p></div></div>
+        <div class="contact-item"><div class="contact-icon"><i class="fas fa-phone-alt"></i></div><div class="contact-detail"><h4>Phone Lines</h4><p><a href="https://wa.me/2348057948256" target="_blank" style="display:block;margin-bottom:.3rem">+234 805 794 8256</a><a href="https://wa.me/2348136664334" target="_blank">+234 813 666 4334</a></p></div></div>
+        <div class="contact-item"><div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div><div class="contact-detail"><h4>Geographic Reach</h4><p>Operating across Rivers State and Nigeria</p></div></div>
+      </div>
+    </div>
+    <div class="form-card fade-up">
+      <div class="form-title" style="display:flex;align-items:center;gap:.5rem;"><i class="fab fa-whatsapp" style="color:#25D366"></i> Message Us on WhatsApp</div>
+      <div class="form-sub">Your message will be sent directly to our admin team via WhatsApp.</div>
+      <form onsubmit="sendWhatsAppMessage(event)">
+        <div class="form-grid">
+          <div class="form-group"><label>Full Name *</label><input type="text" id="contactName" required placeholder="Your name"></div>
+          <div class="form-group"><label>Email *</label><input type="email" id="contactEmail" required placeholder="your@email.com"></div>
+          <div class="form-group"><label>Subject</label><input type="text" id="contactSubject" placeholder="e.g. Partnership Inquiry"></div>
+          <div class="form-group"><label>You Are</label><select id="contactType"><option>A Student</option><option>A Donor</option><option>A School / NGO</option><option>A Mentor</option><option>Other</option></select></div>
+          <div class="form-group full"><label>Message *</label><textarea id="contactMessage" required placeholder="Tell us how we can help or how you'd like to get involved..." style="min-height:120px"></textarea></div>
+        </div>
+        <button type="submit" class="form-submit" style="background:linear-gradient(135deg,#25D366,#128C7E)"><i class="fab fa-whatsapp"></i><span>Send via WhatsApp</span></button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════ RICH FOOTER ════════════════════ -->
+<footer>
+  <div class="footer-top">
+    <!-- Brand col -->
+    <div class="footer-brand-col">
+      <div class="footer-logo-row">
+        <img src="assets/logo.jpeg" alt="Project BookBridge" style="width:48px;height:48px;border-radius:12px;object-fit:cover;box-shadow:0 4px 15px rgba(0,0,0,.1);">
+        <span>Project BookBridge</span>
+      </div>
+      <p class="footer-tagline">Empowering underserved Nigerian students with books, mentors, and opportunity — one classroom at a time.</p>
+      <div class="footer-social">
+        <a href="https://youtube.com/@projectbookbridge" target="_blank" title="YouTube"><i class="fab fa-youtube"></i></a>
+        <a href="https://www.instagram.com/_bookbridge" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="mailto:bookbridge21@gmail.com" title="Email"><i class="fas fa-envelope"></i></a>
+      </div>
+      <div class="footer-badge"><i class="fas fa-globe"></i> Supporting SDG 4 · Quality Education</div>
+    </div>
+    <!-- Navigate col -->
+    <div class="footer-col">
+      <h5>Navigate</h5>
+      <ul>
+        <li><a href="#about">About BookBridge</a></li>
+        <li><a href="#gallery">Photo Gallery</a></li>
+        <li><a href="#" onclick="openResourcesCenter();return false">Learning Resources Center</a></li>
+        <li><a href="#subjects">Subject Hub</a></li>
+        <li><a href="#mentors">Mentor Network</a></li>
+        <li><a href="#documentary">Documentary</a></li>
+        <li><a href="#contact">Contact Us</a></li>
+      </ul>
+    </div>
+    <!-- Get Involved col -->
+    <div class="footer-col">
+      <h5>Get Involved</h5>
+      <ul>
+        <li><a href="#" onclick="openTrackLookup();return false"><i class="fas fa-search" style="margin-right:.3rem"></i>Track Request/Donation</a></li>
+        <li><a href="#" onclick="openPopup('request-popup');return false">Request a Book</a></li>
+        <li><a href="#" onclick="openPopup('donate-popup');return false">Donate Books</a></li>
+        <li><a href="#" onclick="openPopup('mentor-apply-popup');return false">Become a Mentor</a></li>
+        <li><a href="#" onclick="openResourcesCenter();return false">Learning Resources</a></li>
+        <li><a href="#stories">Success Stories</a></li>
+        <li><a href="#social">Follow Us</a></li>
+      </ul>
+    </div>
+    <!-- Contact col -->
+    <div class="footer-col">
+      <h5>Contact</h5>
+      <div class="footer-contact-item"><i class="fab fa-whatsapp" style="color:#25D366"></i><a href="https://wa.me/2348128384816" target="_blank" style="color:#25D366;font-weight:600">+234 812 838 4816 (Primary)</a></div>
+      <div class="footer-contact-item"><i class="fas fa-envelope"></i><a href="mailto:bookbridge21@gmail.com">bookbridge21@gmail.com</a></div>
+      <div class="footer-contact-item"><i class="fab fa-youtube"></i><a href="https://youtube.com/@projectbookbridge" target="_blank">@projectbookbridge</a></div>
+      <div class="footer-contact-item"><i class="fab fa-instagram"></i><a href="https://www.instagram.com/_bookbridge" target="_blank">@_bookbridge</a></div>
+      <div class="footer-contact-item"><i class="fas fa-map-marker-alt"></i><span>Lagos · Anambra · Kano · Rivers · Ogun · Abuja</span></div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 BookBridge · Built with ❤️ to support <strong>SDG 4: Quality Education</strong> across Nigeria</p>
+    <div class="footer-bottom-links">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Use</a>
+      <a href="#contact">Report an Issue</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════
+     POPUP: REQUEST A BOOK
+     ═══════════════════════════════ -->
+<div class="popup-overlay" id="request-popup">
+  <div class="popup-box">
+    <button class="popup-close" onclick="closePopup('request-popup')"><i class="fas fa-times"></i></button>
+    <div class="popup-header">
+      <span class="popup-emoji">📬</span>
+      <div class="popup-title">Request a Book</div>
+      <div class="popup-sub">Fill in the details below and we'll connect you with a donor — usually within 2 weeks.</div>
+    </div>
+    <form onsubmit="submitForm(event,'request')">
+      <div class="form-grid">
+        <div class="form-group"><label>Your Full Name *</label><input type="text" placeholder="e.g. Amara Okafor" required></div>
+        <div class="form-group"><label>School Name *</label><input type="text" placeholder="e.g. Agboville JSS, Lagos" required></div>
+        <div class="form-group"><label>Book Title *</label><input type="text" placeholder="e.g. New General Mathematics" required></div>
+        <div class="form-group"><label>Subject *</label>
+          <select required>
+            <option value="">Select subject</option>
+            <option>English Language</option><option>Mathematics</option>
+            <option>Integrated Science</option><option>Social Studies</option>
+            <option>Business Studies</option><option>Agricultural Science</option><option>Other</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Your Class</label><select><option>JSS 1</option><option>JSS 2</option><option>JSS 3</option></select></div>
+        <div class="form-group"><label>Phone / WhatsApp *</label><input type="tel" placeholder="+234 XXX XXX XXXX" required></div>
+        <div class="form-group"><label>Email Address</label><input type="email" placeholder="your@email.com (for receipt)"></div>
+        <div class="form-group full"><label>Why do you need this book? *</label><textarea placeholder="Tell us a bit about your situation and how this book will help you..." required></textarea></div>
+        <div class="form-group full" style="display:flex;align-items:center;gap:.5rem;padding:1rem;background:var(--ice-soft);border-radius:12px;">
+          <input type="checkbox" id="saveReceipt" style="width:auto;" checked>
+          <label for="saveReceipt" style="margin:0;font-size:.9rem;">📄 Save receipt with Tracking ID for my records</label>
+        </div>
+      </div>
+      <button type="submit" class="form-submit"><i class="fas fa-paper-plane"></i><span>Submit Book Request</span></button>
+    </form>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     POPUP: DONATE BOOKS
+     ═══════════════════════════════ -->
+<div class="popup-overlay" id="donate-popup">
+  <div class="popup-box">
+    <button class="popup-close" onclick="closePopup('donate-popup')"><i class="fas fa-times"></i></button>
+    <div class="popup-header">
+      <span class="popup-emoji">❤️</span>
+      <div class="popup-title">Donate Books</div>
+      <div class="popup-sub">Ready to make a difference? Fill out the details below and we'll arrange collection.</div>
+    </div>
+    <form onsubmit="submitForm(event,'donate')">
+      <div class="form-grid">
+        <div class="form-group"><label>Your Full Name *</label><input type="text" placeholder="e.g. Mr. Emeka Eze" required></div>
+        <div class="form-group"><label>Email Address *</label><input type="email" placeholder="your@email.com" required></div>
+        <div class="form-group"><label>Book Title(s) *</label><input type="text" placeholder="e.g. English Grammar, Maths JSS 2" required></div>
+        <div class="form-group"><label>Subject Category *</label>
+          <select required>
+            <option value="">Select subject</option>
+            <option>English Language</option><option>Mathematics</option>
+            <option>Integrated Science</option><option>Social Studies</option>
+            <option>Business Studies</option><option>Mixed / Multiple</option><option>Other</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Book Condition *</label>
+          <select required>
+            <option value="">Select condition</option>
+            <option>New / Like New</option><option>Good Condition</option><option>Fair Condition</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Number of Books</label><input type="number" placeholder="e.g. 5" min="1"></div>
+        <div class="form-group"><label>Your Location / State *</label><input type="text" placeholder="e.g. Ikeja, Lagos" required></div>
+        <div class="form-group"><label>WhatsApp Number *</label><input type="tel" placeholder="+234 XXX XXX XXXX" required></div>
+        <div class="form-group full"><label>Additional Notes</label><textarea placeholder="Any other details about the books or pickup..."></textarea></div>
+      </div>
+      <button type="submit" class="form-submit" style="background:linear-gradient(135deg,var(--neon-pink),var(--hot-violet))">
+        <i class="fas fa-heart"></i><span>Submit Donation</span>
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     POPUP: BECOME A MENTOR
+     ═══════════════════════════════ -->
+<div class="popup-overlay" id="mentor-apply-popup">
+  <div class="popup-box">
+    <button class="popup-close" onclick="closePopup('mentor-apply-popup')"><i class="fas fa-times"></i></button>
+    <div class="popup-header">
+      <span class="popup-emoji">🏫</span>
+      <div class="popup-title">Become a Mentor</div>
+      <div class="popup-sub">Join our network of educators shaping the next generation of Nigerian students.</div>
+    </div>
+    <form onsubmit="sendMentorApplication(event)">
+      <div class="form-grid">
+        <div class="form-group"><label>Full Name *</label><input type="text" placeholder="e.g. Mrs. Chioma Adeyemi" required></div>
+        <div class="form-group"><label>Email Address *</label><input type="email" placeholder="your@email.com" required></div>
+        <div class="form-group"><label>Phone / WhatsApp *</label><input type="tel" placeholder="+234 XXX XXX XXXX" required></div>
+        <div class="form-group"><label>Subject Speciality *</label>
+          <select required>
+            <option value="">Select subject</option>
+            <option>English Language</option><option>Mathematics</option>
+            <option>Integrated Science</option><option>Social Studies</option>
+            <option>Business Studies</option><option>Agricultural Science</option><option>Multiple Subjects</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Years of Teaching Experience *</label><input type="number" placeholder="e.g. 5" min="1" required></div>
+        <div class="form-group"><label>Current Location / State *</label><input type="text" placeholder="e.g. Surulere, Lagos" required></div>
+        <div class="form-group"><label>Highest Qualification</label>
+          <select>
+            <option>NCE</option><option>B.Ed / B.Sc</option><option>PGDE</option><option>M.Sc / M.Ed</option><option>PhD</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Availability</label>
+          <select>
+            <option>Weekends Only</option><option>Weekday Evenings</option><option>Full Availability</option><option>Flexible</option>
+          </select>
+        </div>
+        <div class="form-group full"><label>Why do you want to mentor? *</label><textarea placeholder="Tell us your motivation and what you hope to contribute to students..." required></textarea></div>
+      </div>
+      <button type="submit" class="form-submit" style="background:linear-gradient(135deg,#25D366,#128C7E)">
+        <i class="fab fa-whatsapp"></i><span>Apply via WhatsApp</span>
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     POPUP: CONNECT WITH MENTOR
+     ═══════════════════════════════ -->
+<div class="popup-overlay" id="connect-mentor-popup">
+  <div class="popup-box">
+    <button class="popup-close" onclick="closePopup('connect-mentor-popup')"><i class="fas fa-times"></i></button>
+    <div id="connect-mentor-inner"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     POPUP: REQUEST ANOTHER MENTOR
+     ═══════════════════════════════ -->
+<div class="popup-overlay" id="request-mentor-popup">
+  <div class="popup-box">
+    <button class="popup-close" onclick="closePopup('request-mentor-popup')"><i class="fas fa-times"></i></button>
+    <div class="popup-header">
+      <span class="popup-emoji">🙋‍♂️</span>
+      <div class="popup-title">Request Another Mentor</div>
+      <div class="popup-sub">Don't see the right mentor for you? Tell us what you need and we'll connect you with a suitable educator.</div>
+    </div>
+    <form onsubmit="submitRequestMentor(event)">
+      <div class="form-grid">
+        <div class="form-group"><label>Your Name *</label><input type="text" id="reqMentorName" required placeholder="Your full name"></div>
+        <div class="form-group"><label>Your School *</label><input type="text" id="reqMentorSchool" required placeholder="School name and state"></div>
+        <div class="form-group"><label>Phone / WhatsApp *</label><input type="tel" id="reqMentorPhone" required placeholder="+234 XXX XXX XXXX"></div>
+        <div class="form-group"><label>Class Level *</label>
+          <select id="reqMentorClass" required>
+            <option value="">Select class</option>
+            <option>JSS 1</option>
+            <option>JSS 2</option>
+            <option>JSS 3</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Subject You Need Help With *</label>
+          <select id="reqMentorSubject" required>
+            <option value="">Select subject</option>
+            <option>English Language</option>
+            <option>Mathematics</option>
+            <option>Integrated Science</option>
+            <option>Social Studies</option>
+            <option>Business Studies</option>
+            <option>Civic Education</option>
+            <option>Religious Studies</option>
+            <option>Agricultural Science</option>
+            <option>Home Economics</option>
+            <option>Basic Technology</option>
+            <option>French</option>
+            <option>Computer Studies</option>
+            <option>Physical & Health Education</option>
+            <option>Other (specify in notes)</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Preferred Location</label>
+          <select id="reqMentorLocation">
+            <option value="">Any location</option>
+            <option>Rivers State</option>
+            <option>Online / Virtual</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group full"><label>What specific help do you need? *</label><textarea id="reqMentorDetails" required placeholder="Describe the topics, areas you're struggling with, or the type of support you need..."></textarea></div>
+      </div>
+      <button type="submit" class="form-submit" style="background:linear-gradient(135deg,var(--royal),var(--azure))">
+        <i class="fab fa-whatsapp"></i><span>Send Request via WhatsApp</span>
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     POPUP: SUBJECT RESOURCES
+     ═══════════════════════════════ -->
+<div class="popup-overlay" id="subject-popup">
+  <div class="popup-box">
+    <button class="popup-close" onclick="closePopup('subject-popup')"><i class="fas fa-times"></i></button>
+    <div id="subject-popup-inner"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     POPUP: SUBJECT CHOICE (Donate/Request)
+     ═══════════════════════════════ -->
+<div class="popup-overlay" id="subject-choice-popup">
+  <div class="popup-box">
+    <button class="popup-close" onclick="closePopup('subject-choice-popup')"><i class="fas fa-times"></i></button>
+    <div class="popup-header">
+      <span class="popup-emoji">📚</span>
+      <div class="popup-title" id="choice-subject-name">Subject</div>
+      <div class="popup-sub">What would you like to do with this subject?</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem">
+      <button onclick="handleSubjectAction('request')" style="padding:1.5rem;border:2px solid var(--azure);border-radius:20px;background:linear-gradient(135deg,rgba(14,165,233,.1),rgba(56,189,248,.05));cursor:pointer;transition:.3s">
+        <div style="font-size:2.5rem;margin-bottom:.5rem">📖</div>
+        <div style="font-weight:700;color:var(--royal);font-size:1.1rem">Request Books</div>
+        <div style="font-size:.8rem;color:var(--muted);margin-top:.3rem">Get materials for this subject</div>
+      </button>
+      <button onclick="handleSubjectAction('donate')" style="padding:1.5rem;border:2px solid var(--neon-pink);border-radius:20px;background:linear-gradient(135deg,rgba(255,0,144,.08),rgba(124,58,237,.05));cursor:pointer;transition:.3s">
+        <div style="font-size:2.5rem;margin-bottom:.5rem">❤️</div>
+        <div style="font-weight:700;color:var(--royal);font-size:1.1rem">Donate Books</div>
+        <div style="font-size:.8rem;color:var(--muted);margin-top:.3rem">Give materials for this subject</div>
+      </button>
+    </div>
+    <button onclick="closePopup('subject-choice-popup')" style="width:100%;padding:.95rem;background:var(--ice);color:var(--muted);border:none;border-radius:50px;font-weight:700;font-size:1rem;cursor:pointer;font-family:inherit">Cancel</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     POPUP: LEARNING RESOURCES CENTER
+     ═══════════════════════════════ -->
+<div class="popup-overlay" id="resources-center-popup">
+  <div class="popup-box" style="max-width:900px;max-height:85vh;">
+    <button class="popup-close" onclick="closePopup('resources-center-popup')"><i class="fas fa-times"></i></button>
+    <div class="popup-header" style="border-bottom:2px solid var(--frost);padding-bottom:1.5rem;">
+      <span class="popup-emoji">📚</span>
+      <div class="popup-title">Learning Resources Center</div>
+      <div class="popup-sub">Access study materials, past questions, and guides. All resources are free!</div>
+    </div>
+    
+    <!-- Search & Filter Bar -->
+    <div style="padding:1.5rem;border-bottom:1px solid var(--frost);background:var(--ice-soft);">
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+        <div style="flex:1;min-width:250px;position:relative;">
+          <i class="fas fa-search" style="position:absolute;left:1rem;top:50%;transform:translateY(-50%);color:var(--muted);"></i>
+          <input type="text" id="resourceSearch" placeholder="Search resources..." 
+            style="width:100%;padding:.9rem 1rem .9rem 2.8rem;border:2px solid var(--frost);border-radius:12px;font-size:.95rem;transition:.3s;"
+            onkeyup="filterResources()">
+        </div>
+        <select id="resourceSubjectFilter" onchange="filterResources()" 
+          style="padding:.9rem 1.2rem;border:2px solid var(--frost);border-radius:12px;font-size:.95rem;background:#fff;cursor:pointer;min-width:150px;">
+          <option value="">All Subjects</option>
+          <option>English Language</option>
+          <option>Mathematics</option>
+          <option>Integrated Science</option>
+          <option>Social Studies</option>
+          <option>Business Studies</option>
+          <option>Agricultural Science</option>
+          <option>Civic Education</option>
+          <option>Computer Studies</option>
+          <option>French</option>
+          <option>CRS</option>
+          <option>Home Economics</option>
+          <option>Other</option>
+        </select>
+        <select id="resourceTypeFilter" onchange="filterResources()" 
+          style="padding:.9rem 1.2rem;border:2px solid var(--frost);border-radius:12px;font-size:.95rem;background:#fff;cursor:pointer;min-width:130px;">
+          <option value="">All Types</option>
+          <option value="PDF">PDF Document</option>
+          <option value="Video">Video Lesson</option>
+          <option value="Interactive">Interactive</option>
+          <option value="Past Questions">Past Questions</option>
+          <option value="Notes">Study Notes</option>
+        </select>
+      </div>
+      <div style="margin-top:1rem;display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;">
+        <span style="font-size:.85rem;color:var(--muted);font-weight:600;">Quick Filters:</span>
+        <button onclick="quickFilter('past-questions')" class="quick-filter-btn" style="padding:.4rem .8rem;border:1px solid var(--frost);border-radius:20px;background:#fff;font-size:.8rem;cursor:pointer;transition:.2s;">📝 Past Questions</button>
+        <button onclick="quickFilter('video')" class="quick-filter-btn" style="padding:.4rem .8rem;border:1px solid var(--frost);border-radius:20px;background:#fff;font-size:.8rem;cursor:pointer;transition:.2s;">🎥 Video Lessons</button>
+        <button onclick="quickFilter('pdf')" class="quick-filter-btn" style="padding:.4rem .8rem;border:1px solid var(--frost);border-radius:20px;background:#fff;font-size:.8rem;cursor:pointer;transition:.2s;">📄 PDF Notes</button>
+        <button onclick="clearFilters()" style="padding:.4rem .8rem;border:none;border-radius:20px;background:var(--danger);color:#fff;font-size:.8rem;cursor:pointer;transition:.2s;margin-left:auto;">
+          <i class="fas fa-times"></i> Clear
+        </button>
+      </div>
+    </div>
+    
+    <!-- Resources List -->
+    <div id="resourcesList" style="padding:1.5rem;overflow-y:auto;max-height:55vh;">
+      <div id="resourcesLoading" style="text-align:center;padding:3rem;color:var(--muted);">
+        <i class="fas fa-spinner fa-spin" style="font-size:2rem;margin-bottom:1rem;display:block;"></i>
+        Loading resources...
+      </div>
+      <div id="resourcesEmpty" style="display:none;text-align:center;padding:3rem;color:var(--muted);">
+        <div style="font-size:4rem;margin-bottom:1rem;">🔍</div>
+        <p>No resources found. Try adjusting your search or filters.</p>
+      </div>
+      <div id="resourcesGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;">
+        <!-- Resources will be populated here -->
+      </div>
+    </div>
+    
+    <!-- Stats Footer -->
+    <div style="padding:1rem 1.5rem;border-top:1px solid var(--frost);background:var(--ice-soft);display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-size:.85rem;color:var(--muted);">
+        <i class="fas fa-database"></i> <span id="resourceCount">0</span> resources available
+      </span>
+      <span style="font-size:.8rem;color:var(--azure);font-weight:600;">
+        <i class="fas fa-cloud"></i> Synced with Firebase
+      </span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     POPUP: MANY MORE SUBJECTS
+     ═══════════════════════════════ -->
+<div class="popup-overlay" id="many-more-popup">
+  <div class="popup-box">
+    <button class="popup-close" onclick="closePopup('many-more-popup')"><i class="fas fa-times"></i></button>
+    <div class="popup-header">
+      <span class="popup-emoji">📚</span>
+      <div class="popup-title">And Many More...</div>
+      <div class="popup-sub">Explore all Junior WAEC subjects available</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:.8rem;margin-bottom:1.5rem">
+      <div onclick="showSubjectChoice('Civic Education')" class="more-subject-item" style="padding:1rem;background:var(--frost);border-radius:12px;cursor:pointer;border:1px solid rgba(14,165,233,.2);text-align:center;transition:.25s"><div style="font-size:1.5rem;margin-bottom:.3rem">🏛️</div><div style="font-weight:600;font-size:.9rem;color:var(--ink)">Civic Education</div></div>
+      <div onclick="showSubjectChoice('CRS / IRS')" class="more-subject-item" style="padding:1rem;background:var(--frost);border-radius:12px;cursor:pointer;border:1px solid rgba(14,165,233,.2);text-align:center;transition:.25s"><div style="font-size:1.5rem;margin-bottom:.3rem">⛪</div><div style="font-weight:600;font-size:.9rem;color:var(--ink)">CRS / IRS</div></div>
+      <div onclick="showSubjectChoice('Home Economics')" class="more-subject-item" style="padding:1rem;background:var(--frost);border-radius:12px;cursor:pointer;border:1px solid rgba(14,165,233,.2);text-align:center;transition:.25s"><div style="font-size:1.5rem;margin-bottom:.3rem">🏠</div><div style="font-weight:600;font-size:.9rem;color:var(--ink)">Home Economics</div></div>
+      <div onclick="showSubjectChoice('Computer Studies')" class="more-subject-item" style="padding:1rem;background:var(--frost);border-radius:12px;cursor:pointer;border:1px solid rgba(14,165,233,.2);text-align:center;transition:.25s"><div style="font-size:1.5rem;margin-bottom:.3rem">💻</div><div style="font-weight:600;font-size:.9rem;color:var(--ink)">Computer Studies</div></div>
+      <div onclick="showSubjectChoice('French Language')" class="more-subject-item" style="padding:1rem;background:var(--frost);border-radius:12px;cursor:pointer;border:1px solid rgba(14,165,233,.2);text-align:center;transition:.25s"><div style="font-size:1.5rem;margin-bottom:.3rem">🥐</div><div style="font-weight:600;font-size:.9rem;color:var(--ink)">French Language</div></div>
+      <div onclick="showSubjectChoice('Physical & Health Education')" class="more-subject-item" style="padding:1rem;background:var(--frost);border-radius:12px;cursor:pointer;border:1px solid rgba(14,165,233,.2);text-align:center;transition:.25s"><div style="font-size:1.5rem;margin-bottom:.3rem">⚽</div><div style="font-weight:600;font-size:.9rem;color:var(--ink)">PHE</div></div>
+      <div onclick="showSubjectChoice('Basic Technology')" class="more-subject-item" style="padding:1rem;background:var(--frost);border-radius:12px;cursor:pointer;border:1px solid rgba(14,165,233,.2);text-align:center;transition:.25s"><div style="font-size:1.5rem;margin-bottom:.3rem">🔧</div><div style="font-weight:600;font-size:.9rem;color:var(--ink)">Basic Technology</div></div>
+      <div onclick="showSubjectChoice('Cultural & Creative Arts')" class="more-subject-item" style="padding:1rem;background:var(--frost);border-radius:12px;cursor:pointer;border:1px solid rgba(14,165,233,.2);text-align:center;transition:.25s"><div style="font-size:1.5rem;margin-bottom:.3rem">🎨</div><div style="font-weight:600;font-size:.9rem;color:var(--ink)">CCA</div></div>
+      <div onclick="showSubjectChoice('Music')" class="more-subject-item" style="padding:1rem;background:var(--frost);border-radius:12px;cursor:pointer;border:1px solid rgba(14,165,233,.2);text-align:center;transition:.25s"><div style="font-size:1.5rem;margin-bottom:.3rem">🎵</div><div style="font-weight:600;font-size:.9rem;color:var(--ink)">Music</div></div>
+      <div onclick="showSubjectChoice('Business Studies')" class="more-subject-item" style="padding:1rem;background:var(--frost);border-radius:12px;cursor:pointer;border:1px solid rgba(14,165,233,.2);text-align:center;transition:.25s"><div style="font-size:1.5rem;margin-bottom:.3rem">💼</div><div style="font-weight:600;font-size:.9rem;color:var(--ink)">Business Studies</div></div>
+    </div>
+    <button onclick="closePopup('many-more-popup')" style="width:100%;padding:.95rem;background:linear-gradient(135deg,var(--royal),var(--azure));color:#fff;border:none;border-radius:50px;font-weight:700;font-size:1rem;cursor:pointer;font-family:inherit">Close</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <i class="fas fa-check-circle" style="color:#7DD3FC;font-size:1.35rem"></i>
+  <div id="toast-msg">Done!</div>
+</div>
+
+<!-- BACK TO TOP -->
+<button class="back-top" id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+  <i class="fas fa-arrow-up"></i>
+</button>
+
+<!-- ════════════════════════════════
+     JAVASCRIPT
+     ════════════════════════════════ -->
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
+<script>
+/* ── FIREBASE CONFIG (Same as admin) ── */
+const firebaseConfig = {
+  apiKey: "AIzaSyBtFYTt_K3ggSjgBmBb-sn09l1hOGwxloM",
+  authDomain: "bookbridge-admin.firebaseapp.com",
+  databaseURL: "https://bookbridge-admin-default-rtdb.firebaseio.com",
+  projectId: "bookbridge-admin",
+  storageBucket: "bookbridge-admin.firebasestorage.app",
+  messagingSenderId: "163400594978",
+  appId: "1:163400594978:web:d1c46f6509090923e63c7b"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+
+/* ── MENTOR DATA ── */
+const defaultMentors=[
+  {id:1,name:'Mrs. Adesola Babatunde',subj:'Mathematics',exp:'12 years',rating:4.9,students:120,bio:'Former WAEC examiner with a passion for making maths accessible. Specialises in JSS 2 & 3 preparation.',avatar:'👩‍🏫',avail:'available',loc:'Rivers State',cover:'cover-blue'},
+  {id:2,name:'Mr. Chukwuemeka Eze',subj:'English Language',exp:'9 years',rating:4.8,students:95,bio:'English teacher and published author. Transforms shy students into confident writers and speakers.',avatar:'👨‍🏫',avail:'available',loc:'Rivers State',cover:'cover-pink'},
+  {id:3,name:'Dr. Fatima Al-Hassan',subj:'Integrated Science',exp:'15 years',rating:4.9,students:140,bio:'Science PhD with a gift for simplifying complex concepts. Students call her "the Science Queen".',avatar:'👩‍🔬',avail:'available',loc:'Rivers State',cover:'cover-cyan'},
+  {id:4,name:'Mr. Oluwafemi Ajayi',subj:'Social Studies',exp:'7 years',rating:4.7,students:80,bio:'History enthusiast and civic educator. Makes history and geography come alive with storytelling.',avatar:'👨‍💼',avail:'busy',loc:'Rivers State',cover:'cover-gold'},
+  {id:5,name:'Mrs. Ngozi Okonkwo',subj:'Business Studies',exp:'10 years',rating:4.8,students:67,bio:'Entrepreneur-turned-teacher. Teaches Business Studies with real-world Nigerian business examples.',avatar:'👩‍💼',avail:'available',loc:'Rivers State',cover:'cover-mint'},
+  {id:6,name:'Mr. Abdullahi Musa',subj:'Agricultural Science',exp:'8 years',rating:4.6,students:55,bio:'Agric extension worker and educator. Brings the farm into the classroom with practical demos.',avatar:'👨‍🌾',avail:'available',loc:'Rivers State',cover:'cover-lav'},
+];
+
+// Data from Firebase
+let mentorData=[...defaultMentors];
+let resourcesData=[];
+
+// Firebase refs
+const mentorsRef=database.ref('mentors');
+const resourcesRef=database.ref('resources');
+
+// Calculate resource counts by subject
+function getResourceCount(subject){
+  if(resourcesData.length===0){
+    // Return default counts if no resources in Firebase yet
+    const defaults={'English Language':120,'Mathematics':98,'Integrated Science':85,'Social Studies':72,'Business Studies':60,'Agricultural Science':44};
+    return defaults[subject]||0;
+  }
+  return resourcesData.filter(r=>r.subject===subject).length;
+}
+
+const captions=[
+  'Students at Agboville Community Secondary School, Lagos',
+  'Book donation drive — Anambra State, 2025',
+  'JSS students preparing for Junior WAEC examinations',
+  'Our community library centre in Lagos',
+  'Celebrating literacy across Nigerian communities',
+];
+
+/* ── CAROUSEL (right side) ── */
+let currentSlide=0;
+const slides=document.querySelectorAll('.carousel-slide');
+const dotsEl=document.getElementById('carousel-dots');
+const captEl=document.getElementById('carousel-caption');
+slides.forEach((_,i)=>{
+  const d=document.createElement('button');
+  d.className='carousel-dot'+(i===0?' active':'');
+  d.onclick=()=>goToSlide(i);
+  dotsEl.appendChild(d);
+});
+function goToSlide(n){
+  slides[currentSlide].classList.remove('active');
+  dotsEl.children[currentSlide].classList.remove('active');
+  currentSlide=(n+slides.length)%slides.length;
+  slides[currentSlide].classList.add('active');
+  dotsEl.children[currentSlide].classList.add('active');
+  captEl.textContent=captions[currentSlide]||'';
+}
+setInterval(()=>goToSlide(currentSlide+1),4500);
+
+/* ── HERO TEXT SIDE BACKGROUND SLIDESHOW ── */
+const textBgSlides=document.querySelectorAll('.hero-text-bg-slide');
+let textSlideIdx=0;
+setInterval(()=>{
+  textBgSlides[textSlideIdx].classList.remove('active');
+  textSlideIdx=(textSlideIdx+1)%textBgSlides.length;
+  textBgSlides[textSlideIdx].classList.add('active');
+},4500);
+
+/* ── GALLERY ── */
+let galleryPos=0;
+function galleryMove(dir){
+  const track=document.getElementById('gallery-track');
+  const cards=track.querySelectorAll('.gallery-card');
+  const isMob=window.innerWidth<900;
+  const vis=isMob?1:3;
+  const maxPos=cards.length-vis;
+  galleryPos=Math.max(0,Math.min(maxPos,galleryPos+dir));
+  const pct=isMob?86:33.333;
+  track.style.transform=`translateX(-${galleryPos*(pct+2)}%)`;
+}
+
+/* ── STORIES ── */
+let storyPos=0;
+function storiesMove(dir){
+  const track=document.getElementById('stories-track');
+  const cards=track.querySelectorAll('.story-card');
+  const isMob=window.innerWidth<900;
+  const maxPos=isMob?cards.length-1:cards.length-2;
+  storyPos=Math.max(0,Math.min(maxPos,storyPos+dir));
+  const pct=isMob?102:51;
+  track.style.transform=`translateX(-${storyPos*pct}%)`;
+}
+
+/* ── COUNTERS ── */
+function animateCounters(){
+  document.querySelectorAll('[data-target]').forEach(el=>{
+    const target=+el.dataset.target;
+    let count=0;const inc=target/60;
+    const t=setInterval(()=>{
+      count=Math.min(count+inc,target);
+      el.textContent=Math.floor(count)+(target>=100?'+':'');
+      if(count>=target)clearInterval(t);
+    },20);
+  });
+}
+
+/* ── SCROLL OBSERVER ── */
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')});
+},{threshold:.15});
+document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+setTimeout(animateCounters,800);
+
+/* ── NAV ── */
+window.addEventListener('scroll',()=>{
+  document.getElementById('main-nav').classList.toggle('scrolled',window.scrollY>50);
+  document.getElementById('back-top').classList.toggle('show',window.scrollY>400);
+});
+function toggleMenu(){document.getElementById('nav-links').classList.toggle('open')}
+document.querySelectorAll('.nav-links a').forEach(a=>a.addEventListener('click',()=>document.getElementById('nav-links').classList.remove('open')));
+
+/* ── POPUP SYSTEM ── */
+function openPopup(id){
+  const el=document.getElementById(id);
+  if(!el)return;
+  // close any open ones first
+  document.querySelectorAll('.popup-overlay.open').forEach(p=>p.classList.remove('open'));
+  el.classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closePopup(id){
+  const el=document.getElementById(id);
+  if(el)el.classList.remove('open');
+  // only restore scroll if nothing else is open
+  if(!document.querySelector('.popup-overlay.open'))
+    document.body.style.overflow='';
+}
+// Close on backdrop click
+document.querySelectorAll('.popup-overlay').forEach(overlay=>{
+  overlay.addEventListener('click',e=>{
+    if(e.target===overlay)closePopup(overlay.id);
+  });
+});
+// Close on Escape
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')
+    document.querySelectorAll('.popup-overlay.open').forEach(p=>closePopup(p.id));
+});
+
+/* ── MENTORS RENDER ── */
+const grid=document.getElementById('mentors-grid');
+mentorData.forEach(m=>{
+  const aColor=m.avail==='available'?'#1D4ED8':'#92400E';
+  const aBg=m.avail==='available'?'rgba(14,165,233,.10)':'rgba(245,158,11,.12)';
+  const aLabel=m.avail==='available'?'Available':'Busy';
+  const stars='★'.repeat(Math.floor(m.rating))+(m.rating%1>=.5?'½':'');
+  grid.innerHTML+=`
+    <div class="mentor-card">
+      <div class="mentor-cover ${m.cover}">
+        <div class="mentor-cover-pattern"></div>
+        <div class="mentor-avatar">${m.avatar}</div>
+      </div>
+      <div class="mentor-body">
+        <div class="mentor-name">${m.name}</div>
+        <div class="mentor-subj">${m.subj} · ${m.loc}</div>
+        <div class="mentor-bio">${m.bio}</div>
+        <div class="mentor-meta">
+          <span><span class="mentor-stars">${stars}</span> ${m.rating}</span>
+          <span><i class="fas fa-users"></i> ${m.students}</span>
+          <span><i class="fas fa-briefcase"></i> ${m.exp}</span>
+        </div>
+        <div style="margin-bottom:1rem">
+          <span style="padding:.3rem .85rem;border-radius:50px;font-size:.72rem;font-weight:800;background:${aBg};color:${aColor}">● ${aLabel}</span>
+        </div>
+        <button class="mentor-btn" onclick="openConnectMentor('${m.name}','${m.subj}','${m.avatar}')">
+          <span>Connect with Mentor</span>
+        </button>
+      </div>
+    </div>`;
+});
+
+// Add "Request Another Mentor" card
+grid.innerHTML+=`
+  <div class="mentor-card" style="background:linear-gradient(135deg,rgba(56,189,248,.08),rgba(139,92,246,.08));border:2px dashed rgba(56,189,248,.3);cursor:pointer" onclick="openPopup('request-mentor-popup')">
+    <div class="mentor-cover" style="background:linear-gradient(135deg,rgba(56,189,248,.2),rgba(139,92,246,.2));display:flex;align-items:center;justify-content:center">
+      <div style="font-size:4rem">🙋‍♂️</div>
+    </div>
+    <div class="mentor-body" style="text-align:center">
+      <div class="mentor-name" style="font-size:1.1rem">Don't see the right mentor?</div>
+      <div class="mentor-subj" style="margin:.5rem 0">Request a custom mentor match</div>
+      <div class="mentor-bio" style="font-size:.8rem;margin-bottom:1rem">Tell us your needs and we'll find the perfect educator for you.</div>
+      <button class="mentor-btn" style="background:linear-gradient(135deg,var(--azure),var(--royal))">
+        <span><i class="fas fa-search"></i> Request Mentor</span>
+      </button>
+    </div>
+  </div>`;
+
+/* ── CONNECT MENTOR POPUP ── */
+function openConnectMentor(name,subj,avatar){
+  document.getElementById('connect-mentor-inner').innerHTML=`
+    <div style="text-align:center;margin-bottom:1.5rem">
+      <div style="font-size:3rem;margin-bottom:.5rem">${avatar}</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:700;color:var(--royal);margin-bottom:.3rem">${name}</div>
+      <div style="font-weight:700;font-size:.88rem;background:linear-gradient(90deg,var(--azure),var(--neon-pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">${subj}</div>
+    </div>
+    <form onsubmit="submitMentorConnect(event,'${name}')">
+      <div class="form-grid">
+        <div class="form-group"><label>Your Name *</label><input type="text" required placeholder="Your full name"></div>
+        <div class="form-group"><label>Your School *</label><input type="text" required placeholder="School name and state"></div>
+        <div class="form-group"><label>Email / WhatsApp *</label><input type="text" required placeholder="How should they reach you?"></div>
+        <div class="form-group"><label>Class</label><select><option>JSS 1</option><option>JSS 2</option><option>JSS 3</option></select></div>
+        <div class="form-group full"><label>What help do you need?</label><textarea placeholder="Topics or areas you're struggling with..."></textarea></div>
+      </div>
+      <button type="submit" class="form-submit"><i class="fas fa-handshake"></i><span>Send Connection Request</span></button>
+    </form>`;
+  openPopup('connect-mentor-popup');
+}
+function submitMentorConnect(e,mentorName){
+  e.preventDefault();
+  const form=e.target;
+  const inputs=form.querySelectorAll('input, select, textarea');
+  
+  // Save to Firebase
+  const mentorRequestsRef=database.ref('mentorRequests');
+  const studentPhone=inputs[2]?.value||'';
+  const reqId=Date.now().toString();
+  console.log('Saving mentor connection request with ID:',reqId);
+  
+  mentorRequestsRef.push({
+    id:reqId,
+    studentName:inputs[0]?.value||'',
+    school:inputs[1]?.value||'',
+    phone:studentPhone,
+    class:inputs[3]?.value||'',
+    subject:mentorName||'General',
+    details:inputs[4]?.value||'',
+    status:'pending',
+    date:new Date().toLocaleDateString(),
+    createdAt:Date.now()
+  }).then(()=>{
+    console.log('Mentor connection request saved successfully!');
+  }).catch(err=>{
+    console.error('Error saving mentor connection request:',err);
+  });
+  
+  closePopup('connect-mentor-popup');
+  showToast(`Connection request sent to ${mentorName}! We'll contact you soon. 🎉`);
+  form.reset();
+}
+
+/* ── SUBJECT CHOICE POPUP ── */
+let selectedSubject='';
+
+function showSubjectChoice(subjectName){
+  selectedSubject=subjectName;
+  document.getElementById('choice-subject-name').textContent=subjectName;
+  closePopup('many-more-popup');
+  closePopup('subject-popup');
+  openPopup('subject-choice-popup');
+}
+
+function handleSubjectAction(action){
+  closePopup('subject-choice-popup');
+  const knownSubjects=['English Language','Mathematics','Integrated Science','Social Studies','Business Studies','Agricultural Science'];
+  const isKnown=knownSubjects.includes(selectedSubject);
+  
+  if(action==='request'){
+    setTimeout(()=>{
+      const selects=document.querySelectorAll('#request-popup select');
+      const subjectSelect=selects[0];
+      const bookTitleInput=document.querySelector('#request-popup input[placeholder*="Book Title"]');
+      if(subjectSelect){
+        let found=false;
+        for(let i=0;i<subjectSelect.options.length;i++){
+          if(subjectSelect.options[i].text===selectedSubject){
+            subjectSelect.selectedIndex=i;
+            found=true;
+            break;
+          }
+        }
+        if(!found){
+          for(let i=0;i<subjectSelect.options.length;i++){
+            if(subjectSelect.options[i].text==='Other'){
+              subjectSelect.selectedIndex=i;
+              break;
+            }
+          }
+        }
+      }
+      if(bookTitleInput&&!isKnown){
+        bookTitleInput.value=selectedSubject+' ';
+        bookTitleInput.focus();
+      }
+      openPopup('request-popup');
+    },100);
+  }else if(action==='donate'){
+    setTimeout(()=>{
+      const select=document.querySelector('#donate-popup select');
+      const bookTitleInput=document.querySelector('#donate-popup input[placeholder*="Book Title"]');
+      if(select){
+        let found=false;
+        for(let i=0;i<select.options.length;i++){
+          if(select.options[i].text===selectedSubject){
+            select.selectedIndex=i;
+            found=true;
+            break;
+          }
+        }
+        if(!found){
+          for(let i=0;i<select.options.length;i++){
+            if(select.options[i].text==='Other'){
+              select.selectedIndex=i;
+              break;
+            }
+          }
+        }
+      }
+      if(bookTitleInput&&!isKnown){
+        bookTitleInput.value=selectedSubject+' ';
+        bookTitleInput.focus();
+      }
+      openPopup('donate-popup');
+    },100);
+  }
+}
+
+/* ── WHATSAPP FUNCTIONS ── */
+function sendWhatsAppMessage(e){
+  e.preventDefault();
+  const name=document.getElementById('contactName').value;
+  const email=document.getElementById('contactEmail').value;
+  const subject=document.getElementById('contactSubject').value||'General Inquiry';
+  const type=document.getElementById('contactType').value;
+  const message=document.getElementById('contactMessage').value;
+  
+  const adminPhone='+2348128384816'; // Primary admin WhatsApp
+  const whatsappMessage=`📨 *New Message from Website*\n\n👤 *Name:* ${name}\n📧 *Email:* ${email}\n👥 *Type:* ${type}\n📝 *Subject:* ${subject}\n\n💬 *Message:*\n${message}`;
+  
+  const whatsappLink=`https://wa.me/${adminPhone}?text=${encodeURIComponent(whatsappMessage)}`;
+  window.open(whatsappLink,'_blank');
+  
+  showToast('Opening WhatsApp to send your message...');
+  e.target.reset();
+  closePopup(''); // Close any open popup
+}
+
+function sendMentorApplication(e){
+  e.preventDefault();
+  const form=e.target;
+  const inputs=form.querySelectorAll('input, select, textarea');
+  
+  // Save to Firebase first
+  const mentorAppsRef=database.ref('mentorApplications');
+  const appId=Date.now().toString();
+  console.log('Saving mentor application with ID:',appId);
+  
+  const mentorData={
+    id:appId,
+    name:inputs[0]?.value||'',
+    email:inputs[1]?.value||'',
+    phone:inputs[2]?.value||'',
+    subject:inputs[3]?.value||'',
+    experience:inputs[4]?.value||'',
+    location:inputs[5]?.value||'',
+    qualification:inputs[6]?.value||'',
+    availability:inputs[7]?.value||'',
+    motivation:inputs[8]?.value||'',
+    status:'pending',
+    date:new Date().toLocaleDateString(),
+    createdAt:Date.now()
+  };
+  
+  mentorAppsRef.push(mentorData).then(()=>{
+    console.log('Mentor application saved to Firebase!');
+    
+    // Now send to WhatsApp
+    const adminPhone='+2348128384816'; // Primary admin WhatsApp
+    const whatsappMessage=`🎓 *New Mentor Application*\n\n👤 *Name:* ${mentorData.name}\n📧 *Email:* ${mentorData.email}\n📱 *Phone:* ${mentorData.phone}\n📚 *Subject:* ${mentorData.subject}\n⏱️ *Experience:* ${mentorData.experience} years\n📍 *Location:* ${mentorData.location}\n🎓 *Qualification:* ${mentorData.qualification}\n🕐 *Availability:* ${mentorData.availability}\n\n💭 *Motivation:*\n${mentorData.motivation}`;
+    
+    const whatsappLink=`https://wa.me/${adminPhone}?text=${encodeURIComponent(whatsappMessage)}`;
+    window.open(whatsappLink,'_blank');
+    
+    showToast('Application saved! Opening WhatsApp to notify admin...');
+    form.reset();
+    closePopup('mentor-apply-popup');
+  }).catch(err=>{
+    console.error('Error saving mentor application:',err);
+    showToast('Error saving application. Please try again.');
+  });
+}
+
+/* ── FORMS ── */
+function submitForm(e,type){
+  e.preventDefault();
+  const form=e.target;
+  const formData=new FormData(form);
+  const data=Object.fromEntries(formData.entries());
+  
+  // Generate unique tracking ID function
+  function generateTrackingId(prefix){
+    const timestamp=Date.now().toString(36).toUpperCase();
+    const random1=Math.random().toString(36).substring(2,6).toUpperCase();
+    const random2=Math.floor(Math.random()*1000).toString().padStart(3,'0');
+    const uniqueId=`${prefix}-${timestamp}-${random1}-${random2}`;
+    console.log('Generated tracking ID:',uniqueId);
+    return uniqueId;
+  }
+  
+  // Save to Firebase for admin dashboard
+  const requestsRef=database.ref('requests');
+  const donationsRef=database.ref('donations');
+  const mentorAppsRef=database.ref('mentorApplications');
+  
+  let trackingId='';
+  
+  if(type==='request'){
+    const inputs=form.querySelectorAll('input, select, textarea');
+    trackingId=generateTrackingId('REQ');
+    const phone=inputs[5]?.value||'';
+    const email=inputs[6]?.value||'';
+    const saveReceipt=inputs[7]?.checked||false;
+    console.log('Saving request with tracking ID:',trackingId);
+    requestsRef.push({
+      trackingId:trackingId,
+      id:Date.now().toString(),
+      studentName:inputs[0]?.value||'',
+      school:inputs[1]?.value||'',
+      bookTitle:inputs[2]?.value||'',
+      subject:inputs[3]?.value||'',
+      class:inputs[4]?.value||'',
+      phone:phone,
+      email:email,
+      reason:inputs[8]?.value||'',
+      status:'pending',
+      deliveryStatus:'processing',
+      date:new Date().toLocaleDateString(),
+      createdAt:Date.now()
+    }).then(()=>{
+      console.log('Request saved successfully to Firebase!');
+      showToast('Request saved! Tracking ID: '+trackingId);
+      // Generate receipt if requested
+      if(saveReceipt){
+        generateReceipt({trackingId,type:'request',name:inputs[0]?.value,phone,email,date:new Date().toLocaleDateString()});
+      }
+    }).catch(err=>{
+      console.error('Error saving request:',err);
+      showToast('Error saving request. Please try again.');
+    });
+    // Show tracking info after submission
+    showTrackingInfo(trackingId,phone,'request');
+    return;
+  }else if(type==='donate'){
+    const inputs=form.querySelectorAll('input, select, textarea');
+    trackingId=generateTrackingId('DON');
+    const phone=inputs[7]?.value||'';
+    console.log('Saving donation with tracking ID:',trackingId);
+    donationsRef.push({
+      trackingId:trackingId,
+      id:Date.now().toString(),
+      donorName:inputs[0]?.value||'',
+      email:inputs[1]?.value||'',
+      bookTitle:inputs[2]?.value||'',
+      subject:inputs[3]?.value||'',
+      condition:inputs[4]?.value||'',
+      quantity:inputs[5]?.value||'',
+      location:inputs[6]?.value||'',
+      phone:phone,
+      notes:inputs[8]?.value||'',
+      status:'pending',
+      pickupStatus:'scheduled',
+      date:new Date().toLocaleDateString(),
+      createdAt:Date.now()
+    }).then(()=>{
+      console.log('Donation saved successfully to Firebase!');
+      showToast('Donation saved! Tracking ID: '+trackingId);
+    }).catch(err=>{
+      console.error('Error saving donation:',err);
+      showToast('Error saving donation. Please try again.');
+    });
+    showTrackingInfo(trackingId,phone,'donation');
+    return;
+  }else if(type==='mentor'){
+    const inputs=form.querySelectorAll('input, select, textarea');
+    const appId=Date.now().toString();
+    console.log('Saving mentor application with ID:',appId);
+    mentorAppsRef.push({
+      id:appId,
+      name:inputs[0]?.value||'',
+      email:inputs[1]?.value||'',
+      phone:inputs[2]?.value||'',
+      subject:inputs[3]?.value||'',
+      experience:inputs[4]?.value||'',
+      location:inputs[5]?.value||'',
+      qualification:inputs[6]?.value||'',
+      availability:inputs[7]?.value||'',
+      motivation:inputs[8]?.value||'',
+      status:'pending',
+      date:new Date().toLocaleDateString(),
+      createdAt:Date.now()
+    }).then(()=>{
+      console.log('Mentor application saved successfully!');
+    }).catch(err=>{
+      console.error('Error saving mentor application:',err);
+    });
+  }
+  
+  const msgs={
+    request:'📬 Book request submitted! Check your tracking ID below.',
+    donate:'❤️ Thank you for your donation! Check your tracking ID below.',
+    contact:'✉️ Message sent! We\'ll reply within 24 hours.',
+    mentor:'🎓 Mentor application received! We\'ll be in touch soon.',
+  };
+  
+  // For request and donation, we show tracking modal instead of toast
+  if(type==='request'||type==='donate'){
+    form.reset();
+    document.querySelectorAll('.popup-overlay.open').forEach(p=>closePopup(p.id));
+    return;
+  }
+  
+  form.reset();
+  // close any open popup
+  document.querySelectorAll('.popup-overlay.open').forEach(p=>closePopup(p.id));
+  showToast(msgs[type]||'Submitted successfully!');
+}
+
+/* ── TRACKING SYSTEM ── */
+function showTrackingInfo(trackingId,phone,type){
+  const isRequest=type==='request';
+  const adminPhone='+2348128384816'; // Main admin WhatsApp
+  const whatsappLink=`https://wa.me/${adminPhone}?text=Hello%20Project%20BookBridge,%20I%20need%20help%20with%20my%20${isRequest?'request':'donation'}%20(ID:%20${trackingId})`;
+  
+  const trackPopup=document.createElement('div');
+  trackPopup.className='popup-overlay open';
+  trackPopup.id='tracking-popup';
+  trackPopup.innerHTML=`
+    <div class="popup-box" style="max-width:500px;text-align:center">
+      <button class="popup-close" onclick="closePopup('tracking-popup')"><i class="fas fa-times"></i></button>
+      <div style="font-size:3.5rem;margin-bottom:1rem">${isRequest?'📦':'❤️'}</div>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:700;color:var(--royal);margin-bottom:.5rem">
+        ${isRequest?'Request Submitted!':'Donation Registered!'}
+      </h2>
+      <p style="color:var(--muted);margin-bottom:1.5rem">
+        ${isRequest?'Your book request has been received.':'Thank you for your generous donation!'}
+      </p>
+      
+      <div style="background:var(--frost);border-radius:16px;padding:1.5rem;margin-bottom:1.5rem;border:2px dashed var(--azure)">
+        <div style="font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem">Your Tracking ID</div>
+        <div style="font-size:1.4rem;font-weight:800;color:var(--royal);font-family:'Courier New',monospace;letter-spacing:.05em">${trackingId}</div>
+        <div style="font-size:.8rem;color:var(--muted);margin-top:.5rem">Save this ID to track your ${isRequest?'request':'donation'}</div>
+      </div>
+      
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem">
+        <div style="background:#fff;border:2px solid var(--azure);border-radius:12px;padding:1rem">
+          <div style="font-size:1.5rem;margin-bottom:.3rem">📱</div>
+          <div style="font-weight:700;font-size:.85rem;color:var(--ink)">WhatsApp Support</div>
+          <a href="${whatsappLink}" target="_blank" class="btn btn-primary" style="display:block;margin-top:.8rem;padding:.6rem;font-size:.8rem;text-decoration:none">
+            <i class="fab fa-whatsapp"></i> Chat with Admin
+          </a>
+        </div>
+        <div style="background:#fff;border:2px solid var(--sky);border-radius:12px;padding:1rem">
+          <div style="font-size:1.5rem;margin-bottom:.3rem">🔍</div>
+          <div style="font-weight:700;font-size:.85rem;color:var(--ink)">Track Status</div>
+          <button onclick="openTrackLookup('${trackingId}')" class="btn btn-secondary" style="display:block;margin-top:.8rem;padding:.6rem;font-size:.8rem;width:100%;border:none;cursor:pointer">
+            <i class="fas fa-search"></i> Check Status
+          </button>
+        </div>
+      </div>
+      
+      <div style="font-size:.8rem;color:var(--muted)">
+        <i class="fas fa-info-circle"></i> Use your tracking ID anytime to check status or contact us
+      </div>
+    </div>
+  `;
+  document.body.appendChild(trackPopup);
+}
+
+/* ── RECEIPT GENERATOR ── */
+function generateReceipt(data){
+  const receiptHTML=`
+    <div style="font-family:'Segoe UI',sans-serif;max-width:400px;margin:0 auto;padding:2rem;background:linear-gradient(135deg,var(--ice-soft),#fff);border-radius:20px;border:2px solid var(--frost);box-shadow:0 20px 60px rgba(0,0,0,.1);">
+      <div style="text-align:center;margin-bottom:1.5rem;">
+        <div style="font-size:3rem;margin-bottom:.5rem;">📚</div>
+        <h2 style="font-family:'Cormorant Garamond',serif;color:var(--royal);margin:0;">Project BookBridge</h2>
+        <p style="color:var(--muted);font-size:.9rem;margin:.3rem 0;">Book Request Receipt</p>
+      </div>
+      
+      <div style="background:#fff;border-radius:12px;padding:1.5rem;margin-bottom:1rem;border:1px solid var(--frost);">
+        <div style="text-align:center;margin-bottom:1rem;padding-bottom:1rem;border-bottom:2px dashed var(--frost);">
+          <div style="font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;">Tracking ID</div>
+          <div style="font-family:'Courier New',monospace;font-size:1.4rem;font-weight:700;color:var(--royal);letter-spacing:.02em;">${data.trackingId}</div>
+        </div>
+        
+        <div style="display:grid;gap:.8rem;">
+          <div style="display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid var(--frost);">
+            <span style="color:var(--muted);font-size:.9rem;">Name</span>
+            <span style="font-weight:600;text-align:right;">${data.name||'N/A'}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid var(--frost);">
+            <span style="color:var(--muted);font-size:.9rem;">Phone</span>
+            <span style="font-weight:600;text-align:right;">${data.phone||'N/A'}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid var(--frost);">
+            <span style="color:var(--muted);font-size:.9rem;">Email</span>
+            <span style="font-weight:600;text-align:right;">${data.email||'N/A'}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:.5rem 0;">
+            <span style="color:var(--muted);font-size:.9rem;">Date</span>
+            <span style="font-weight:600;text-align:right;">${data.date}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="text-align:center;margin-bottom:1rem;">
+        <div style="font-size:.85rem;color:var(--muted);margin-bottom:.5rem;">Scan to track your request</div>
+        <div style="display:inline-block;padding:.8rem;background:#fff;border-radius:12px;border:1px solid var(--frost);">
+          <i class="fas fa-qrcode" style="font-size:3rem;color:var(--royal);"></i>
+        </div>
+      </div>
+      
+      <div style="text-align:center;font-size:.8rem;color:var(--muted);padding-top:1rem;border-top:1px solid var(--frost);">
+        <p>Save this receipt for your records.</p>
+        <p>Contact us: <a href="https://wa.me/2348128384816" style="color:var(--azure);">WhatsApp</a> | <a href="mailto:bookbridge21@gmail.com" style="color:var(--azure);">Email</a></p>
+      </div>
+    </div>
+  `;
+  
+  // Create a new window for the receipt
+  const receiptWindow=window.open('','_blank','width=500,height=700');
+  receiptWindow.document.write(`
+    <html>
+      <head>
+        <title>Project BookBridge Receipt - ${data.trackingId}</title>
+        <link rel="stylesheet" href="bookbridge.css">
+        <style>
+          body{margin:0;padding:20px;background:#f8fafc;}
+          @media print{body{background:#fff;padding:0;}}
+        </style>
+      </head>
+      <body>
+        ${receiptHTML}
+        <div style="text-align:center;margin-top:1rem;">
+          <button onclick="window.print()" style="padding:.8rem 1.5rem;background:var(--royal);color:#fff;border:none;border-radius:50px;cursor:pointer;font-size:1rem;margin-right:.5rem;">
+            <i class="fas fa-print"></i> Print Receipt
+          </button>
+          <button onclick="window.close()" style="padding:.8rem 1.5rem;background:var(--frost);color:var(--muted);border:none;border-radius:50px;cursor:pointer;font-size:1rem;">
+            <i class="fas fa-times"></i> Close
+          </button>
+        </div>
+      </body>
+    </html>
+  `);
+  receiptWindow.document.close();
+}
+
+function openTrackLookup(prefillId=''){
+  const lookupPopup=document.createElement('div');
+  lookupPopup.className='popup-overlay open';
+  lookupPopup.id='lookup-popup';
+  lookupPopup.innerHTML=`
+    <div class="popup-box" style="max-width:500px">
+      <button class="popup-close" onclick="closePopup('lookup-popup')"><i class="fas fa-times"></i></button>
+      <div class="popup-header">
+        <span class="popup-emoji">🔍</span>
+        <div class="popup-title">Track Your Request/Donation</div>
+        <div class="popup-sub">Enter your tracking ID to check status</div>
+      </div>
+      
+      <div style="margin-bottom:1.5rem">
+        <input type="text" id="trackIdInput" placeholder="e.g. REQ-ABC123-XYZ" value="${prefillId}" 
+          style="width:100%;padding:1rem;border:2px solid var(--frost);border-radius:12px;font-size:1rem;text-align:center;text-transform:uppercase;font-family:'Courier New',monospace">
+      </div>
+      
+      <button onclick="lookupTrackingId()" class="btn btn-primary" style="width:100%;padding:1rem">
+        <i class="fas fa-search"></i> Track Status
+      </button>
+      
+      <div id="trackingResult" style="margin-top:1.5rem;display:none">
+        <!-- Results will appear here -->
+      </div>
+    </div>
+  `;
+  document.body.appendChild(lookupPopup);
+}
+
+function lookupTrackingId(){
+  const trackId=document.getElementById('trackIdInput').value.trim().toUpperCase();
+  if(!trackId){
+    showToast('Please enter a tracking ID');
+    return;
+  }
+  
+  const resultDiv=document.getElementById('trackingResult');
+  resultDiv.style.display='block';
+  resultDiv.innerHTML='<div style="text-align:center;padding:2rem"><i class="fas fa-spinner fa-spin" style="font-size:2rem;color:var(--azure)"></i><p style="margin-top:1rem;color:var(--muted)">Searching...</p></div>';
+  
+  // Search in Firebase
+  const requestsRef=database.ref('requests');
+  const donationsRef=database.ref('donations');
+  
+  Promise.all([
+    requestsRef.orderByChild('trackingId').equalTo(trackId).once('value'),
+    donationsRef.orderByChild('trackingId').equalTo(trackId).once('value')
+  ]).then(([requestSnap,donationSnap])=>{
+    const requestData=requestSnap.val();
+    const donationData=donationSnap.val();
+    
+    if(requestData){
+      const req=Object.values(requestData)[0];
+      showTrackingResult(req,'request');
+    }else if(donationData){
+      const don=Object.values(donationData)[0];
+      showTrackingResult(don,'donation');
+    }else{
+      resultDiv.innerHTML=`<div style="text-align:center;padding:2rem;background:var(--frost);border-radius:12px">
+        <i class="fas fa-exclamation-circle" style="font-size:2.5rem;color:var(--warning)"></i>
+        <h3 style="margin-top:1rem;color:var(--ink)">Not Found</h3>
+        <p style="color:var(--muted)">No record found for tracking ID: <strong>${trackId}</strong></p>
+        <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Please check the ID and try again, or contact support.</p>
+      </div>`;
+    }
+  }).catch(err=>{
+    resultDiv.innerHTML=`<div style="color:var(--danger);text-align:center">Error: ${err.message}</div>`;
+  });
+}
+
+function showTrackingResult(data,type){
+  const isRequest=type==='request';
+  const adminPhone='+2348128384816'; // Main admin WhatsApp
+  const whatsappLink=`https://wa.me/${adminPhone}?text=Hello%20Project%20BookBridge,%20I%20need%20help%20with%20my%20${isRequest?'request':'donation'}%20(ID:%20${data.trackingId})`;
+  
+  const statusColors={
+    pending:'var(--warning)',
+    fulfilled:'var(--success)',
+    collected:'var(--success)',
+    processing:'var(--azure)',
+    unpaid:'var(--danger)',
+    paid:'var(--success)',
+    scheduled:'var(--azure)'
+  };
+  
+  let statusHTML='';
+  if(isRequest){
+    statusHTML=`<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-bottom:1.5rem">
+      <div style="background:#fff;border:2px solid ${statusColors[data.status]||'var(--muted)'};border-radius:12px;padding:1rem;text-align:center">
+        <div style="font-size:.75rem;color:var(--muted);text-transform:uppercase">Request Status</div>
+        <div style="font-weight:700;color:${statusColors[data.status]||'var(--muted)'};font-size:1.1rem;text-transform:capitalize">${data.status}</div>
+      </div>
+      <div style="background:#fff;border:2px solid ${statusColors[data.paymentStatus]||'var(--muted)'};border-radius:12px;padding:1rem;text-align:center">
+        <div style="font-size:.75rem;color:var(--muted);text-transform:uppercase">Payment</div>
+        <div style="font-weight:700;color:${statusColors[data.paymentStatus]||'var(--muted)'};font-size:1.1rem;text-transform:capitalize">${data.paymentStatus}</div>
+      </div>
+      <div style="background:#fff;border:2px solid ${statusColors[data.deliveryStatus]||'var(--muted)'};border-radius:12px;padding:1rem;text-align:center;grid-column:1/-1">
+        <div style="font-size:.75rem;color:var(--muted);text-transform:uppercase">Delivery</div>
+        <div style="font-weight:700;color:${statusColors[data.deliveryStatus]||'var(--muted)'};font-size:1.1rem;text-transform:capitalize">${data.deliveryStatus}</div>
+      </div>
+    </div>`;
+  }else{
+    statusHTML=`<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-bottom:1.5rem">
+      <div style="background:#fff;border:2px solid ${statusColors[data.status]||'var(--muted)'};border-radius:12px;padding:1rem;text-align:center">
+        <div style="font-size:.75rem;color:var(--muted);text-transform:uppercase">Donation Status</div>
+        <div style="font-weight:700;color:${statusColors[data.status]||'var(--muted)'};font-size:1.1rem;text-transform:capitalize">${data.status}</div>
+      </div>
+      <div style="background:#fff;border:2px solid ${statusColors[data.pickupStatus]||'var(--muted)'};border-radius:12px;padding:1rem;text-align:center">
+        <div style="font-size:.75rem;color:var(--muted);text-transform:uppercase">Pickup</div>
+        <div style="font-weight:700;color:${statusColors[data.pickupStatus]||'var(--muted)'};font-size:1.1rem;text-transform:capitalize">${data.pickupStatus}</div>
+      </div>
+    </div>`;
+  }
+  
+  const resultDiv=document.getElementById('trackingResult');
+  resultDiv.innerHTML=`
+    <div style="background:var(--frost);border-radius:16px;padding:1.5rem">
+      <div style="text-align:center;margin-bottom:1.5rem">
+        <div style="font-size:2.5rem">${isRequest?'📦':'❤️'}</div>
+        <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--royal);margin-top:.5rem">${isRequest?'Book Request':'Book Donation'}</h3>
+        <div style="font-size:1rem;font-weight:700;color:var(--ink);font-family:'Courier New',monospace">${data.trackingId}</div>
+      </div>
+      
+      ${statusHTML}
+      
+      <div style="background:#fff;border-radius:12px;padding:1rem;margin-bottom:1rem">
+        <div style="font-weight:700;color:var(--ink);margin-bottom:.5rem"><i class="fas fa-user"></i> ${isRequest?data.studentName:data.donorName}</div>
+        <div style="font-size:.85rem;color:var(--muted)"><i class="fas fa-book"></i> ${data.bookTitle}</div>
+        <div style="font-size:.85rem;color:var(--muted)"><i class="fas fa-graduation-cap"></i> ${data.subject}</div>
+        ${isRequest?`<div style="font-size:.85rem;color:var(--muted)"><i class="fas fa-school"></i> ${data.school}</div>`:`<div style="font-size:.85rem;color:var(--muted)"><i class="fas fa-map-marker-alt"></i> ${data.location}</div>`}
+      </div>
+      
+      <div style="display:flex;gap:1rem">
+        <a href="${whatsappLink}" target="_blank" class="btn btn-primary" style="flex:1;text-decoration:none;text-align:center;padding:.8rem">
+          <i class="fab fa-whatsapp"></i> Chat Support
+        </a>
+        <button onclick="closePopup('lookup-popup')" class="btn btn-secondary" style="flex:1;padding:.8rem;border:none;cursor:pointer">
+          <i class="fas fa-times"></i> Close
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+/* ── TOAST ── */
+function showToast(msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toast-msg').textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),4200);
+}
+
+/* ── LEARNING RESOURCES CENTER ── */
+let allResources = [];
+let filteredResources = [];
+
+function openResourcesCenter(){
+  openPopup('resources-center-popup');
+  loadResourcesFromFirebase();
+}
+
+function loadResourcesFromFirebase(){
+  const resourcesRef = database.ref('resources');
+  document.getElementById('resourcesLoading').style.display = 'block';
+  document.getElementById('resourcesEmpty').style.display = 'none';
+  document.getElementById('resourcesGrid').innerHTML = '';
+  
+  resourcesRef.once('value', (snapshot) => {
+    const data = snapshot.val();
+    if (data) {
+      allResources = Object.entries(data).map(([key, val]) => ({ ...val, firebaseKey: key }));
+    } else {
+      allResources = [];
+    }
+    document.getElementById('resourcesLoading').style.display = 'none';
+    filterResources();
+  });
+}
+
+function filterResources(){
+  const search = document.getElementById('resourceSearch').value.toLowerCase();
+  const subject = document.getElementById('resourceSubjectFilter').value;
+  const type = document.getElementById('resourceTypeFilter').value;
+  
+  filteredResources = allResources.filter(r => {
+    const matchesSearch = !search || 
+      (r.title && r.title.toLowerCase().includes(search)) ||
+      (r.description && r.description.toLowerCase().includes(search));
+    const matchesSubject = !subject || r.subject === subject;
+    const matchesType = !type || r.type === type;
+    return matchesSearch && matchesSubject && matchesType;
+  });
+  
+  renderResourcesList();
+}
+
+function quickFilter(filter){
+  document.getElementById('resourceSearch').value = '';
+  
+  if (filter === 'past-questions'){
+    document.getElementById('resourceTypeFilter').value = 'Past Questions';
+    document.getElementById('resourceSubjectFilter').value = '';
+  } else if (filter === 'video'){
+    document.getElementById('resourceTypeFilter').value = 'Video';
+    document.getElementById('resourceSubjectFilter').value = '';
+  } else if (filter === 'pdf'){
+    document.getElementById('resourceTypeFilter').value = 'PDF';
+    document.getElementById('resourceSubjectFilter').value = '';
+  }
+  
+  filterResources();
+}
+
+function clearFilters(){
+  document.getElementById('resourceSearch').value = '';
+  document.getElementById('resourceSubjectFilter').value = '';
+  document.getElementById('resourceTypeFilter').value = '';
+  filterResources();
+}
+
+function renderResourcesList(){
+  const grid = document.getElementById('resourcesGrid');
+  const empty = document.getElementById('resourcesEmpty');
+  const count = document.getElementById('resourceCount');
+  
+  count.textContent = filteredResources.length;
+  
+  if (filteredResources.length === 0){
+    empty.style.display = 'block';
+    grid.innerHTML = '';
+    return;
+  }
+  
+  empty.style.display = 'none';
+  
+  const typeIcons = {
+    'PDF': '📄',
+    'Video': '🎥',
+    'Interactive': '🖥️',
+    'Past Questions': '📝',
+    'Notes': '📚'
+  };
+  
+  const typeColors = {
+    'PDF': 'var(--danger)',
+    'Video': 'var(--azure)',
+    'Interactive': 'var(--neon-pink)',
+    'Past Questions': 'var(--success)',
+    'Notes': 'var(--warning)'
+  };
+  
+  grid.innerHTML = filteredResources.map(r => `
+    <div class="resource-card" style="background:#fff;border:2px solid var(--frost);border-radius:16px;padding:1.2rem;transition:.3s;cursor:pointer;position:relative;overflow:hidden;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 30px rgba(0,0,0,.1)';this.style.borderColor='var(--azure)'" onmouseout="this.style.transform='';this.style.boxShadow='';this.style.borderColor='var(--frost)'" onclick="openResource('${r.url || '#'}')">
+      <div style="display:flex;align-items:flex-start;gap:1rem;">
+        <div style="width:50px;height:50px;border-radius:12px;background:linear-gradient(135deg,${typeColors[r.type] || 'var(--azure)'},${typeColors[r.type] || 'var(--sky)'});display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;">
+          ${typeIcons[r.type] || '📄'}
+        </div>
+        <div style="flex:1;min-width:0;">
+          <h4 style="font-size:1rem;font-weight:700;color:var(--ink);margin-bottom:.3rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${r.title || 'Untitled Resource'}</h4>
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem;">
+            <span style="font-size:.75rem;padding:.2rem .6rem;background:var(--frost);border-radius:20px;color:var(--muted);">${r.subject || 'General'}</span>
+            <span style="font-size:.75rem;padding:.2rem .6rem;background:var(--frost);border-radius:20px;color:var(--muted);">${r.type || 'PDF'}</span>
+          </div>
+          <p style="font-size:.85rem;color:var(--muted);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${r.description || 'No description available.'}</p>
+        </div>
+      </div>
+      <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--frost);display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:.8rem;color:var(--muted);">
+          <i class="fas fa-download"></i> ${r.downloads || 0} downloads
+        </span>
+        <span style="font-size:.8rem;color:var(--azure);font-weight:600;">
+          Open Resource <i class="fas fa-external-link-alt"></i>
+        </span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openResource(url){
+  if (!url || url === '#'){
+    showToast('Resource link not available');
+    return;
+  }
+  
+  // Track download
+  const resource = allResources.find(r => r.url === url);
+  if (resource && resource.firebaseKey){
+    const downloads = (resource.downloads || 0) + 1;
+    database.ref('resources/' + resource.firebaseKey).update({ downloads: downloads });
+  }
+  
+  // Open in new tab
+  window.open(url, '_blank');
+}
+
+/* ── VIDEO ── */
+// Video functionality - main video is now static with embedded URL
+
+/* ════════════════════════════
+   CANVAS CURSOR TRAIL
+   ════════════════════════════ */
+const canvas=document.getElementById('cursor-canvas');
+const ctx=canvas.getContext('2d');
+const glow=document.getElementById('cursor-glow');
+function resizeCanvas(){canvas.width=window.innerWidth;canvas.height=window.innerHeight}
+resizeCanvas();
+window.addEventListener('resize',resizeCanvas);
+
+const TRAIL_COLORS=['#38BDF8','#0EA5E9','#7C3AED','#FF0090','#F59E0B','#10B981','#A78BFA','#F43F5E','#06B6D4','#FB923C','#34D399','#818CF8'];
+let particles=[],lastX=-300,lastY=-300,colorIdx=0;
+
+class Particle{
+  constructor(x,y,color){
+    this.x=x+(Math.random()-.5)*16;this.y=y+(Math.random()-.5)*16;
+    this.color=color;this.r=Math.random()*8+3;this.alpha=1;
+    this.decay=Math.random()*.028+.014;
+    this.vx=(Math.random()-.5)*3;this.vy=(Math.random()-.5)*3-1.4;
+    this.gravity=.065;this.spin=(Math.random()-.5)*.35;
+    this.type=Math.random()<.35?'star':'circle';
+  }
+  update(){
+    this.vx+=this.spin*.05;this.vy+=this.gravity;
+    this.x+=this.vx;this.y+=this.vy;
+    this.alpha-=this.decay;this.r*=.981;
+  }
+  draw(){
+    ctx.save();ctx.globalAlpha=Math.max(0,this.alpha);
+    ctx.fillStyle=this.color;ctx.shadowColor=this.color;ctx.shadowBlur=14;
+    if(this.type==='star'){
+      ctx.translate(this.x,this.y);ctx.beginPath();
+      for(let i=0;i<5;i++){
+        const a=(i*4*Math.PI)/5-Math.PI/2,b=(i*4*Math.PI)/5+(2*Math.PI)/5-Math.PI/2;
+        ctx.lineTo(Math.cos(a)*this.r,Math.sin(a)*this.r);
+        ctx.lineTo(Math.cos(b)*this.r*.4,Math.sin(b)*this.r*.4);
+      }
+      ctx.closePath();ctx.fill();
+    }else{ctx.beginPath();ctx.arc(this.x,this.y,this.r,0,Math.PI*2);ctx.fill()}
+    ctx.restore();
+  }
+}
+function spawnParticles(x,y){
+  const dx=x-lastX,dy=y-lastY,speed=Math.sqrt(dx*dx+dy*dy);
+  const count=Math.min(Math.floor(speed*.45)+1,7);
+  for(let i=0;i<count;i++)particles.push(new Particle(x,y,TRAIL_COLORS[(colorIdx+i)%TRAIL_COLORS.length]));
+  colorIdx=(colorIdx+count)%TRAIL_COLORS.length;lastX=x;lastY=y;
+}
+(function animateParticles(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles=particles.filter(p=>p.alpha>.01);
+  particles.forEach(p=>{p.update();p.draw()});
+  requestAnimationFrame(animateParticles);
+})();
+window.addEventListener('mousemove',e=>{
+  glow.style.left=e.clientX+'px';glow.style.top=e.clientY+'px';
+  spawnParticles(e.clientX,e.clientY);
+});
+window.addEventListener('touchmove',e=>{
+  const t=e.touches[0];spawnParticles(t.clientX,t.clientY);
+},{passive:true});
+document.querySelectorAll('a,button,.subject-card,.mentor-card,.gallery-card,.story-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{glow.style.width='62px';glow.style.height='62px';glow.style.background='radial-gradient(circle,rgba(255,0,144,.55),transparent 70%)'});
+  el.addEventListener('mouseleave',()=>{glow.style.width='32px';glow.style.height='32px';glow.style.background='radial-gradient(circle,rgba(56,189,248,.70),transparent 70%)'});
+});
+
+/* ── FLOATING ORBS ── */
+const orbContainer=document.getElementById('orb-container');
+orbContainer.style.cssText='position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;';
+[
+  {color:'rgba(56,189,248,.26)',  size:340,x:10,y:15,dur:30,dx1:'75px', dy1:'-55px',dx2:'-45px',dy2:'85px', dx3:'60px', dy3:'25px', o:.62},
+  {color:'rgba(124,58,237,.22)', size:290,x:78,y:8, dur:36,dx1:'-65px',dy1:'75px', dx2:'50px', dy2:'-55px',dx3:'-35px',dy3:'65px', o:.52},
+  {color:'rgba(255,0,144,.18)',  size:360,x:5, y:68,dur:42,dx1:'85px', dy1:'38px', dx2:'-50px',dy2:'-78px',dx3:'65px', dy3:'-30px',o:.58},
+  {color:'rgba(245,158,11,.20)', size:270,x:82,y:72,dur:32,dx1:'-55px',dy1:'-65px',dx2:'75px', dy2:'38px', dx3:'-40px',dy3:'-55px',o:.52},
+  {color:'rgba(16,185,129,.18)', size:310,x:48,y:42,dur:40,dx1:'48px', dy1:'65px', dx2:'-75px',dy2:'-42px',dx3:'55px', dy3:'48px', o:.48},
+  {color:'rgba(6,182,212,.20)',  size:250,x:25,y:82,dur:26,dx1:'-48px',dy1:'-55px',dx2:'65px', dy2:'28px', dx3:'-28px',dy3:'-48px',o:.48},
+  {color:'rgba(167,139,250,.18)',size:220,x:65,y:52,dur:34,dx1:'38px', dy1:'-75px',dx2:'-58px',dy2:'48px', dx3:'28px', dy3:'65px', o:.45},
+  {color:'rgba(244,63,94,.16)',  size:190,x:18,y:48,dur:28,dx1:'-38px',dy1:'55px', dx2:'48px', dy2:'-38px',dx3:'-18px',dy3:'48px', o:.40},
+].forEach(cfg=>{
+  const orb=document.createElement('div');
+  orb.className='orb';
+  orb.style.cssText=`width:${cfg.size}px;height:${cfg.size}px;background:${cfg.color};left:${cfg.x}%;top:${cfg.y}%;--dx1:${cfg.dx1};--dy1:${cfg.dy1};--dx2:${cfg.dx2};--dy2:${cfg.dy2};--dx3:${cfg.dx3};--dy3:${cfg.dy3};--o:${cfg.o};animation-duration:${cfg.dur}s,3s;animation-delay:0s,${Math.random()*2}s;animation-timing-function:ease-in-out,ease;animation-fill-mode:both,forwards;`;
+  orbContainer.appendChild(orb);
+});
+
+/* ── INIT: UPDATE DYNAMIC CONTENT ── */
+function initDynamicContent(){
+  // Update resource counts on subject cards
+  document.querySelectorAll('.subject-card[data-subject]').forEach(card=>{
+    const subject=card.dataset.subject;
+    const countSpan=card.querySelector('.resource-count');
+    if(countSpan){
+      countSpan.textContent=getResourceCount(subject);
+    }
+  });
+  
+  // Re-render mentors if grid exists (mentors section)
+  const mentorsGrid=document.getElementById('mentors-grid');
+  if(mentorsGrid){
+    mentorsGrid.innerHTML='';
+    mentorData.forEach(m=>{
+      const aColor=m.avail==='available'?'#1D4ED8':'#92400E';
+      const aBg=m.avail==='available'?'rgba(14,165,233,.10)':'rgba(245,158,11,.12)';
+      const aLabel=m.avail==='available'?'Available':'Busy';
+      const stars='★'.repeat(Math.floor(m.rating))+(m.rating%1>=.5?'½':'');
+      mentorsGrid.innerHTML+=`
+        <div class="mentor-card">
+          <div class="mentor-cover ${m.cover||'cover-blue'}">
+            <div class="mentor-cover-pattern"></div>
+            <div class="mentor-avatar">${m.avatar}</div>
+          </div>
+          <div class="mentor-body">
+            <div class="mentor-name">${m.name}</div>
+            <div class="mentor-subj">${m.subj} · ${m.loc}</div>
+            <div class="mentor-bio">${m.bio}</div>
+            <div class="mentor-meta">
+              <span><span class="mentor-stars">${stars}</span> ${m.rating}</span>
+              <span><i class="fas fa-users"></i> ${m.students}</span>
+              <span><i class="fas fa-briefcase"></i> ${m.exp}</span>
+            </div>
+            <div style="margin-bottom:1rem">
+              <span style="padding:.3rem .85rem;border-radius:50px;font-size:.72rem;font-weight:800;background:${aBg};color:${aColor}">● ${aLabel}</span>
+            </div>
+            <button class="mentor-btn" onclick="openConnectMentor('${m.name}','${m.subj}','${m.avatar}')">
+              <span>Connect with Mentor</span>
+            </button>
+          </div>
+        </div>`;
+    });
+    
+    // Add "Request Another Mentor" card
+    mentorsGrid.innerHTML+=`
+      <div class="mentor-card" style="background:linear-gradient(135deg,rgba(56,189,248,.08),rgba(139,92,246,.08));border:2px dashed rgba(56,189,248,.3);cursor:pointer" onclick="openPopup('request-mentor-popup')">
+        <div class="mentor-cover" style="background:linear-gradient(135deg,rgba(56,189,248,.2),rgba(139,92,246,.2));display:flex;align-items:center;justify-content:center">
+          <div style="font-size:4rem">🙋‍♂️</div>
+        </div>
+        <div class="mentor-body" style="text-align:center">
+          <div class="mentor-name" style="font-size:1.1rem">Don't see the right mentor?</div>
+          <div class="mentor-subj" style="margin:.5rem 0">Request a custom mentor match</div>
+          <div class="mentor-bio" style="font-size:.8rem;margin-bottom:1rem">Tell us your needs and we'll find the perfect educator for you.</div>
+          <button class="mentor-btn" style="background:linear-gradient(135deg,var(--azure),var(--royal))">
+            <span><i class="fas fa-search"></i> Request Mentor</span>
+          </button>
+        </div>
+      </div>`;
+  }
+}
+
+/* ── REQUEST MENTOR FORM ── */
+function submitRequestMentor(e){
+  e.preventDefault();
+  
+  const name=document.getElementById('reqMentorName').value;
+  const school=document.getElementById('reqMentorSchool').value;
+  const phone=document.getElementById('reqMentorPhone').value;
+  const cls=document.getElementById('reqMentorClass').value;
+  const subject=document.getElementById('reqMentorSubject').value;
+  const location=document.getElementById('reqMentorLocation').value||'Any location';
+  const details=document.getElementById('reqMentorDetails').value;
+  
+  // Save to Firebase first
+  const mentorRequestsRef=database.ref('mentorRequests');
+  const reqId=Date.now().toString();
+  console.log('Saving mentor connection request with ID:',reqId);
+  
+  mentorRequestsRef.push({
+    id:reqId,
+    studentName:name,
+    school:school,
+    phone:phone,
+    class:cls,
+    subject:subject,
+    location:location,
+    details:details,
+    status:'pending',
+    date:new Date().toLocaleDateString(),
+    createdAt:Date.now()
+  }).then(()=>{
+    console.log('Mentor connection request saved to Firebase!');
+    
+    // Now send to WhatsApp
+    const message=`🙋‍♂️ *Mentor Request*\n\n👤 *Student:* ${name}\n🏫 *School:* ${school}\n📞 *Contact:* ${phone}\n📚 *Class:* ${cls}\n📖 *Subject:* ${subject}\n📍 *Preferred Location:* ${location}\n\n📝 *What help is needed:*\n${details}\n\nPlease help connect me with a suitable mentor.`;
+    
+    const adminPhone='+2348128384816'; // Main admin WhatsApp
+    const whatsappLink=`https://wa.me/${adminPhone}?text=${encodeURIComponent(message)}`;
+    
+    closePopup('request-mentor-popup');
+    
+    // Open WhatsApp in new tab
+    window.open(whatsappLink,'_blank');
+    
+    showToast('Request saved! Opening WhatsApp to notify admin...');
+  }).catch(err=>{
+    console.error('Error saving mentor request:',err);
+    showToast('Error saving request. Please try again.');
+  });
+  
+  // Reset form
+  e.target.reset();
+}
+
+/* ── FIREBASE REAL-TIME SYNC ── */
+function setupFirebaseSync(){
+  // Sync mentors from Firebase
+  mentorsRef.on('value',(snapshot)=>{
+    const data=snapshot.val();
+    if(data){
+      mentorData=Object.values(data);
+    }else{
+      // Initialize Firebase with defaults if empty
+      mentorData=[...defaultMentors];
+      defaultMentors.forEach(m=>mentorsRef.push(m));
+    }
+    initDynamicContent();
+  });
+  
+  // Sync resources from Firebase
+  resourcesRef.on('value',(snapshot)=>{
+    const data=snapshot.val();
+    resourcesData=data?Object.values(data):[];
+    // Update resource counts
+    document.querySelectorAll('.subject-card[data-subject]').forEach(card=>{
+      const subject=card.dataset.subject;
+      const countSpan=card.querySelector('.resource-count');
+      if(countSpan){
+        countSpan.textContent=getResourceCount(subject);
+      }
+    });
+  });
+}
+
+// Run on page load
+document.addEventListener('DOMContentLoaded',()=>{
+  initDynamicContent();
+  setupFirebaseSync();
+});
+</script>
+</body>
+</html>

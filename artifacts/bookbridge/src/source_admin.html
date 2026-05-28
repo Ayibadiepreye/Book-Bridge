@@ -1,0 +1,2414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project BookBridge Admin Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <style>
+    :root{
+      --royal:#003A8C;
+      --royal-deep:#002A6C;
+      --royal-glow:rgba(0,58,140,0.15);
+      --azure:#0EA5E9;
+      --azure-light:#38BDF8;
+      --sky:#7DD3FC;
+      --sky-glow:rgba(125,211,252,0.3);
+      --neon-pink:#FF0090;
+      --neon-pink-glow:rgba(255,0,144,0.2);
+      --hot-violet:#7C3AED;
+      --hot-violet-glow:rgba(124,58,237,0.2);
+      --lavender:#E0E7FF;
+      --lavender-soft:rgba(224,231,255,0.6);
+      --ink:#0F172A;
+      --ink-light:#1E293B;
+      --muted:#64748B;
+      --muted-soft:#94A3B8;
+      --ice:#F8FAFC;
+      --ice-soft:rgba(248,250,252,0.8);
+      --frost:#F1F5F9;
+      --frost-glass:rgba(241,245,249,0.7);
+      --success:#10B981;
+      --success-glow:rgba(16,185,129,0.15);
+      --warning:#F59E0B;
+      --warning-glow:rgba(245,158,11,0.15);
+      --danger:#EF4444;
+      --danger-glow:rgba(239,68,68,0.15);
+      --white-glass:rgba(255,255,255,0.85);
+      --shadow-soft:0 4px 20px rgba(0,0,0,0.04);
+      --shadow-medium:0 8px 30px rgba(0,0,0,0.08);
+      --shadow-strong:0 20px 60px rgba(0,0,0,0.12);
+      --shadow-glow:0 0 40px var(--sky-glow);
+    }
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+    
+    /* Smooth scrolling */
+    html{scroll-behavior:smooth}
+    
+    body{
+      background:linear-gradient(135deg,var(--ice) 0%,#EFF6FF 50%,var(--lavender-soft) 100%);
+      background-attachment:fixed;
+      color:var(--ink);
+      min-height:100vh;
+      font-feature-settings:'liga' 1,'calt' 1;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+    
+    /* ══ LOGIN ══ */
+    .login-overlay{
+      position:fixed;inset:0;z-index:10000;
+      background:linear-gradient(165deg,#020712 0%,#04122B 40%,#0F172A 100%);
+      display:flex;align-items:center;justify-content:center;
+      overflow:hidden;
+    }
+    .login-overlay::before{
+      content:'';position:absolute;inset:0;
+      background:
+        radial-gradient(ellipse 80% 60% at 30% 40%,rgba(14,165,233,.25),transparent 50%),
+        radial-gradient(ellipse 60% 50% at 70% 60%,rgba(124,58,237,.2),transparent 50%),
+        radial-gradient(ellipse 50% 40% at 50% 80%,rgba(255,0,144,.15),transparent 50%);
+      animation:pulseGlow 8s ease-in-out infinite;
+    }
+    @keyframes pulseGlow{
+      0%,100%{opacity:1;transform:scale(1)}
+      50%{opacity:0.8;transform:scale(1.02)}
+    }
+    .login-box{
+      background:var(--white-glass);
+      backdrop-filter:blur(20px);
+      -webkit-backdrop-filter:blur(20px);
+      border-radius:28px;
+      padding:2.8rem;
+      max-width:440px;
+      width:92%;
+      box-shadow:var(--shadow-strong),0 0 0 1px rgba(255,255,255,0.5) inset;
+      position:relative;z-index:1;
+      border:1px solid rgba(255,255,255,0.4);
+      animation:slideUp 0.6s cubic-bezier(0.16,1,0.3,1);
+    }
+    @keyframes slideUp{
+      from{opacity:0;transform:translateY(30px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+    .login-logo{
+      text-align:center;margin-bottom:2rem;
+    }
+    .login-logo .logo-icon{
+      width:72px;height:72px;border-radius:20px;
+      background:linear-gradient(135deg,var(--royal) 0%,var(--azure) 50%,var(--sky) 100%);
+      display:flex;align-items:center;justify-content:center;
+      font-size:2.2rem;margin:0 auto 1rem;
+      box-shadow:0 12px 40px rgba(14,165,233,.5),0 0 0 4px rgba(14,165,233,.1);
+      animation:float 3s ease-in-out infinite;
+    }
+    @keyframes float{
+      0%,100%{transform:translateY(0)}
+      50%{transform:translateY(-8px)}
+    }
+    .login-logo h1{
+      font-family:'Cormorant Garamond',serif;font-size:1.9rem;
+      color:var(--royal);font-weight:700;
+      letter-spacing:-0.02em;
+    }
+    .login-logo p{color:var(--muted);font-size:.9rem;margin-top:.4rem;font-weight:500}
+    .form-group{margin-bottom:1.4rem}
+    .form-group label{display:block;font-size:.78rem;font-weight:600;color:var(--muted);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.08em}
+    .form-group input{
+      width:100%;padding:1rem 1.2rem;border:2px solid var(--frost);
+      border-radius:14px;font-size:.95rem;transition:all 0.3s ease;
+      background:var(--white-glass);
+    }
+    .form-group input:hover{border-color:var(--sky)}
+    .form-group input:focus{
+      outline:none;border-color:var(--azure);
+      box-shadow:0 0 0 4px var(--sky-glow);
+      background:#fff;
+    }
+    .login-btn{
+      width:100%;padding:1.1rem;
+      background:linear-gradient(135deg,var(--royal) 0%,var(--azure) 100%);
+      color:#fff;border:none;border-radius:14px;font-weight:700;font-size:1.05rem;cursor:pointer;
+      transition:all 0.3s ease;
+      box-shadow:0 4px 20px rgba(14,165,233,.4),0 0 0 1px rgba(255,255,255,0.2) inset;
+      position:relative;overflow:hidden;
+    }
+    .login-btn::before{
+      content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent);
+      transition:left 0.5s;
+    }
+    .login-btn:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(14,165,233,.5)}
+    .login-btn:hover::before{left:100%}
+    .login-btn:active{transform:translateY(-1px)}
+    .login-error{color:var(--danger);font-size:.9rem;margin-top:.8rem;text-align:center;display:none;background:var(--danger-glow);padding:0.8rem;border-radius:10px}
+    
+    /* ══ LAYOUT ══ */
+    .admin-container{display:none;min-height:100vh}
+    .sidebar{
+      position:fixed;left:0;top:0;bottom:0;width:280px;
+      background:linear-gradient(180deg,var(--royal-deep) 0%,var(--royal) 50%,#0F4C9A 100%);
+      color:#fff;padding:1.8rem;z-index:100;
+      display:flex;flex-direction:column;
+      box-shadow:4px 0 30px rgba(0,0,0,0.1);
+      overflow-y:auto;
+    }
+    .sidebar::-webkit-scrollbar{width:0;display:none}
+    .sidebar::-webkit-scrollbar-track{display:none}
+    .sidebar::-webkit-scrollbar-thumb{display:none}
+    .sidebar{-ms-overflow-style:none;scrollbar-width:none}
+    .sidebar::before{
+      content:'';position:absolute;inset:0;
+      background:
+        radial-gradient(ellipse 100% 50% at 0% 0%,rgba(14,165,233,.2),transparent 60%),
+        radial-gradient(ellipse 80% 40% at 100% 100%,rgba(124,58,237,.15),transparent 50%);
+      pointer-events:none;
+    }
+    .sidebar-header{
+      display:flex;align-items:center;gap:1rem;padding-bottom:1.8rem;
+      border-bottom:1px solid rgba(255,255,255,.12);
+      position:relative;z-index:1;
+    }
+    .sidebar-header .logo-icon{
+      width:48px;height:48px;border-radius:14px;
+      background:linear-gradient(135deg,var(--azure) 0%,var(--sky) 100%);
+      display:flex;align-items:center;justify-content:center;font-size:1.5rem;
+      box-shadow:0 8px 25px rgba(14,165,233,.4);
+    }
+    .sidebar-header h2{
+      font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;
+      letter-spacing:-0.01em;
+    }
+    .sidebar-nav{flex:1;margin-top:2rem;position:relative;z-index:1;overflow-y:auto;max-height:calc(100vh - 250px);scrollbar-width:none;-ms-overflow-style:none}
+    .sidebar-nav::-webkit-scrollbar{width:0;display:none}
+    .nav-item{
+      display:flex;align-items:center;gap:1rem;padding:1rem 1.2rem;
+      border-radius:14px;cursor:pointer;transition:all 0.3s ease;
+      color:rgba(255,255,255,.75);font-size:.92rem;font-weight:500;
+      margin-bottom:.5rem;
+      position:relative;overflow:hidden;
+    }
+    .nav-item::before{
+      content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+      background:linear-gradient(180deg,var(--sky),var(--azure));
+      border-radius:0 3px 3px 0;
+      opacity:0;transition:opacity 0.3s;
+    }
+    .nav-item:hover,.nav-item.active{
+      background:rgba(255,255,255,.1);color:#fff;
+      transform:translateX(4px);
+    }
+    .nav-item.active::before{opacity:1}
+    .nav-item i{width:22px;text-align:center;font-size:1.05rem}
+    .nav-badge{
+      margin-left:auto;background:linear-gradient(135deg,var(--neon-pink),var(--hot-violet));color:#fff;
+      font-size:.7rem;padding:.25rem .6rem;border-radius:50px;font-weight:700;
+      box-shadow:0 2px 10px var(--neon-pink-glow);
+    }
+    .sidebar-footer{
+      padding-top:1.2rem;border-top:1px solid rgba(255,255,255,.12);
+      position:relative;z-index:1;
+    }
+    .logout-btn{
+      width:100%;padding:1rem;background:rgba(255,255,255,.08);
+      color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:12px;
+      font-size:.88rem;font-weight:600;cursor:pointer;transition:all 0.3s ease;
+      display:flex;align-items:center;justify-content:center;gap:.6rem;
+    }
+    .logout-btn:hover{background:rgba(255,255,255,.15);transform:translateY(-2px)}
+    
+    .main-content{
+      margin-left:280px;padding:2rem 2.5rem;
+      min-height:100vh;
+    }
+    .top-bar{
+      display:flex;align-items:center;justify-content:space-between;
+      margin-bottom:2rem;
+      padding-bottom:1.5rem;
+      border-bottom:1px solid var(--frost);
+    }
+    .top-bar h1{
+      font-family:'Cormorant Garamond',serif;font-size:2.2rem;color:var(--ink);
+      font-weight:700;letter-spacing:-0.02em;
+      background:linear-gradient(135deg,var(--ink) 0%,var(--royal) 100%);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    }
+    .top-bar h1::after{
+      content:'';display:block;width:60px;height:4px;
+      background:linear-gradient(90deg,var(--azure),var(--sky));
+      border-radius:2px;margin-top:0.5rem;
+    }
+    .admin-info{display:flex;align-items:center;gap:1rem}
+    .admin-avatar{
+      width:44px;height:44px;border-radius:50%;
+      background:linear-gradient(135deg,var(--royal) 0%,var(--azure) 100%);
+      display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;
+      box-shadow:0 4px 15px rgba(14,165,233,.3);
+      border:2px solid #fff;
+    }
+    
+    /* ══ STATS CARDS ══ */
+    .stats-grid{
+      display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;margin-bottom:2rem;
+    }
+    .stat-card{
+      background:var(--white-glass);
+      backdrop-filter:blur(10px);
+      -webkit-backdrop-filter:blur(10px);
+      border-radius:20px;padding:1.5rem;
+      box-shadow:var(--shadow-soft),0 0 0 1px rgba(255,255,255,0.6) inset;
+      border:1px solid rgba(255,255,255,0.5);
+      transition:all 0.3s ease;
+      position:relative;overflow:hidden;
+    }
+    .stat-card::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:3px;
+      background:linear-gradient(90deg,var(--azure),var(--sky));
+      opacity:0;transition:opacity 0.3s;
+    }
+    .stat-card:hover{
+      transform:translateY(-4px);
+      box-shadow:var(--shadow-medium),0 0 0 1px rgba(255,255,255,0.8) inset;
+    }
+    .stat-card:hover::before{opacity:1}
+    .stat-card.blue::before{background:linear-gradient(90deg,var(--azure),var(--sky))}
+    .stat-card.green::before{background:linear-gradient(90deg,var(--success),#34D399)}
+    .stat-card.pink::before{background:linear-gradient(90deg,var(--neon-pink),var(--hot-violet))}
+    .stat-card.violet::before{background:linear-gradient(90deg,var(--hot-violet),var(--lavender))}
+    .stat-card .stat-icon{
+      width:52px;height:52px;border-radius:14px;
+      display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-bottom:1rem;
+      transition:transform 0.3s ease;
+    }
+    .stat-card:hover .stat-icon{transform:scale(1.1) rotate(-5deg)}
+    .stat-card.blue .stat-icon{background:linear-gradient(135deg,var(--sky-glow),rgba(14,165,233,.1));color:var(--azure)}
+    .stat-card.green .stat-icon{background:linear-gradient(135deg,var(--success-glow),rgba(16,185,129,.1));color:var(--success)}
+    .stat-card.pink .stat-icon{background:linear-gradient(135deg,var(--neon-pink-glow),rgba(255,0,144,.1));color:var(--neon-pink)}
+    .stat-card.violet .stat-icon{background:linear-gradient(135deg,var(--hot-violet-glow),rgba(124,58,237,.1));color:var(--hot-violet)}
+    .stat-card .stat-value{
+      font-size:2rem;font-weight:800;color:var(--ink);margin-bottom:.3rem;
+      letter-spacing:-0.02em;
+    }
+    .stat-card .stat-label{
+      font-size:.85rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.05em;
+    }
+    
+    /* ══ SECTIONS ══ */
+    .section{display:none}
+    .section.active{display:block;animation:fadeIn 0.4s ease}
+    @keyframes fadeIn{
+      from{opacity:0;transform:translateY(10px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+    
+    /* ══ CARDS ══ */
+    .card{
+      background:var(--white-glass);
+      backdrop-filter:blur(10px);
+      -webkit-backdrop-filter:blur(10px);
+      border-radius:20px;
+      box-shadow:var(--shadow-soft),0 0 0 1px rgba(255,255,255,0.6) inset;
+      border:1px solid rgba(255,255,255,0.5);
+      overflow:hidden;
+      transition:all 0.3s ease;
+    }
+    .card:hover{box-shadow:var(--shadow-medium)}
+    .card-header{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:1.5rem 1.8rem;border-bottom:1px solid var(--frost);
+      background:linear-gradient(180deg,#fff,var(--ice-soft));
+    }
+    .card-header h3{
+      font-size:1.15rem;font-weight:700;color:var(--ink);
+      display:flex;align-items:center;gap:0.7rem;
+    }
+    .card-header h3 i{font-size:1.2rem}
+    .card-body{padding:1.8rem}
+    
+    /* ══ BUTTONS ══ */
+    .btn{
+      display:inline-flex;align-items:center;gap:.6rem;padding:.8rem 1.4rem;
+      border-radius:12px;font-size:.88rem;font-weight:600;cursor:pointer;
+      transition:all 0.3s ease;border:none;
+      position:relative;overflow:hidden;
+    }
+    .btn::before{
+      content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent);
+      transition:left 0.5s;
+    }
+    .btn:hover::before{left:100%}
+    .btn-primary{
+      background:linear-gradient(135deg,var(--royal) 0%,var(--azure) 100%);color:#fff;
+      box-shadow:0 4px 20px rgba(14,165,233,.4),0 0 0 1px rgba(255,255,255,0.2) inset;
+    }
+    .btn-primary:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(14,165,233,.5)}
+    .btn-success{
+      background:linear-gradient(135deg,var(--success) 0%,#34D399 100%);color:#fff;
+      box-shadow:0 4px 20px var(--success-glow);
+    }
+    .btn-success:hover{transform:translateY(-3px);box-shadow:0 8px 30px var(--success-glow)}
+    .btn-danger{
+      background:linear-gradient(135deg,var(--danger) 0%,#F87171 100%);color:#fff;
+      box-shadow:0 4px 20px var(--danger-glow);
+    }
+    .btn-danger:hover{transform:translateY(-3px);box-shadow:0 8px 30px var(--danger-glow)}
+    .btn-secondary{
+      background:var(--frost);color:var(--muted);
+      border:1px solid rgba(148,163,184,0.3);
+    }
+    .btn-secondary:hover{background:var(--ice);transform:translateY(-2px);color:var(--ink)}
+    .btn-sm{padding:.5rem .9rem;font-size:.8rem}
+    
+    /* ══ TABLES ══ */
+    .table-container{overflow-x:auto;border-radius:16px;border:1px solid var(--frost)}
+    .data-table{width:100%;border-collapse:separate;border-spacing:0}
+    .data-table th{
+      text-align:left;padding:1rem 1.2rem;font-size:.75rem;
+      font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;
+      background:linear-gradient(180deg,var(--ice),var(--frost));
+      border-bottom:2px solid var(--frost);
+    }
+    .data-table th:first-child{border-radius:16px 0 0 0}
+    .data-table th:last-child{border-radius:0 16px 0 0}
+    .data-table td{
+      padding:1.1rem 1.2rem;font-size:.9rem;color:var(--ink);
+      border-bottom:1px solid var(--frost);
+      transition:all 0.2s ease;
+    }
+    .data-table tr:last-child td:first-child{border-radius:0 0 0 16px}
+    .data-table tr:last-child td:last-child{border-radius:0 0 16px 0}
+    .data-table tr:hover td{
+      background:linear-gradient(90deg,rgba(14,165,233,.05),rgba(125,211,252,.05));
+    }
+    .table-actions{display:flex;gap:.5rem}
+    .table-actions button{
+      width:36px;height:36px;border-radius:10px;border:none;
+      cursor:pointer;transition:all 0.3s ease;display:flex;align-items:center;justify-content:center;
+      font-size:0.9rem;
+    }
+    .table-actions .edit-btn{
+      background:linear-gradient(135deg,var(--sky-glow),rgba(14,165,233,.1));
+      color:var(--azure);
+      border:1px solid rgba(14,165,233,.2);
+    }
+    .table-actions .edit-btn:hover{
+      background:linear-gradient(135deg,var(--azure),var(--sky));
+      color:#fff;transform:translateY(-2px);
+      box-shadow:0 4px 15px rgba(14,165,233,.4);
+    }
+    .table-actions .delete-btn{
+      background:linear-gradient(135deg,var(--danger-glow),rgba(239,68,68,.1));
+      color:var(--danger);
+      border:1px solid rgba(239,68,68,.2);
+    }
+    .table-actions .delete-btn:hover{
+      background:linear-gradient(135deg,var(--danger),#F87171);
+      color:#fff;transform:translateY(-2px);
+      box-shadow:0 4px 15px var(--danger-glow);
+    }
+    
+    /* ══ BADGES ══ */
+    .badge{
+      display:inline-flex;align-items:center;gap:0.3rem;
+      padding:.4rem .9rem;border-radius:50px;
+      font-size:.72rem;font-weight:700;text-transform:uppercase;
+      letter-spacing:0.03em;
+      border:1px solid transparent;
+      transition:all 0.3s ease;
+    }
+    .badge::before{
+      content:'';width:6px;height:6px;border-radius:50%;
+    }
+    .badge-success{
+      background:linear-gradient(135deg,var(--success-glow),rgba(16,185,129,.1));
+      color:var(--success);
+      border-color:rgba(16,185,129,.2);
+    }
+    .badge-success::before{background:var(--success);box-shadow:0 0 6px var(--success)}
+    .badge-warning{
+      background:linear-gradient(135deg,var(--warning-glow),rgba(245,158,11,.1));
+      color:var(--warning);
+      border-color:rgba(245,158,11,.2);
+    }
+    .badge-warning::before{background:var(--warning);box-shadow:0 0 6px var(--warning)}
+    .badge-pending{
+      background:linear-gradient(135deg,rgba(100,116,139,.1),rgba(148,163,184,.05));
+      color:var(--muted);
+      border-color:rgba(100,116,139,.2);
+    }
+    .badge-pending::before{background:var(--muted);box-shadow:0 0 6px var(--muted)}
+    .badge-danger{
+      background:linear-gradient(135deg,var(--danger-glow),rgba(239,68,68,.1));
+      color:var(--danger);
+      border-color:rgba(239,68,68,.2);
+    }
+    .badge-danger::before{background:var(--danger);box-shadow:0 0 6px var(--danger)}
+    
+    /* ══ FORMS ══ */
+    .form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.2rem}
+    .form-group-full{grid-column:1/-1}
+    .form-group label{
+      display:block;font-size:.78rem;font-weight:600;color:var(--muted);
+      margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.06em;
+    }
+    .form-group input,.form-group select,.form-group textarea{
+      width:100%;padding:1rem 1.2rem;border:2px solid var(--frost);
+      border-radius:12px;font-size:.93rem;transition:all 0.3s ease;
+      background:var(--white-glass);
+    }
+    .form-group input:hover,.form-group select:hover,.form-group textarea:hover{
+      border-color:var(--sky);
+    }
+    .form-group input:focus,.form-group select:focus,.form-group textarea:focus{
+      outline:none;border-color:var(--azure);
+      box-shadow:0 0 0 4px var(--sky-glow);
+      background:#fff;
+    }
+    .form-group textarea{min-height:120px;resize:vertical}
+    
+    /* ══ MODALS ══ */
+    .modal-overlay{
+      position:fixed;inset:0;z-index:1000;
+      background:rgba(15,23,42,.6);backdrop-filter:blur(8px);
+      -webkit-backdrop-filter:blur(8px);
+      display:none;align-items:center;justify-content:center;
+      padding:1rem;
+      opacity:0;transition:opacity 0.3s ease;
+    }
+    .modal-overlay.open{
+      display:flex;opacity:1;
+      animation:modalFadeIn 0.3s ease;
+    }
+    @keyframes modalFadeIn{
+      from{opacity:0}
+      to{opacity:1}
+    }
+    .modal-box{
+      background:var(--white-glass);
+      backdrop-filter:blur(20px);
+      -webkit-backdrop-filter:blur(20px);
+      border-radius:24px;max-width:650px;width:100%;
+      max-height:90vh;overflow-y:auto;
+      box-shadow:0 30px 100px rgba(0,0,0,.25),0 0 0 1px rgba(255,255,255,0.5) inset;
+      border:1px solid rgba(255,255,255,0.4);
+      transform:scale(0.95);transition:transform 0.3s ease;
+      scrollbar-width:none;-ms-overflow-style:none;
+    }
+    .modal-box::-webkit-scrollbar{display:none}
+    .modal-overlay.open .modal-box{transform:scale(1)}
+    .modal-header{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:1.5rem 2rem;border-bottom:1px solid var(--frost);
+      background:linear-gradient(180deg,#fff,var(--ice-soft));
+    }
+    .modal-header h3{
+      font-size:1.3rem;font-weight:700;color:var(--ink);
+      display:flex;align-items:center;gap:0.8rem;
+    }
+    .modal-header h3 i{font-size:1.2rem;color:var(--azure)}
+    .modal-close{
+      width:40px;height:40px;border-radius:12px;border:none;
+      background:var(--frost);color:var(--muted);cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      transition:all 0.3s ease;font-size:1rem;
+    }
+    .modal-close:hover{
+      background:linear-gradient(135deg,var(--danger),#F87171);
+      color:#fff;transform:rotate(90deg);
+    }
+    .modal-body{padding:2rem}
+    .modal-footer{
+      display:flex;gap:1rem;justify-content:flex-end;
+      padding:1.2rem 2rem;border-top:1px solid var(--frost);
+      background:var(--ice-soft);
+    }
+    
+    /* ══ FLOATING SHAPES DECORATION ══ */
+    .shape-decoration{
+      position:fixed;pointer-events:none;z-index:0;
+      opacity:0.4;
+    }
+    .shape-1{
+      width:400px;height:400px;border-radius:50%;
+      background:radial-gradient(circle,var(--sky-glow),transparent 70%);
+      top:-200px;right:-100px;animation:floatShape 20s ease-in-out infinite;
+    }
+    .shape-2{
+      width:300px;height:300px;border-radius:50%;
+      background:radial-gradient(circle,var(--hot-violet-glow),transparent 70%);
+      bottom:10%;left:-150px;animation:floatShape 25s ease-in-out infinite reverse;
+    }
+    @keyframes floatShape{
+      0%,100%{transform:translate(0,0)}
+      25%{transform:translate(30px,-30px)}
+      50%{transform:translate(-20px,20px)}
+      75%{transform:translate(20px,30px)}
+    }
+    
+    /* Toast Animations */
+    @keyframes toastSlideIn{
+      from{opacity:0;transform:translateX(100px) scale(0.9)}
+      to{opacity:1;transform:translateX(0) scale(1)}
+    }
+    @keyframes toastSlideOut{
+      from{opacity:1;transform:translateX(0) scale(1)}
+      to{opacity:0;transform:translateX(100px) scale(0.9)}
+    }
+    
+    /* ══ RESPONSIVE ══ */
+    @media(max-width:1024px){
+      .stats-grid{grid-template-columns:repeat(2,1fr)}
+      .sidebar{width:240px}
+      .main-content{margin-left:240px;padding:1.5rem}
+    }
+    @media(max-width:768px){
+      .sidebar{width:100%;position:relative;height:auto;padding:1.2rem}
+      .main-content{margin-left:0;padding:1.2rem}
+      .stats-grid{grid-template-columns:1fr}
+      .form-grid{grid-template-columns:1fr}
+      .login-box{padding:2rem}
+    }
+  </style>
+</head>
+<body>
+  
+  <!-- ══ LOGIN ══ -->
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-box">
+      <div class="login-logo">
+        <img src="assets/logo.jpeg" alt="Project BookBridge" style="width:72px;height:72px;border-radius:20px;object-fit:cover;margin:0 auto .8rem;box-shadow:0 12px 40px rgba(14,165,233,.4),0 0 0 4px rgba(14,165,233,.1);animation:float 3s ease-in-out infinite;">
+        <h1>Project BookBridge Admin</h1>
+        <p>Enter your credentials to access the dashboard</p>
+      </div>
+      <form id="loginForm">
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" id="username" placeholder="Enter username" required>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="password" placeholder="Enter password" required>
+        </div>
+        <div class="login-error" id="loginError">Invalid username or password</div>
+        <button type="submit" class="login-btn">
+          <i class="fas fa-sign-in-alt"></i> Sign In
+        </button>
+      </form>
+    </div>
+  </div>
+  
+  <!-- ══ ADMIN DASHBOARD ══ -->
+  <div class="admin-container" id="adminContainer">
+    <!-- Decorative floating shapes -->
+    <div class="shape-decoration shape-1"></div>
+    <div class="shape-decoration shape-2"></div>
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <img src="assets/logo.jpeg" alt="Project BookBridge" style="width:48px;height:48px;border-radius:12px;object-fit:cover;box-shadow:0 4px 15px rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.3);">
+        <h2>Project BookBridge</h2>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-item active" onclick="showSection('dashboard')">
+          <i class="fas fa-chart-pie"></i>
+          <span>Dashboard</span>
+        </div>
+        <div class="nav-item" onclick="showSection('mentors')">
+          <i class="fas fa-chalkboard-teacher"></i>
+          <span>Mentors</span>
+        </div>
+        <div class="nav-item" onclick="showSection('requests')">
+          <i class="fas fa-book-reader"></i>
+          <span>Book Requests</span>
+          <span class="nav-badge" id="requestBadge">0</span>
+        </div>
+        <div class="nav-item" onclick="showSection('donations')">
+          <i class="fas fa-heart"></i>
+          <span>Donations</span>
+          <span class="nav-badge" id="donationsBadge">0</span>
+        </div>
+        <div class="nav-item" onclick="showSection('mentorRequests')">
+          <i class="fas fa-handshake"></i>
+          <span>Mentor Requests</span>
+          <span class="nav-badge" id="mentorRequestsBadge">0</span>
+        </div>
+        <div class="nav-item" onclick="showSection('mentorApplications')">
+          <i class="fas fa-user-plus"></i>
+          <span>Mentor Applications</span>
+          <span class="nav-badge" id="mentorAppsBadge">0</span>
+        </div>
+        <div class="nav-item" onclick="showSection('resources')">
+          <i class="fas fa-folder-open"></i>
+          <span>Resources</span>
+        </div>
+        <div class="nav-item" onclick="showSection('stories')">
+          <i class="fas fa-quote-left"></i>
+          <span>Success Stories</span>
+        </div>
+        <div class="nav-item" onclick="showSection('settings')">
+          <i class="fas fa-cog"></i>
+          <span>Settings</span>
+        </div>
+      </nav>
+      <div class="sidebar-footer">
+        <button class="logout-btn" onclick="logout()">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+      
+      <!-- Top Bar -->
+      <div class="top-bar">
+        <h1 id="pageTitle">Dashboard</h1>
+        <div class="admin-info">
+          <span style="font-size:.85rem;color:var(--muted)">Welcome back, <strong>Admin</strong></span>
+          <div class="admin-avatar">A</div>
+        </div>
+      </div>
+      
+      <!-- Dashboard Section -->
+      <section class="section active" id="dashboardSection">
+        <div class="stats-grid">
+          <div class="stat-card blue">
+            <div class="stat-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+            <div class="stat-value" id="totalMentors">6</div>
+            <div class="stat-label">Total Mentors</div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+            <div class="stat-value" id="activeMentors">4</div>
+            <div class="stat-label">Available Mentors</div>
+          </div>
+          <div class="stat-card pink">
+            <div class="stat-icon"><i class="fas fa-book-reader"></i></div>
+            <div class="stat-value" id="totalRequests">0</div>
+            <div class="stat-label">Book Requests</div>
+          </div>
+          <div class="stat-card violet">
+            <div class="stat-icon"><i class="fas fa-heart"></i></div>
+            <div class="stat-value" id="totalDonations">0</div>
+            <div class="stat-label">Donations</div>
+          </div>
+        </div>
+        
+        <div style="display:grid;grid-template-columns:2fr 1fr;gap:1.5rem">
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fas fa-clock" style="color:var(--azure);margin-right:.5rem"></i>Recent Activity</h3>
+            </div>
+            <div class="card-body">
+              <div id="recentActivity">
+                <p style="text-align:center;color:var(--muted);padding:2rem">No recent activity</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fas fa-bolt" style="color:var(--neon-pink);margin-right:.5rem"></i>Quick Actions</h3>
+            </div>
+            <div class="card-body">
+              <div style="display:flex;flex-direction:column;gap:.8rem">
+                <button class="btn btn-primary" onclick="showSection('mentors');openMentorModal()">
+                  <i class="fas fa-plus"></i> Add Mentor
+                </button>
+                <button class="btn btn-success" onclick="showSection('resources');openResourceModal()">
+                  <i class="fas fa-plus"></i> Add Resource
+                </button>
+                <button class="btn btn-secondary" onclick="window.open('bookbridge.html','_blank')">
+                  <i class="fas fa-external-link-alt"></i> View Website
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Mentors Section -->
+      <section class="section" id="mentorsSection">
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fas fa-chalkboard-teacher" style="color:var(--azure);margin-right:.5rem"></i>Manage Mentors</h3>
+            <button class="btn btn-primary" onclick="openMentorModal()">
+              <i class="fas fa-plus"></i> Add New Mentor
+            </button>
+          </div>
+          <div class="card-body">
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Mentor</th>
+                    <th>Subject</th>
+                    <th>Location</th>
+                    <th>Contact</th>
+                    <th>Status</th>
+                    <th>Students</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="mentorsTable">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Requests Section -->
+      <section class="section" id="requestsSection">
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fas fa-book-reader" style="color:var(--neon-pink);margin-right:.5rem"></i>Book Requests</h3>
+            <div style="display:flex;gap:.5rem">
+              <button class="btn btn-sm btn-secondary" onclick="filterRequests('all')">All</button>
+              <button class="btn btn-sm btn-warning" onclick="filterRequests('pending')">Pending</button>
+              <button class="btn btn-sm btn-success" onclick="filterRequests('fulfilled')">Fulfilled</button>
+              <button class="btn btn-sm btn-primary" onclick="console.log('Manual refresh, requests:',requests);renderRequests();" title="Refresh"><i class="fas fa-sync-alt"></i></button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Tracking ID</th>
+                    <th>Student</th>
+                    <th>Contact</th>
+                    <th>Book Title</th>
+                    <th>Subject</th>
+                    <th>Status</th>
+                    <th>Delivery</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="requestsTable">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Donations Section -->
+      <section class="section" id="donationsSection">
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fas fa-heart" style="color:var(--hot-violet);margin-right:.5rem"></i>Book Donations</h3>
+            <div style="display:flex;gap:.5rem">
+              <button class="btn btn-sm btn-secondary" onclick="filterDonations('all')">All</button>
+              <button class="btn btn-sm btn-warning" onclick="filterDonations('pending')">Pending</button>
+              <button class="btn btn-sm btn-success" onclick="filterDonations('collected')">Collected</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Tracking ID</th>
+                    <th>Donor</th>
+                    <th>Contact</th>
+                    <th>Book Title(s)</th>
+                    <th>Subject</th>
+                    <th>Condition</th>
+                    <th>Location</th>
+                    <th>Status</th>
+                    <th>Pickup</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="donationsTable">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Mentor Connection Requests Section -->
+      <section class="section" id="mentorRequestsSection">
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fas fa-handshake" style="color:var(--azure);margin-right:.5rem"></i>Mentor Connection Requests</h3>
+            <div style="display:flex;gap:.5rem">
+              <button class="btn btn-sm btn-secondary" onclick="filterMentorRequests('all')">All</button>
+              <button class="btn btn-sm btn-warning" onclick="filterMentorRequests('pending')">Pending</button>
+              <button class="btn btn-sm btn-success" onclick="filterMentorRequests('connected')">Connected</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Student</th>
+                    <th>Subject Needed</th>
+                    <th>Class</th>
+                    <th>Location</th>
+                    <th>Contact</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="mentorRequestsTable">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Mentor Applications Section -->
+      <section class="section" id="mentorApplicationsSection">
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fas fa-user-plus" style="color:var(--success);margin-right:.5rem"></i>Mentor Applications</h3>
+            <div style="display:flex;gap:.5rem">
+              <button class="btn btn-sm btn-secondary" onclick="filterMentorApps('all')">All</button>
+              <button class="btn btn-sm btn-warning" onclick="filterMentorApps('pending')">Pending</button>
+              <button class="btn btn-sm btn-success" onclick="filterMentorApps('approved')">Approved</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Applicant</th>
+                    <th>Subject</th>
+                    <th>Experience</th>
+                    <th>Location</th>
+                    <th>Contact</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="mentorAppsTable">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Resources Section -->
+      <section class="section" id="resourcesSection">
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fas fa-folder-open" style="color:var(--success);margin-right:.5rem"></i>Learning Resources</h3>
+            <button class="btn btn-primary" onclick="openResourceModal()">
+              <i class="fas fa-plus"></i> Add Resource
+            </button>
+          </div>
+          <div class="card-body">
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Resource</th>
+                    <th>Subject</th>
+                    <th>Type</th>
+                    <th>Downloads</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="resourcesTable">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Stories Section -->
+      <section class="section" id="storiesSection">
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fas fa-quote-left" style="color:var(--warning);margin-right:.5rem"></i>Success Stories</h3>
+            <button class="btn btn-primary" onclick="openStoryModal()">
+              <i class="fas fa-plus"></i> Add Story
+            </button>
+          </div>
+          <div class="card-body">
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Student</th>
+                    <th>School</th>
+                    <th>Quote</th>
+                    <th>Featured</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="storiesTable">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Settings Section -->
+      <section class="section" id="settingsSection">
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fas fa-cog" style="color:var(--muted);margin-right:.5rem"></i>Settings</h3>
+          </div>
+          <div class="card-body">
+            <div style="max-width:600px">
+              <h4 style="margin-bottom:1rem;font-size:1rem">Admin Credentials</h4>
+              <div class="form-group">
+                <label>Current Password</label>
+                <input type="password" id="currentPassword" placeholder="Enter current password">
+              </div>
+              <div class="form-group">
+                <label>New Password</label>
+                <input type="password" id="newPassword" placeholder="Enter new password">
+              </div>
+              <div class="form-group">
+                <label>Confirm New Password</label>
+                <input type="password" id="confirmPassword" placeholder="Confirm new password">
+              </div>
+              <button class="btn btn-primary" onclick="changePassword()">
+                <i class="fas fa-save"></i> Update Password
+              </button>
+              
+              <hr style="margin:2rem 0;border:none;border-top:1px solid var(--frost)">
+              
+              <h4 style="margin-bottom:1rem;font-size:1rem">Data Management</h4>
+              <div style="display:flex;gap:1rem">
+                <button class="btn btn-secondary" onclick="exportData()">
+                  <i class="fas fa-download"></i> Export Data
+                </button>
+                <button class="btn btn-danger" onclick="clearAllData()">
+                  <i class="fas fa-trash"></i> Clear All Data
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+    </main>
+  </div>
+  
+  <!-- ══ MODALS ══ -->
+  
+  <!-- Mentor Modal -->
+  <div class="modal-overlay" id="mentorModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="mentorModalTitle">Add Mentor</h3>
+        <button class="modal-close" onclick="closeModal('mentorModal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="mentorForm" class="form-grid">
+          <input type="hidden" id="mentorId">
+          <div class="form-group">
+            <label>Full Name *</label>
+            <input type="text" id="mentorName" required placeholder="e.g. Mrs. Adesola Babatunde">
+          </div>
+          <div class="form-group">
+            <label>Subject *</label>
+            <select id="mentorSubject" required>
+              <option value="">Select subject</option>
+              <option>English Language</option>
+              <option>Mathematics</option>
+              <option>Integrated Science</option>
+              <option>Social Studies</option>
+              <option>Business Studies</option>
+              <option>Agricultural Science</option>
+              <option>Civic Education</option>
+              <option>Computer Studies</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Experience *</label>
+            <input type="text" id="mentorExp" required placeholder="e.g. 12 years">
+          </div>
+          <div class="form-group">
+            <label>Location *</label>
+            <input type="text" id="mentorLoc" required placeholder="e.g. Rivers State">
+          </div>
+          <div class="form-group">
+            <label>Rating (1-5)</label>
+            <input type="number" id="mentorRating" min="1" max="5" step="0.1" value="4.8" placeholder="4.8">
+          </div>
+          <div class="form-group">
+            <label>Students Helped</label>
+            <input type="number" id="mentorStudents" min="0" value="50" placeholder="50">
+          </div>
+          <div class="form-group">
+            <label>Status</label>
+            <select id="mentorStatus">
+              <option value="available">Available</option>
+              <option value="busy">Busy</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Avatar Emoji</label>
+            <input type="text" id="mentorAvatar" placeholder="e.g. 👩‍🏫" value="👩‍🏫">
+          </div>
+          <div class="form-group">
+            <label>WhatsApp Number</label>
+            <input type="tel" id="mentorWhatsApp" placeholder="e.g. +234 XXX XXX XXXX">
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="mentorEmail" placeholder="e.g. mentor@email.com">
+          </div>
+          <div class="form-group form-group-full">
+            <label>Bio</label>
+            <textarea id="mentorBio" placeholder="Brief description about the mentor..."></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('mentorModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveMentor()">
+          <i class="fas fa-save"></i> Save Mentor
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Resource Modal -->
+  <div class="modal-overlay" id="resourceModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="resourceModalTitle">Add Resource</h3>
+        <button class="modal-close" onclick="closeModal('resourceModal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="resourceForm" class="form-grid">
+          <input type="hidden" id="resourceId">
+          <div class="form-group form-group-full">
+            <label>Resource Title *</label>
+            <input type="text" id="resourceTitle" required placeholder="e.g. JSS 3 Mathematics Study Guide">
+          </div>
+          <div class="form-group">
+            <label>Subject *</label>
+            <select id="resourceSubject" required>
+              <option value="">Select subject</option>
+              <option>English Language</option>
+              <option>Mathematics</option>
+              <option>Integrated Science</option>
+              <option>Social Studies</option>
+              <option>Business Studies</option>
+              <option>Agricultural Science</option>
+              <option>Civic Education</option>
+              <option>Computer Studies</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Type *</label>
+            <select id="resourceType" required>
+              <option value="PDF">PDF Document</option>
+              <option value="Video">Video Lesson</option>
+              <option value="Interactive">Interactive</option>
+              <option value="Past Questions">Past Questions</option>
+              <option value="Notes">Study Notes</option>
+            </select>
+          </div>
+          <div class="form-group form-group-full">
+            <label>Description</label>
+            <textarea id="resourceDesc" rows="3" placeholder="Brief description of the resource..."></textarea>
+          </div>
+          <div class="form-group form-group-full">
+            <label>File URL / Link *</label>
+            <input type="url" id="resourceUrl" required placeholder="https://drive.google.com/... or https://youtube.com/...">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('resourceModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveResource()">
+          <i class="fas fa-save"></i> Save Resource
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Story Modal -->
+  <div class="modal-overlay" id="storyModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="storyModalTitle">Add Success Story</h3>
+        <button class="modal-close" onclick="closeModal('storyModal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="storyForm" class="form-grid">
+          <input type="hidden" id="storyId">
+          <div class="form-group">
+            <label>Student Name *</label>
+            <input type="text" id="storyName" required placeholder="e.g. Chioma Adeleke">
+          </div>
+          <div class="form-group">
+            <label>School *</label>
+            <input type="text" id="storySchool" required placeholder="e.g. Rivers State Model College">
+          </div>
+          <div class="form-group form-group-full">
+            <label>Quote *</label>
+            <textarea id="storyQuote" required placeholder="Success story quote..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>Featured on Homepage</label>
+            <select id="storyFeatured">
+              <option value="yes">Yes</option>
+              <option value="no">No</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('storyModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveStory()">
+          <i class="fas fa-save"></i> Save Story
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // ══ URL ACCESS CONTROL ══
+    // Admin page requires special hash key to access
+    // Use: admin.html#access=bookbridge2025
+    const ACCESS_KEY='bookbridge2025';
+    const urlHash=window.location.hash;
+    
+    if(!urlHash.includes('access='+ACCESS_KEY)){
+      // Hide everything and show access denied
+      document.body.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:linear-gradient(135deg,var(--royal-deep),var(--royal));color:#fff;text-align:center;padding:2rem;"><div><div style="font-size:4rem;margin-bottom:1rem;">🔒</div><h1 style="font-family:'Cormorant Garamond',serif;font-size:2rem;margin-bottom:1rem;">Access Denied</h1><p style="opacity:.8;margin-bottom:2rem;">This admin panel requires a secure access key.</p><a href="bookbridge.html" style="display:inline-block;padding:1rem 2rem;background:#fff;color:var(--royal);text-decoration:none;border-radius:50px;font-weight:600;">Return to Website</a></div></div>`;
+      throw new Error('Unauthorized access attempt');
+    }
+    
+    // ══ DATA STORE ══
+    const defaultMentors=[
+      {id:1,name:'Mrs. Adesola Babatunde',subj:'Mathematics',exp:'12 years',rating:4.9,students:120,bio:'Former WAEC examiner with a passion for making maths accessible.',avatar:'👩‍🏫',avail:'available',loc:'Rivers State'},
+      {id:2,name:'Mr. Chukwuemeka Eze',subj:'English Language',exp:'9 years',rating:4.8,students:95,bio:'English teacher and published author.',avatar:'👨‍🏫',avail:'available',loc:'Rivers State'},
+      {id:3,name:'Dr. Fatima Al-Hassan',subj:'Integrated Science',exp:'15 years',rating:4.9,students:140,bio:'Science PhD with a gift for simplifying complex concepts.',avatar:'👩‍🔬',avail:'available',loc:'Rivers State'},
+      {id:4,name:'Mr. Oluwafemi Ajayi',subj:'Social Studies',exp:'7 years',rating:4.7,students:80,bio:'History enthusiast and civic educator.',avatar:'👨‍💼',avail:'busy',loc:'Rivers State'},
+      {id:5,name:'Mrs. Ngozi Okonkwo',subj:'Business Studies',exp:'10 years',rating:4.8,students:67,bio:'Entrepreneur-turned-teacher.',avatar:'👩‍💼',avail:'available',loc:'Rivers State'},
+      {id:6,name:'Mr. Abdullahi Musa',subj:'Agricultural Science',exp:'8 years',rating:4.6,students:55,bio:'Agric extension worker and educator.',avatar:'👨‍🌾',avail:'available',loc:'Rivers State'},
+    ];
+    
+    // ══ FIREBASE CONFIGURATION ══
+    const firebaseConfig = {
+      apiKey: "AIzaSyBtFYTt_K3ggSjgBmBb-sn09l1hOGwxloM",
+      authDomain: "bookbridge-admin.firebaseapp.com",
+      databaseURL: "https://bookbridge-admin-default-rtdb.firebaseio.com",
+      projectId: "bookbridge-admin",
+      storageBucket: "bookbridge-admin.firebasestorage.app",
+      messagingSenderId: "163400594978",
+      appId: "1:163400594978:web:d1c46f6509090923e63c7b"
+    };
+    
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    const auth = firebase.auth();
+    
+    // Data refs
+    const mentorsRef = database.ref('mentors');
+    const requestsRef = database.ref('requests');
+    const donationsRef = database.ref('donations');
+    const resourcesRef = database.ref('resources');
+    const storiesRef = database.ref('stories');
+    const mentorRequestsRef = database.ref('mentorRequests');
+    const mentorApplicationsRef = database.ref('mentorApplications');
+    
+    // Local data stores (synced with Firebase)
+    let mentors = [...defaultMentors];
+    let mentorRequests = [];
+    let mentorApplications = [];
+    let requests = [];
+    let donations = [];
+    let resources = [];
+    let stories = [];
+    let adminPassword = 'admin123'; // Will be stored in Firebase Auth or Realtime DB
+    
+    // ══ SYNC DATA WITH FIREBASE ══
+    function setupFirebaseListeners() {
+      console.log('Setting up Firebase listeners...');
+      // Mentors sync
+      mentorsRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        console.log('Mentors data received:',data);
+        if (data) {
+          mentors = Object.entries(data).map(([key, val]) => ({ ...val, firebaseKey: key }));
+        } else {
+          // Initialize with defaults if empty
+          mentors = [...defaultMentors];
+          mentors.forEach(m => mentorsRef.push(m));
+        }
+        console.log('Processed mentors:',mentors.length);
+        renderMentors();
+        updateStats();
+      });
+      
+      // Requests sync
+      requestsRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        console.log('Requests data received:',data);
+        requests = data ? Object.entries(data).map(([key, val]) => ({ ...val, firebaseKey: key })) : [];
+        console.log('Processed requests:',requests.length);
+        renderRequests();
+        updateBadges();
+      });
+      
+      // Donations sync
+      donationsRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        console.log('Donations data received:',data);
+        donations = data ? Object.entries(data).map(([key, val]) => ({ ...val, firebaseKey: key })) : [];
+        console.log('Processed donations:',donations.length);
+        renderDonations();
+        updateBadges();
+      });
+      
+      // Resources sync
+      resourcesRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        console.log('Resources data received:',data);
+        resources = data ? Object.entries(data).map(([key, val]) => ({ ...val, firebaseKey: key })) : [];
+        console.log('Processed resources:',resources.length);
+        renderResources();
+      });
+      
+      // Stories sync
+      storiesRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        console.log('Stories data received:',data);
+        stories = data ? Object.entries(data).map(([key, val]) => ({ ...val, firebaseKey: key })) : [];
+        console.log('Processed stories:',stories.length);
+        renderStories();
+      });
+      
+      // Mentor Requests sync
+      mentorRequestsRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        console.log('Mentor requests data received:',data);
+        mentorRequests = data ? Object.entries(data).map(([key, val]) => ({ ...val, firebaseKey: key })) : [];
+        console.log('Processed mentor requests:',mentorRequests.length);
+        document.getElementById('mentorRequestsBadge').textContent = mentorRequests.filter(r => r.status === 'pending').length;
+        renderMentorRequests();
+      });
+      
+      // Mentor Applications sync
+      mentorApplicationsRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        console.log('Mentor applications data received:',data);
+        mentorApplications = data ? Object.entries(data).map(([key, val]) => ({ ...val, firebaseKey: key })) : [];
+        console.log('Processed mentor applications:',mentorApplications.length);
+        document.getElementById('mentorAppsBadge').textContent = mentorApplications.filter(a => a.status === 'pending').length;
+        renderMentorApplications();
+      });
+    }
+    
+    // ══ AUTHENTICATION ══
+    const loginOverlay=document.getElementById('loginOverlay');
+    const adminContainer=document.getElementById('adminContainer');
+    
+    // Check if already logged in (Firebase Auth)
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        showDashboard();
+        setupFirebaseListeners();
+      }
+    });
+    
+    document.getElementById('loginForm').addEventListener('submit',function(e){
+      e.preventDefault();
+      const username=document.getElementById('username').value;
+      const password=document.getElementById('password').value;
+      
+      // For demo: simple auth. In production, use Firebase Auth properly
+      if(username==='admin'&&password==='admin123'){
+        // Sign in anonymously or with custom token
+        auth.signInAnonymously().then(() => {
+          showDashboard();
+          setupFirebaseListeners();
+        }).catch((error) => {
+          document.getElementById('loginError').textContent = 'Auth error: ' + error.message;
+          document.getElementById('loginError').style.display='block';
+        });
+      }else{
+        document.getElementById('loginError').style.display='block';
+      }
+    });
+    
+    function showDashboard(){
+      console.log('showDashboard called');
+      loginOverlay.style.display='none';
+      adminContainer.style.display='block';
+      initDashboard();
+      console.log('Dashboard should be visible now');
+    }
+    
+    function logout(){
+      auth.signOut().then(() => {
+        location.reload();
+      });
+    }
+    
+    // ══ NAVIGATION ══
+    function showSection(section){
+      // Update nav items
+      document.querySelectorAll('.nav-item').forEach(item=>item.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      
+      // Hide all sections
+      document.querySelectorAll('.section').forEach(sec=>sec.classList.remove('active'));
+      
+      // Show selected section
+      const sectionMap={
+        'dashboard':'dashboardSection',
+        'mentors':'mentorsSection',
+        'requests':'requestsSection',
+        'donations':'donationsSection',
+        'mentorRequests':'mentorRequestsSection',
+        'mentorApplications':'mentorApplicationsSection',
+        'resources':'resourcesSection',
+        'stories':'storiesSection',
+        'settings':'settingsSection'
+      };
+      
+      document.getElementById(sectionMap[section]).classList.add('active');
+      
+      // Update title
+      const titles={
+        'dashboard':'Dashboard',
+        'mentors':'Manage Mentors',
+        'requests':'Book Requests',
+        'donations':'Book Donations',
+        'mentorRequests':'Mentor Connection Requests',
+        'mentorApplications':'Mentor Applications',
+        'resources':'Learning Resources',
+        'stories':'Success Stories',
+        'settings':'Settings'
+      };
+      document.getElementById('pageTitle').textContent=titles[section];
+      
+      // Load section data
+      console.log('Switching to section:',section,'Data counts - Mentors:',mentors.length,'Requests:',requests.length,'Donations:',donations.length);
+      if(section==='mentors')renderMentors();
+      if(section==='requests'){console.log('Rendering requests section, data:',requests);renderRequests();}
+      if(section==='donations'){console.log('Rendering donations section, data:',donations);renderDonations();}
+      if(section==='mentorRequests')renderMentorRequests();
+      if(section==='mentorApplications')renderMentorApplications();
+      if(section==='resources')renderResources();
+      if(section==='stories')renderStories();
+    }
+    
+    // ══ DASHBOARD ══
+    function initDashboard(){
+      console.log('Dashboard initializing...');
+      // Immediate fetch to populate data
+      console.log('Fetching all data from Firebase...');
+      Promise.all([
+        mentorsRef.once('value'),
+        requestsRef.once('value'),
+        donationsRef.once('value'),
+        resourcesRef.once('value'),
+        storiesRef.once('value'),
+        mentorRequestsRef.once('value'),
+        mentorApplicationsRef.once('value')
+      ]).then(([mentorsSnap,requestsSnap,donationsSnap,resourcesSnap,storiesSnap,mentorReqSnap,mentorAppSnap])=>{
+        console.log('Initial data fetch complete');
+        // Process mentors
+        const mentorsData=mentorsSnap.val();
+        if(mentorsData){
+          mentors=Object.entries(mentorsData).map(([key,val])=>({...val,firebaseKey:key}));
+        }
+        // Process requests
+        const requestsData=requestsSnap.val();
+        if(requestsData){
+          requests=Object.entries(requestsData).map(([key,val])=>({...val,firebaseKey:key}));
+          console.log('Fetched requests:',requests.length);
+        }
+        // Process donations
+        const donationsData=donationsSnap.val();
+        if(donationsData){
+          donations=Object.entries(donationsData).map(([key,val])=>({...val,firebaseKey:key}));
+          console.log('Fetched donations:',donations.length);
+        }
+        // Process resources
+        const resourcesData=resourcesSnap.val();
+        if(resourcesData){
+          resources=Object.entries(resourcesData).map(([key,val])=>({...val,firebaseKey:key}));
+        }
+        // Process stories
+        const storiesData=storiesSnap.val();
+        if(storiesData){
+          stories=Object.entries(storiesData).map(([key,val])=>({...val,firebaseKey:key}));
+        }
+        // Process mentor requests
+        const mentorReqData=mentorReqSnap.val();
+        if(mentorReqData){
+          mentorRequests=Object.entries(mentorReqData).map(([key,val])=>({...val,firebaseKey:key}));
+        }
+        // Process mentor applications
+        const mentorAppData=mentorAppSnap.val();
+        if(mentorAppData){
+          mentorApplications=Object.entries(mentorAppData).map(([key,val])=>({...val,firebaseKey:key}));
+        }
+        // Update UI
+        updateStats();
+        updateBadges();
+        // Render all tables
+        renderMentors();
+        renderRequests();
+        renderDonations();
+        renderResources();
+        renderStories();
+        renderMentorRequests();
+        renderMentorApplications();
+        console.log('Dashboard initialized with data - Mentors:',mentors.length,'Requests:',requests.length,'Donations:',donations.length);
+      }).catch(err=>{
+        console.error('Error fetching initial data:',err);
+      });
+    }
+    
+    function updateStats(){
+      const totalMentorsEl=document.getElementById('totalMentors');
+      const activeMentorsEl=document.getElementById('activeMentors');
+      const totalRequestsEl=document.getElementById('totalRequests');
+      const totalDonationsEl=document.getElementById('totalDonations');
+      if(totalMentorsEl)totalMentorsEl.textContent=mentors.length;
+      if(activeMentorsEl)activeMentorsEl.textContent=mentors.filter(m=>m.avail==='available').length;
+      if(totalRequestsEl)totalRequestsEl.textContent=requests.length;
+      if(totalDonationsEl)totalDonationsEl.textContent=donations.length;
+      console.log('Stats updated');
+    }
+    
+    function updateBadges(){
+      const reqBadge=document.getElementById('requestBadge');
+      const donBadge=document.getElementById('donationsBadge');
+      if(reqBadge)reqBadge.textContent=requests.filter(r=>r.status==='pending').length;
+      if(donBadge)donBadge.textContent=donations.filter(d=>d.status==='pending').length;
+      console.log('Badges updated - Requests:',requests.length,'Donations:',donations.length);
+    }
+    
+    // ══ MENTORS ══
+    function renderMentors(){
+      const tbody=document.getElementById('mentorsTable');
+      if(!tbody){console.warn('mentorsTable not found');return;}
+      console.log('Rendering mentors:',mentors.length);
+      tbody.innerHTML=mentors.map(mentor=>`
+        <tr>
+          <td>
+            <div style="display:flex;align-items:center;gap:.8rem">
+              <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--royal),var(--azure));display:flex;align-items:center;justify-content:center;font-size:1.2rem">${mentor.avatar}</div>
+              <div>
+                <div style="font-weight:600">${mentor.name}</div>
+                <div style="font-size:.75rem;color:var(--muted)">${mentor.exp} experience</div>
+              </div>
+            </div>
+          </td>
+          <td>${mentor.subj}</td>
+          <td>${mentor.loc}</td>
+          <td>
+            <div style="display:flex;flex-direction:column;gap:.3rem;font-size:.8rem">
+              ${mentor.whatsapp?`<a href="https://wa.me/${mentor.whatsapp.replace(/\D/g,'')}" target="_blank" style="color:var(--success);text-decoration:none"><i class="fab fa-whatsapp"></i> ${mentor.whatsapp}</a>`:'<span style="color:var(--muted)">-</span>'}
+              ${mentor.email?`<a href="mailto:${mentor.email}" style="color:var(--azure);text-decoration:none"><i class="fas fa-envelope"></i> Email</a>`:'<span style="color:var(--muted)">-</span>'}
+            </div>
+          </td>
+          <td><span class="badge ${mentor.avail==='available'?'badge-success':'badge-warning'}">${mentor.avail}</span></td>
+          <td>${mentor.students}</td>
+          <td>
+            <div class="table-actions">
+              <a href="https://wa.me/${mentor.whatsapp?mentor.whatsapp.replace(/\D/g,''):''}" target="_blank" class="edit-btn" style="text-decoration:none;background:#25D366;color:#fff;${!mentor.whatsapp?'visibility:hidden':''}" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+              <button class="edit-btn" onclick="editMentor(${mentor.id})" title="Edit"><i class="fas fa-edit"></i></button>
+              <button class="delete-btn" onclick="deleteMentor(${mentor.id})" title="Delete"><i class="fas fa-trash"></i></button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+    
+    function openMentorModal(){
+      document.getElementById('mentorForm').reset();
+      document.getElementById('mentorId').value='';
+      document.getElementById('mentorModalTitle').textContent='Add Mentor';
+      document.getElementById('mentorModal').classList.add('open');
+    }
+    
+    function editMentor(id){
+      const mentor=mentors.find(m=>m.id===id);
+      if(!mentor)return;
+      
+      document.getElementById('mentorId').value=mentor.id;
+      document.getElementById('mentorName').value=mentor.name;
+      document.getElementById('mentorSubject').value=mentor.subj;
+      document.getElementById('mentorExp').value=mentor.exp;
+      document.getElementById('mentorLoc').value=mentor.loc;
+      document.getElementById('mentorRating').value=mentor.rating;
+      document.getElementById('mentorStudents').value=mentor.students;
+      document.getElementById('mentorStatus').value=mentor.avail;
+      document.getElementById('mentorAvatar').value=mentor.avatar;
+      document.getElementById('mentorBio').value=mentor.bio||'';
+      document.getElementById('mentorWhatsApp').value=mentor.whatsapp||'';
+      document.getElementById('mentorEmail').value=mentor.email||'';
+      
+      document.getElementById('mentorModalTitle').textContent='Edit Mentor';
+      document.getElementById('mentorModal').classList.add('open');
+    }
+    
+    function saveMentor(){
+      const form=document.getElementById('mentorForm');
+      if(!form.checkValidity()){
+        form.reportValidity();
+        return;
+      }
+      
+      const id=document.getElementById('mentorId').value;
+      const mentorData={
+        id:id?parseInt(id):Date.now(),
+        name:document.getElementById('mentorName').value,
+        subj:document.getElementById('mentorSubject').value,
+        exp:document.getElementById('mentorExp').value,
+        rating:parseFloat(document.getElementById('mentorRating').value),
+        students:parseInt(document.getElementById('mentorStudents').value),
+        bio:document.getElementById('mentorBio').value,
+        avatar:document.getElementById('mentorAvatar').value,
+        avail:document.getElementById('mentorStatus').value,
+        loc:document.getElementById('mentorLoc').value,
+        whatsapp:document.getElementById('mentorWhatsApp').value,
+        email:document.getElementById('mentorEmail').value
+      };
+      
+      // Save to Firebase
+      if (id) {
+        const existingMentor = mentors.find(m => m.id === parseInt(id));
+        if (existingMentor && existingMentor.firebaseKey) {
+          // Preserve firebaseKey in the data
+          mentorData.firebaseKey = existingMentor.firebaseKey;
+          mentorsRef.child(existingMentor.firebaseKey).set(mentorData);
+          // Update local array preserving firebaseKey
+          const index = mentors.findIndex(m => m.id === parseInt(id));
+          mentors[index] = mentorData;
+        }
+      } else {
+        mentorsRef.push(mentorData);
+        mentors.push(mentorData);
+      }
+      closeModal('mentorModal');
+      showToast(id?'Mentor updated!':'Mentor added!');
+    }
+    
+    // ══ CUSTOM MODALS (Replace browser alerts/confirms) ══
+    function showConfirmModal(title,message,onConfirm,onCancel){
+      const modal=document.createElement('div');
+      modal.className='modal-overlay open';
+      modal.innerHTML=`
+        <div class="modal-box" style="max-width:400px;text-align:center">
+          <div class="modal-header" style="justify-content:center;border-bottom:none;padding-bottom:0">
+            <h3 style="color:var(--danger)"><i class="fas fa-exclamation-triangle" style="margin-right:.5rem"></i>${title}</h3>
+          </div>
+          <div class="modal-body" style="padding:1.5rem 2rem">
+            <p style="color:var(--muted);line-height:1.6">${message}</p>
+          </div>
+          <div class="modal-footer" style="justify-content:center;gap:1rem;border-top:none;padding-top:0">
+            <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove();${onCancel?onCancel+'()':''}">Cancel</button>
+            <button class="btn btn-danger" onclick="this.closest('.modal-overlay').remove();${onConfirm}()">Confirm</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+    
+    function showDetailModal(title,fields){
+      const modal=document.createElement('div');
+      modal.className='modal-overlay open';
+      modal.innerHTML=`
+        <div class="modal-box" style="max-width:500px">
+          <div class="modal-header">
+            <h3><i class="fas fa-info-circle" style="color:var(--azure);margin-right:.5rem"></i>${title}</h3>
+            <button class="modal-close" onclick="this.closest('.modal-overlay').remove()"><i class="fas fa-times"></i></button>
+          </div>
+          <div class="modal-body" style="padding:1.5rem 2rem">
+            <div style="display:grid;gap:1rem">
+              ${fields.map(f=>`<div><label style="font-size:.75rem;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:.3rem">${f.label}</label><div style="font-weight:600;color:var(--ink)">${f.value||'N/A'}</div></div>`).join('')}
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">Close</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+    
+    function confirmDeleteMentor(id){
+      const mentor = mentors.find(m => m.id === id);
+      if (mentor && mentor.firebaseKey) {
+        mentorsRef.child(mentor.firebaseKey).remove();
+      }
+      showToast('Mentor deleted');
+    }
+    
+    function deleteMentor(id){
+      showConfirmModal('Delete Mentor','Are you sure you want to delete this mentor? This action cannot be undone.',`confirmDeleteMentor(${id})`);
+    }
+    
+    // ══ MENTOR CONNECTION REQUESTS ══
+    function renderMentorRequests(filter='all'){
+      const tbody=document.getElementById('mentorRequestsTable');
+      if(!tbody){console.warn('mentorRequestsTable not found');return;}
+      console.log('Rendering mentor requests:',mentorRequests.length);
+      let filtered=mentorRequests;
+      if(filter!=='all')filtered=mentorRequests.filter(r=>r.status===filter);
+      
+      tbody.innerHTML=filtered.length?filtered.map(req=>`
+        <tr>
+          <td>
+            <div style="font-weight:600">${req.studentName}</div>
+            <div style="font-size:.75rem;color:var(--muted)">${req.school||'Unknown school'}</div>
+          </td>
+          <td>${req.subject}</td>
+          <td>${req.class}</td>
+          <td>${req.location||'Any location'}</td>
+          <td>
+            <div style="font-size:.8rem">
+              ${req.phone?`<a href="tel:${req.phone}" style="color:var(--success);text-decoration:none"><i class="fas fa-phone"></i> ${req.phone}</a>`:'<span style="color:var(--muted)">-</span>'}<br>
+              ${req.email?`<a href="mailto:${req.email}" style="color:var(--azure);text-decoration:none"><i class="fas fa-envelope"></i> Email</a>`:'<span style="color:var(--muted)">-</span>'}
+            </div>
+          </td>
+          <td><span class="badge badge-${req.status==='connected'?'success':'warning'}">${req.status||'pending'}</span></td>
+          <td>${req.date||'N/A'}</td>
+          <td>
+            <div class="table-actions">
+              <a href="https://wa.me/${req.phone?.replace(/\D/g,'')||''}?text=Hello%20${encodeURIComponent(req.studentName||'')},%20this%20is%20Project%20BookBridge%20about%20your%20mentor%20request" target="_blank" class="edit-btn" style="text-decoration:none;background:#25D366;color:#fff;${!req.phone?'visibility:hidden':''}" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+              <button class="edit-btn" onclick="viewMentorRequestDetail('${req.id}')" title="View Details"><i class="fas fa-eye"></i></button>
+              <button class="delete-btn" onclick="deleteMentorRequest('${req.id}')" title="Delete"><i class="fas fa-trash"></i></button>
+            </div>
+          </td>
+        </tr>
+      `).join(''):'<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--muted)">No mentor requests found</td></tr>';
+    }
+    
+    function filterMentorRequests(status){
+      renderMentorRequests(status);
+    }
+    
+    function viewMentorRequestDetail(id){
+      const req=mentorRequests.find(r=>r.id===id);
+      if(!req)return;
+      showDetailModal('Mentor Request Details',[
+        {label:'Student',value:req.studentName},
+        {label:'School',value:req.school},
+        {label:'Class',value:req.class},
+        {label:'Subject',value:req.subject},
+        {label:'Location',value:req.location},
+        {label:'Phone',value:req.phone},
+        {label:'Email',value:req.email},
+        {label:'Details',value:req.details}
+      ]);
+    }
+    
+    function confirmDeleteMentorRequest(id){
+      const req = mentorRequests.find(r => r.id === id);
+      if (req && req.firebaseKey) {
+        mentorRequestsRef.child(req.firebaseKey).remove()
+          .then(()=>showToast('Mentor request deleted'))
+          .catch(err=>showToast('Error: '+err.message));
+      }
+    }
+    
+    function deleteMentorRequest(id){
+      showConfirmModal('Delete Mentor Request','Delete this mentor connection request?',`confirmDeleteMentorRequest(${id})`);
+    }
+    
+    // ══ MENTOR APPLICATIONS ══
+    function renderMentorApplications(filter='all'){
+      const tbody=document.getElementById('mentorAppsTable');
+      if(!tbody){console.warn('mentorAppsTable not found');return;}
+      console.log('Rendering mentor applications:',mentorApplications.length);
+      let filtered=mentorApplications;
+      if(filter!=='all')filtered=mentorApplications.filter(a=>a.status===filter);
+      
+      tbody.innerHTML=filtered.length?filtered.map(app=>`
+        <tr>
+          <td>
+            <div style="font-weight:600">${app.name}</div>
+            <div style="font-size:.75rem;color:var(--muted)">${app.qualification||''}</div>
+          </td>
+          <td>${app.subject}</td>
+          <td>${app.experience}</td>
+          <td>${app.location}</td>
+          <td>
+            <div style="font-size:.8rem">
+              ${app.phone?`<a href="tel:${app.phone}" style="color:var(--success);text-decoration:none"><i class="fas fa-phone"></i> ${app.phone}</a>`:'<span style="color:var(--muted)">-</span>'}<br>
+              ${app.email?`<a href="mailto:${app.email}" style="color:var(--azure);text-decoration:none"><i class="fas fa-envelope"></i> Email</a>`:'<span style="color:var(--muted)">-</span>'}
+            </div>
+          </td>
+          <td><span class="badge badge-${app.status==='approved'?'success':'warning'}">${app.status||'pending'}</span></td>
+          <td>${app.date||'N/A'}</td>
+          <td>
+            <div class="table-actions">
+              <a href="https://wa.me/${app.phone?.replace(/\D/g,'')||''}?text=Hello%20${encodeURIComponent(app.name||'')},%20this%20is%20Project%20BookBridge%20about%20your%20mentor%20application" target="_blank" class="edit-btn" style="text-decoration:none;background:#25D366;color:#fff;${!app.phone?'visibility:hidden':''}" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+              <button class="edit-btn" onclick="viewMentorAppDetail('${app.id}')" title="View Details"><i class="fas fa-eye"></i></button>
+              <button class="delete-btn" onclick="deleteMentorApp('${app.id}')" title="Delete"><i class="fas fa-trash"></i></button>
+            </div>
+          </td>
+        </tr>
+      `).join(''):'<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--muted)">No mentor applications found</td></tr>';
+    }
+    
+    function filterMentorApps(status){
+      renderMentorApplications(status);
+    }
+    
+    function viewMentorAppDetail(id){
+      const app=mentorApplications.find(a=>a.id===id);
+      if(!app)return;
+      showDetailModal('Mentor Application Details',[
+        {label:'Name',value:app.name},
+        {label:'Email',value:app.email},
+        {label:'Phone',value:app.phone},
+        {label:'Subject',value:app.subject},
+        {label:'Experience',value:app.experience+' years'},
+        {label:'Location',value:app.location},
+        {label:'Qualification',value:app.qualification},
+        {label:'Availability',value:app.availability},
+        {label:'Motivation',value:app.motivation}
+      ]);
+    }
+    
+    function confirmDeleteMentorApp(id){
+      const app = mentorApplications.find(a => a.id === id);
+      if (app && app.firebaseKey) {
+        mentorApplicationsRef.child(app.firebaseKey).remove()
+          .then(()=>showToast('Mentor application deleted'))
+          .catch(err=>showToast('Error: '+err.message));
+      }
+    }
+    
+    function deleteMentorApp(id){
+      showConfirmModal('Delete Mentor Application','Delete this mentor application?',`confirmDeleteMentorApp(${id})`);
+    }
+    
+    // ══ REQUESTS ══
+    function renderRequests(filter='all'){
+      try{
+        const tbody=document.getElementById('requestsTable');
+        console.log('renderRequests called, tbody:',tbody,'requests array:',requests);
+        if(!tbody){console.warn('requestsTable element NOT FOUND in DOM');return;}
+        console.log('Rendering',requests.length,'requests, filter:',filter);
+        let filtered=requests;
+        if(filter!=='all')filtered=requests.filter(r=>r.status===filter);
+        console.log('Filtered requests to render:',filtered.length);
+        
+        tbody.innerHTML=filtered.length?filtered.map(req=>`
+        <tr>
+          <td><code style="background:var(--frost);padding:.2rem .4rem;border-radius:4px;font-family:monospace">${req.trackingId||'N/A'}</code></td>
+          <td>
+            <div style="font-weight:600">${req.studentName||'Anonymous'}</div>
+            <div style="font-size:.75rem;color:var(--muted)">${req.school||'No school'}</div>
+          </td>
+          <td>
+            <div style="display:flex;flex-direction:column;gap:.3rem;font-size:.8rem;">
+              ${req.phone?`<a href="https://wa.me/${req.phone.replace(/\D/g,'')}?text=Hello%20${encodeURIComponent(req.studentName||'')},%20this%20is%20Project%20BookBridge%20about%20your%20request%20${req.trackingId}" target="_blank" style="color:#25D366;text-decoration:none;"><i class="fab fa-whatsapp"></i> ${req.phone}</a>`:'<span style="color:var(--muted)">-</span>'}
+              ${req.email?`<a href="mailto:${req.email}" style="color:var(--azure);text-decoration:none;"><i class="fas fa-envelope"></i> Email</a>`:'<span style="color:var(--muted)">-</span>'}
+            </div>
+          </td>
+          <td>${req.bookTitle}</td>
+          <td>${req.subject}</td>
+          <td>
+            <span class="badge badge-${req.status==='fulfilled'?'success':req.status==='pending'?'warning':'danger'}">${req.status}</span>
+          </td>
+          <td>
+            <span class="badge badge-${req.deliveryStatus==='delivered'?'success':req.deliveryStatus==='shipped'?'warning':'secondary'}">${req.deliveryStatus||'processing'}</span>
+          </td>
+          <td>${req.date||'N/A'}</td>
+          <td>
+            <div class="table-actions">
+              <a href="https://wa.me/${req.phone?.replace(/\D/g,'')||''}?text=Hello%20${encodeURIComponent(req.studentName||'')},%20this%20is%20Project%20BookBridge%20about%20your%20request%20${req.trackingId}" target="_blank" class="edit-btn" style="text-decoration:none;background:#25D366;color:#fff;${!req.phone?'visibility:hidden':''}" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+              <button class="edit-btn" onclick="viewRequestDetail('${req.id}')" title="View/Edit"><i class="fas fa-eye"></i></button>
+              <button class="delete-btn" onclick="deleteRequest('${req.id}')" title="Delete"><i class="fas fa-trash"></i></button>
+            </div>
+          </td>
+        </tr>
+      `).join(''):'<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--muted)">No requests found</td></tr>';
+      }catch(err){
+        console.error('Error rendering requests:',err);
+      }
+    }
+    
+    function filterRequests(status){
+      renderRequests(status);
+    }
+    
+    function viewRequestDetail(id){
+      const req=requests.find(r=>r.id===id);
+      if(!req)return;
+      
+      const modal=document.createElement('div');
+      modal.className='modal-overlay open';
+      modal.innerHTML=`
+        <div class="modal-box" style="max-width:600px">
+          <div class="modal-header">
+            <h3>Request Details - ${req.trackingId||'N/A'}</h3>
+            <button class="modal-close" onclick="this.closest('.modal-overlay').remove()"><i class="fas fa-times"></i></button>
+          </div>
+          <div class="modal-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+              <div><label style="font-size:.75rem;color:var(--muted);text-transform:uppercase">Student</label><div style="font-weight:600">${req.studentName}</div></div>
+              <div><label style="font-size:.75rem;color:var(--muted);text-transform:uppercase">Phone</label><div style="font-weight:600">${req.phone||'N/A'}</div></div>
+              <div><label style="font-size:.75rem;color:var(--muted);text-transform:uppercase">School</label><div>${req.school}</div></div>
+              <div><label style="font-size:.75rem;color:var(--muted);text-transform:uppercase">Class</label><div>${req.class||'N/A'}</div></div>
+            </div>
+            <div style="margin-bottom:1rem">
+              <label style="font-size:.75rem;color:var(--muted);text-transform:uppercase">Book Title</label>
+              <div style="font-weight:600">${req.bookTitle}</div>
+            </div>
+            <div style="margin-bottom:1rem">
+              <label style="font-size:.75rem;color:var(--muted);text-transform:uppercase">Subject</label>
+              <div>${req.subject}</div>
+            </div>
+            <div style="margin-bottom:1rem">
+              <label style="font-size:.75rem;color:var(--muted);text-transform:uppercase">Reason</label>
+              <div style="background:var(--frost);padding:.75rem;border-radius:8px">${req.reason||'N/A'}</div>
+            </div>
+            
+            <hr style="border:none;border-top:1px solid var(--frost);margin:1.5rem 0">
+            
+            <h4 style="margin-bottom:1rem;font-size:1rem">Update Status</h4>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1rem">
+              <div>
+                <label style="font-size:.75rem;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:.3rem">Request Status</label>
+                <select id="editReqStatus" style="width:100%;padding:.5rem;border:2px solid var(--frost);border-radius:8px">
+                  <option value="pending" ${req.status==='pending'?'selected':''}>Pending</option>
+                  <option value="processing" ${req.status==='processing'?'selected':''}>Processing</option>
+                  <option value="fulfilled" ${req.status==='fulfilled'?'selected':''}>Fulfilled</option>
+                  <option value="cancelled" ${req.status==='cancelled'?'selected':''}>Cancelled</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size:.75rem;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:.3rem">Delivery</label>
+                <select id="editDelStatus" style="width:100%;padding:.5rem;border:2px solid var(--frost);border-radius:8px">
+                  <option value="processing" ${req.deliveryStatus==='processing'?'selected':''}>Processing</option>
+                  <option value="packed" ${req.deliveryStatus==='packed'?'selected':''}>Packed</option>
+                  <option value="shipped" ${req.deliveryStatus==='shipped'?'selected':''}>Shipped</option>
+                  <option value="delivered" ${req.deliveryStatus==='delivered'?'selected':''}>Delivered</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a href="https://wa.me/${req.phone?.replace(/\D/g,'')||''}?text=Hello%20${encodeURIComponent(req.studentName||'')},%20this%20is%20Project%20BookBridge%20about%20your%20request%20${req.trackingId}" target="_blank" class="btn btn-success" style="text-decoration:none">
+              <i class="fab fa-whatsapp"></i> WhatsApp Student
+            </a>
+            <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">Cancel</button>
+            <button class="btn btn-primary" onclick="updateRequestStatus('${req.id}','${req.firebaseKey}')">
+              <i class="fas fa-save"></i> Save Changes
+            </button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+    
+    function updateRequestStatus(id,firebaseKey){
+      const newStatus=document.getElementById('editReqStatus').value;
+      const newDelStatus=document.getElementById('editDelStatus').value;
+      
+      if(firebaseKey){
+        requestsRef.child(firebaseKey).update({
+          status:newStatus,
+          deliveryStatus:newDelStatus
+        });
+      }
+      document.querySelector('.modal-overlay.open').remove();
+      showToast('Request status updated!');
+    }
+    
+    function confirmDeleteRequest(id){
+      const req = requests.find(r => r.id === id);
+      if (req && req.firebaseKey) {
+        requestsRef.child(req.firebaseKey).remove()
+          .then(()=>showToast('Request deleted from database'))
+          .catch(err=>showToast('Error: '+err.message));
+      }
+    }
+    
+    function deleteRequest(id){
+      showConfirmModal('Delete Request','Delete this request permanently? This cannot be undone.',`confirmDeleteRequest(${id})`);
+    }
+    
+    // ══ DONATIONS ══
+    function renderDonations(filter='all'){
+      const tbody=document.getElementById('donationsTable');
+      if(!tbody){console.warn('donationsTable not found');return;}
+      console.log('Rendering donations:',donations.length);
+      let filtered=donations;
+      if(filter!=='all')filtered=donations.filter(d=>d.status===filter);
+      
+      tbody.innerHTML=filtered.length?filtered.map(don=>`
+        <tr>
+          <td><code style="background:var(--frost);padding:.2rem .4rem;border-radius:4px;font-family:monospace">${don.trackingId||'N/A'}</code></td>
+          <td>
+            <div style="font-weight:600">${don.donorName}</div>
+            <div style="font-size:.75rem;color:var(--muted)">${don.email||'No email'}</div>
+          </td>
+          <td>
+            <div style="display:flex;flex-direction:column;gap:.3rem;font-size:.8rem;">
+              ${don.phone?`<a href="https://wa.me/${don.phone.replace(/\D/g,'')}?text=Hello%20${encodeURIComponent(don.donorName||'')},%20this%20is%20Project%20BookBridge%20about%20your%20donation%20${don.trackingId}" target="_blank" style="color:#25D366;text-decoration:none;"><i class="fab fa-whatsapp"></i> ${don.phone}</a>`:'<span style="color:var(--muted)">-</span>'}
+              ${don.email?`<a href="mailto:${don.email}" style="color:var(--azure);text-decoration:none;"><i class="fas fa-envelope"></i> Email</a>`:'<span style="color:var(--muted)">-</span>'}
+            </div>
+          </td>
+          <td>${don.bookTitle}</td>
+          <td>${don.subject}</td>
+          <td>${don.condition}</td>
+          <td>${don.location}</td>
+          <td>
+            <span class="badge badge-${don.status==='collected'?'success':don.status==='pending'?'warning':'danger'}">${don.status}</span>
+          </td>
+          <td>
+            <span class="badge badge-${don.pickupStatus==='picked_up'?'success':don.pickupStatus==='scheduled'?'warning':'secondary'}">${don.pickupStatus||'scheduled'}</span>
+          </td>
+          <td>${don.date||'N/A'}</td>
+          <td>
+            <div class="table-actions">
+              <a href="https://wa.me/${don.phone?.replace(/\D/g,'')||''}?text=Hello%20${encodeURIComponent(don.donorName||'')},%20this%20is%20Project%20BookBridge%20about%20your%20donation%20${don.trackingId}" target="_blank" class="edit-btn" style="text-decoration:none;background:#25D366;color:#fff;${!don.phone?'visibility:hidden':''}" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+              <button class="edit-btn" onclick="viewDonationDetail('${don.id}')" title="View/Edit"><i class="fas fa-eye"></i></button>
+              <button class="delete-btn" onclick="deleteDonation('${don.id}')" title="Delete"><i class="fas fa-trash"></i></button>
+            </div>
+          </td>
+        </tr>
+      `).join(''):'<tr><td colspan="10" style="text-align:center;padding:2rem;color:var(--muted)">No donations found</td></tr>';
+    }
+    
+    function filterDonations(status){
+      renderDonations(status);
+    }
+    
+    function viewDonationDetail(id){
+      const don=donations.find(d=>d.id===id);
+      if(!don)return;
+      
+      const modal=document.createElement('div');
+      modal.className='modal-overlay open';
+      modal.innerHTML=`
+        <div class="modal-box" style="max-width:600px">
+          <div class="modal-header">
+            <h3>Donation Details - ${don.trackingId||'N/A'}</h3>
+            <button class="modal-close" onclick="this.closest('.modal-overlay').remove()"><i class="fas fa-times"></i></button>
+          </div>
+          <div class="modal-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+              <div><label style="font-size:.75rem;color:var(--muted);text-transform:uppercase">Donor</label><div style="font-weight:600">${don.donorName}</div></div>
+              <div><label style="font-size:.75rem;color:var(--muted);text-transform:uppercase">Phone</label><div style="font-weight:600">${don.phone||'N/A'}</div></div>
+              <div><label style="font-size:.75rem;color:var(--muted);text-transform:uppercase">Email</label><div>${don.email||'N/A'}</div></div>
+              <div><label style="font-size:.75rem;color:var(--muted);text-transform:uppercase">Location</label><div>${don.location}</div></div>
+            </div>
+            <div style="margin-bottom:1rem">
+              <label style="font-size:.75rem;color:var(--muted);text-transform:uppercase">Book Title(s)</label>
+              <div style="font-weight:600">${don.bookTitle}</div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+              <div><label style="font-size:.75rem;color:var(--muted);text-transform:uppercase">Subject</label><div>${don.subject}</div></div>
+              <div><label style="font-size:.75rem;color:var(--muted);text-transform:uppercase">Condition</label><div>${don.condition}</div></div>
+              <div><label style="font-size:.75rem;color:var(--muted);text-transform:uppercase">Quantity</label><div>${don.quantity||'N/A'}</div></div>
+            </div>
+            <div style="margin-bottom:1rem">
+              <label style="font-size:.75rem;color:var(--muted);text-transform:uppercase">Notes</label>
+              <div style="background:var(--frost);padding:.75rem;border-radius:8px">${don.notes||'N/A'}</div>
+            </div>
+            
+            <hr style="border:none;border-top:1px solid var(--frost);margin:1.5rem 0">
+            
+            <h4 style="margin-bottom:1rem;font-size:1rem">Update Status</h4>
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-bottom:1rem">
+              <div>
+                <label style="font-size:.75rem;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:.3rem">Donation Status</label>
+                <select id="editDonStatus" style="width:100%;padding:.5rem;border:2px solid var(--frost);border-radius:8px">
+                  <option value="pending" ${don.status==='pending'?'selected':''}>Pending</option>
+                  <option value="received" ${don.status==='received'?'selected':''}>Received</option>
+                  <option value="collected" ${don.status==='collected'?'selected':''}>Collected</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size:.75rem;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:.3rem">Pickup Status</label>
+                <select id="editPickupStatus" style="width:100%;padding:.5rem;border:2px solid var(--frost);border-radius:8px">
+                  <option value="scheduled" ${don.pickupStatus==='scheduled'?'selected':''}>Scheduled</option>
+                  <option value="in_transit" ${don.pickupStatus==='in_transit'?'selected':''}>In Transit</option>
+                  <option value="picked_up" ${don.pickupStatus==='picked_up'?'selected':''}>Picked Up</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a href="https://wa.me/${don.phone?.replace(/\D/g,'')||''}?text=Hello%20${encodeURIComponent(don.donorName||'')},%20this%20is%20Project%20BookBridge%20about%20your%20donation%20${don.trackingId}" target="_blank" class="btn btn-success" style="text-decoration:none">
+              <i class="fab fa-whatsapp"></i> WhatsApp Donor
+            </a>
+            <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">Cancel</button>
+            <button class="btn btn-primary" onclick="updateDonationStatus('${don.id}','${don.firebaseKey}')">
+              <i class="fas fa-save"></i> Save Changes
+            </button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+    
+    function updateDonationStatus(id,firebaseKey){
+      const newStatus=document.getElementById('editDonStatus').value;
+      const newPickupStatus=document.getElementById('editPickupStatus').value;
+      
+      if(firebaseKey){
+        donationsRef.child(firebaseKey).update({
+          status:newStatus,
+          pickupStatus:newPickupStatus
+        });
+      }
+      document.querySelector('.modal-overlay.open').remove();
+      showToast('Donation status updated!');
+    }
+    
+    function confirmDeleteDonation(id){
+      const don = donations.find(d => d.id === id);
+      if (don && don.firebaseKey) {
+        donationsRef.child(don.firebaseKey).remove()
+          .then(()=>showToast('Donation deleted from database'))
+          .catch(err=>showToast('Error: '+err.message));
+      }
+    }
+    
+    function deleteDonation(id){
+      showConfirmModal('Delete Donation','Delete this donation permanently? This cannot be undone.',`confirmDeleteDonation(${id})`);
+    }
+    
+    // ══ RESOURCES ══
+    function renderResources(){
+      const tbody=document.getElementById('resourcesTable');
+      if(!tbody){console.warn('resourcesTable not found');return;}
+      console.log('Rendering resources:',resources.length);
+      tbody.innerHTML=resources.length?resources.map(res=>`
+        <tr>
+          <td>${res.title}</td>
+          <td>${res.subject}</td>
+          <td>${res.type}</td>
+          <td>${res.downloads||0}</td>
+          <td><span class="badge badge-success">Active</span></td>
+          <td>
+            <div class="table-actions">
+              <a href="${res.url||'#'}" target="_blank" class="edit-btn" style="text-decoration:none;background:var(--azure);color:#fff;${!res.url?'visibility:hidden':''}" title="Open"><i class="fas fa-external-link-alt"></i></a>
+              <button class="edit-btn" onclick="editResource(${res.id})" title="Edit"><i class="fas fa-edit"></i></button>
+              <button class="delete-btn" onclick="deleteResource(${res.id})" title="Delete"><i class="fas fa-trash"></i></button>
+            </div>
+          </td>
+        </tr>
+      `).join(''):'<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--muted)">No resources found</td></tr>';
+    }
+    
+    function openResourceModal(){
+      document.getElementById('resourceForm').reset();
+      document.getElementById('resourceId').value='';
+      document.getElementById('resourceModalTitle').textContent='Add Resource';
+      document.getElementById('resourceModal').classList.add('open');
+    }
+    
+    function editResource(id){
+      const resource=resources.find(r=>r.id===id);
+      if(!resource)return;
+      
+      document.getElementById('resourceId').value=resource.id;
+      document.getElementById('resourceTitle').value=resource.title||'';
+      document.getElementById('resourceSubject').value=resource.subject||'';
+      document.getElementById('resourceType').value=resource.type||'PDF';
+      document.getElementById('resourceDesc').value=resource.description||'';
+      document.getElementById('resourceUrl').value=resource.url||'';
+      
+      document.getElementById('resourceModalTitle').textContent='Edit Resource';
+      document.getElementById('resourceModal').classList.add('open');
+    }
+    
+    function saveResource(){
+      const form=document.getElementById('resourceForm');
+      if(!form.checkValidity()){
+        form.reportValidity();
+        return;
+      }
+      
+      const id=document.getElementById('resourceId').value;
+      const resourceData={
+        id:id?parseInt(id):Date.now(),
+        title:document.getElementById('resourceTitle').value,
+        subject:document.getElementById('resourceSubject').value,
+        type:document.getElementById('resourceType').value,
+        description:document.getElementById('resourceDesc').value,
+        url:document.getElementById('resourceUrl').value,
+        downloads:0,
+        date:new Date().toLocaleDateString()
+      };
+      
+      // Save to Firebase
+      if (id) {
+        const existingResource = resources.find(r => r.id === parseInt(id));
+        if (existingResource && existingResource.firebaseKey) {
+          // Preserve firebaseKey
+          resourceData.firebaseKey = existingResource.firebaseKey;
+          resourcesRef.child(existingResource.firebaseKey).set(resourceData);
+          // Update local array
+          const index = resources.findIndex(r => r.id === parseInt(id));
+          resources[index] = resourceData;
+        }
+      } else {
+        resourcesRef.push(resourceData);
+        resources.push(resourceData);
+      }
+      closeModal('resourceModal');
+      showToast(id?'Resource updated!':'Resource added!');
+    }
+    
+    function confirmDeleteResource(id){
+      const resource = resources.find(r => r.id === id);
+      if (resource && resource.firebaseKey) {
+        resourcesRef.child(resource.firebaseKey).remove();
+      }
+      showToast('Resource deleted');
+    }
+    
+    function deleteResource(id){
+      showConfirmModal('Delete Resource','Delete this resource?',`confirmDeleteResource(${id})`);
+    }
+    
+    // ══ STORIES ══
+    function renderStories(){
+      const tbody=document.getElementById('storiesTable');
+      if(!tbody){console.warn('storiesTable not found');return;}
+      console.log('Rendering stories:',stories.length);
+      tbody.innerHTML=stories.length?stories.map(story=>`
+        <tr>
+          <td>${story.name}</td>
+          <td>${story.school}</td>
+          <td style="max-width:300px;overflow:hidden;text-overflow:ellipsis">${story.quote}</td>
+          <td>${story.featured==='yes'?'Yes':'No'}</td>
+          <td>
+            <div class="table-actions">
+              <button class="edit-btn" onclick="editStory(${story.id})" title="Edit"><i class="fas fa-edit"></i></button>
+              <button class="delete-btn" onclick="deleteStory(${story.id})" title="Delete"><i class="fas fa-trash"></i></button>
+            </div>
+          </td>
+        </tr>
+      `).join(''):'<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--muted)">No stories found</td></tr>';
+    }
+    
+    function openStoryModal(){
+      document.getElementById('storyForm').reset();
+      document.getElementById('storyId').value='';
+      document.getElementById('storyModalTitle').textContent='Add Success Story';
+      document.getElementById('storyModal').classList.add('open');
+    }
+    
+    function editStory(id){
+      const story=stories.find(s=>s.id===id);
+      if(!story)return;
+      
+      document.getElementById('storyId').value=story.id;
+      document.getElementById('storyName').value=story.name;
+      document.getElementById('storySchool').value=story.school;
+      document.getElementById('storyQuote').value=story.quote;
+      document.getElementById('storyFeatured').value=story.featured;
+      
+      document.getElementById('storyModalTitle').textContent='Edit Story';
+      document.getElementById('storyModal').classList.add('open');
+    }
+    
+    function saveStory(){
+      const form=document.getElementById('storyForm');
+      if(!form.checkValidity()){
+        form.reportValidity();
+        return;
+      }
+      
+      const id=document.getElementById('storyId').value;
+      const storyData={
+        id:id?parseInt(id):Date.now(),
+        name:document.getElementById('storyName').value,
+        school:document.getElementById('storySchool').value,
+        quote:document.getElementById('storyQuote').value,
+        featured:document.getElementById('storyFeatured').value
+      };
+      
+      // Save to Firebase
+      if (id) {
+        const existingStory = stories.find(s => s.id === parseInt(id));
+        if (existingStory && existingStory.firebaseKey) {
+          // Preserve firebaseKey
+          storyData.firebaseKey = existingStory.firebaseKey;
+          storiesRef.child(existingStory.firebaseKey).set(storyData);
+          // Update local array
+          const index = stories.findIndex(s => s.id === parseInt(id));
+          stories[index] = storyData;
+        }
+      } else {
+        storiesRef.push(storyData);
+        stories.push(storyData);
+      }
+      closeModal('storyModal');
+      showToast(id?'Story updated!':'Story added!');
+    }
+    
+    function confirmDeleteStory(id){
+      const story = stories.find(s => s.id === id);
+      if (story && story.firebaseKey) {
+        storiesRef.child(story.firebaseKey).remove();
+      }
+      showToast('Story deleted');
+    }
+    
+    function deleteStory(id){
+      showConfirmModal('Delete Story','Delete this success story?',`confirmDeleteStory(${id})`);
+    }
+    
+    // ══ SETTINGS ══
+    function changePassword(){
+      const current=document.getElementById('currentPassword').value;
+      const newPass=document.getElementById('newPassword').value;
+      const confirm=document.getElementById('confirmPassword').value;
+      
+      if(current!==adminPassword){
+        showToast('Current password is incorrect');
+        return;
+      }
+      if(newPass!==confirm){
+        showToast('New passwords do not match');
+        return;
+      }
+      if(newPass.length<6){
+        showToast('Password must be at least 6 characters');
+        return;
+      }
+      
+      // Save admin password to Firebase (in a real app, use Firebase Auth)
+      database.ref('settings/adminPassword').set(newPass);
+      adminPassword = newPass;
+      document.getElementById('currentPassword').value='';
+      document.getElementById('newPassword').value='';
+      document.getElementById('confirmPassword').value='';
+      showToast('Password updated successfully!');
+    }
+    
+    function exportData(){
+      const data={
+        mentors,requests,donations,resources,stories,
+        exportedAt:new Date().toISOString()
+      };
+      const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');
+      a.href=url;
+      a.download=`project-bookbridge-data-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      showToast('Data exported!');
+    }
+    
+    function confirmClearAllData(){
+      // Second confirmation with extra warning
+      const modal=document.createElement('div');
+      modal.className='modal-overlay open';
+      modal.innerHTML=`
+        <div class="modal-box" style="max-width:400px;text-align:center;border:2px solid var(--danger)">
+          <div class="modal-header" style="justify-content:center;border-bottom:none;padding-bottom:0">
+            <h3 style="color:var(--danger)"><i class="fas fa-radiation" style="margin-right:.5rem"></i>FINAL WARNING</h3>
+          </div>
+          <div class="modal-body" style="padding:1.5rem 2rem">
+            <p style="color:var(--danger);font-weight:600;margin-bottom:1rem">This action CANNOT be undone!</p>
+            <p style="color:var(--muted);line-height:1.6">All mentors, requests, donations, resources, and stories will be permanently deleted from Firebase.</p>
+          </div>
+          <div class="modal-footer" style="justify-content:center;gap:1rem;border-top:none;padding-top:0">
+            <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">Cancel</button>
+            <button class="btn btn-danger" onclick="this.closest('.modal-overlay').remove();executeClearAllData()">Yes, Delete Everything</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+    
+    function executeClearAllData(){
+      // Clear Firebase data
+      mentorsRef.remove();
+      requestsRef.remove();
+      donationsRef.remove();
+      resourcesRef.remove();
+      storiesRef.remove();
+      mentorRequestsRef.remove();
+      mentorApplicationsRef.remove();
+      
+      initDashboard();
+      showToast('All data cleared from cloud');
+    }
+    
+    function clearAllData(){
+      // First confirmation
+      showConfirmModal('Delete All Data','WARNING: This will delete ALL data including mentors, requests, donations, resources, and stories. Are you sure?','confirmClearAllData');
+    }
+    
+    // ══ UTILITIES ══
+    function closeModal(modalId){
+      document.getElementById(modalId).classList.remove('open');
+    }
+    
+    function showToast(message,type='success'){
+      const toast=document.createElement('div');
+      const colors={
+        success:'linear-gradient(135deg,var(--royal),var(--azure))',
+        error:'linear-gradient(135deg,var(--danger),#F87171)',
+        warning:'linear-gradient(135deg,var(--warning),#FBBF24)'
+      };
+      const icons={
+        success:'<i class="fas fa-check-circle"></i>',
+        error:'<i class="fas fa-exclamation-circle"></i>',
+        warning:'<i class="fas fa-info-circle"></i>'
+      };
+      
+      toast.style.cssText=`
+        position:fixed;top:24px;right:24px;
+        background:${colors[type]||colors.success};
+        color:#fff;padding:1.2rem 1.8rem;border-radius:16px;
+        box-shadow:0 12px 40px rgba(0,0,0,.25),0 0 0 1px rgba(255,255,255,0.2) inset;
+        z-index:10000;font-weight:600;font-size:0.95rem;
+        animation:toastSlideIn 0.4s cubic-bezier(0.16,1,0.3,1);
+        display:flex;align-items:center;gap:0.8rem;
+        backdrop-filter:blur(10px);
+        border:1px solid rgba(255,255,255,0.3);
+      `;
+      toast.innerHTML=`${icons[type]||icons.success} <span>${message}</span>`;
+      document.body.appendChild(toast);
+      
+      setTimeout(()=>{
+        toast.style.animation='toastSlideOut 0.4s cubic-bezier(0.16,1,0.3,1) forwards';
+        setTimeout(()=>toast.remove(),400);
+      },3500);
+    }
+    
+    // Close modals on overlay click
+    document.querySelectorAll('.modal-overlay').forEach(overlay=>{
+      overlay.addEventListener('click',function(e){
+        if(e.target===this)this.classList.remove('open');
+      });
+    });
+  </script>
+</body>
+</html>
